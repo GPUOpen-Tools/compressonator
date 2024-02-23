@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -36,38 +36,26 @@
 extern "C" {
 #endif
 
-typedef struct _Color888 {
+typedef struct _Color888
+{
     unsigned char red;
     unsigned char green;
     unsigned char blue;
 } Color888_t;
 
-extern unsigned int
-atiEncodeRGBBlockATITC(
-    Color888_t      (*pPixels)[4][4],
-    unsigned int    *pColorLow565or1555Ret, // Return value
-    unsigned int    *pColorHigh565Ret       // Return value
+extern unsigned int atiEncodeRGBBlockATITC(Color888_t (*pPixels)[4][4],
+                                           unsigned int* pColorLow565or1555Ret,  // Return value
+                                           unsigned int* pColorHigh565Ret        // Return value
 );
 
+extern void atiDecodeRGBBlockATITC(Color888_t (*pPixelsOut)[4][4], unsigned int bitIndices, unsigned int colorLow565or1555, unsigned int colorHigh565);
 
-extern void
-atiDecodeRGBBlockATITC(
-    Color888_t      (*pPixelsOut)[4][4],
-    unsigned int    bitIndices,
-    unsigned int    colorLow565or1555,
-    unsigned int    colorHigh565
-);
+extern void atiEncodeAlphaBlockATITCA4(unsigned char (*pSrcAlpha)[4][4], unsigned int (*pEncodedAlpha)[2]);
 
-
-extern void
-atiEncodeAlphaBlockATITCA4( unsigned char (*pSrcAlpha)[4][4], unsigned int (*pEncodedAlpha)[2] );
-
-
-extern void
-atiDecodeAlphaBlockATITCA4( unsigned char (*pAlphaOut)[4][4], unsigned char *pEncodedData );
+extern void atiDecodeAlphaBlockATITCA4(unsigned char (*pAlphaOut)[4][4], unsigned char* pEncodedData);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif  /* __CMP_H__ */
+#endif /* __CMP_H__ */

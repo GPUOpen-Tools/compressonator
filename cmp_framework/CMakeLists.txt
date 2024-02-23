@@ -66,6 +66,10 @@ target_sources(CMP_Framework
     ${PROJECT_SOURCE_DIR}/applications/_plugins/common/cmp_fileio.cpp
     ${PROJECT_SOURCE_DIR}/applications/_plugins/common/format_conversion.h
     ${PROJECT_SOURCE_DIR}/applications/_plugins/common/format_conversion.cpp
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/codec_common.h
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/codec_common.cpp
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/texture_utils.h
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/common/texture_utils.cpp
 
     # CMP_SDK Lossy Compression
     ${PROJECT_SOURCE_DIR}/applications/_plugins/ccmp_sdk/bcn.cpp
@@ -105,11 +109,17 @@ if (OPTION_BUILD_BROTLIG)
         PRIVATE
         ${PROJECT_SOURCE_DIR}/applications/_plugins/ccmp_sdk/brlg/codec_brlg.h
         ${PROJECT_SOURCE_DIR}/applications/_plugins/ccmp_sdk/brlg/codec_brlg.cpp
+        ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib/brotlig/brlg_sdk_wrapper.cpp
+        ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib/brotlig/BrotligCompute.cpp
     )
 
     target_link_libraries(CMP_Framework
-        PRIVATE
+        PUBLIC
         ExtBrotlig
+        dxcompiler.lib
+        dxgi.lib
+        d3d12.lib
+        dxguid.lib
     )
 endif()
 
@@ -123,7 +133,7 @@ if (OPTION_CMP_APC)
 endif()
 
 target_include_directories(CMP_Framework
-    PRIVATE
+    PUBLIC
     ./
     ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
     ${PROJECT_SOURCE_DIR}/cmp_framework/common/
@@ -138,9 +148,9 @@ target_include_directories(CMP_Framework
 )
 
 if (UNIX)
-    target_compile_definitions(CMP_Framework PRIVATE _LINUX)
+    target_compile_definitions(CMP_Framework PUBLIC _LINUX)
 endif()
 
-set_target_properties(CMP_Framework PROPERTIES FOLDER "Libs")
+set_target_properties(CMP_Framework PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_LIBS})
 
-target_link_libraries(CMP_Framework PRIVATE CMP_Core)
+target_link_libraries(CMP_Framework PUBLIC CMP_Core)

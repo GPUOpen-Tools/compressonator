@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -786,8 +786,7 @@ cp3DModelView::cp3DModelView(const QString filePathName, const QString filePathN
                 viewer_type = "VULKAN";
                 m_plugin    = reinterpret_cast<PluginInterface_3DModel*>(g_pluginManager.GetPlugin("3DMODEL_VIEWER", viewer_type));
                 break;
-            default:
-            {
+            default: {
                 if (mainComponents)
                 {
                     if (mainComponents->m_CompressStatusDialog)

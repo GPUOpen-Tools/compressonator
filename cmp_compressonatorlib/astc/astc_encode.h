@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2014-2017  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2014-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 //
@@ -29,30 +29,20 @@
 #include "astc_definitions.h"
 #include "astc_encode_kernel.h"
 
-class ASTCBlockEncoder {
-  public:
+class ASTCBlockEncoder
+{
+public:
+    ASTCBlockEncoder(){};
 
-    ASTCBlockEncoder() {
-    };
-
-
-    ~ASTCBlockEncoder() {
-    };
+    ~ASTCBlockEncoder(){};
 
     // This routine compresses a block and returns the RMS error
-    double CompressBlock_kernel(
-        ASTC_Encoder::astc_codec_image *input_image,
-        uint8_t *bp,
-        int x,
-        int y,
-        int z,
-        ASTC_Encoder::ASTC_Encode  *ASTCEncode
-    );
+    double CompressBlock_kernel(ASTC_Encoder::astc_codec_image* input_image, uint8_t* bp, int x, int y, int z, ASTC_Encoder::ASTC_Encode* ASTCEncode);
 
-  private:
-    imageblock                  m_pb;
-    symbolic_compressed_block   m_scb;
-    physical_compressed_block   m_pcb;
+private:
+    imageblock                m_pb;
+    symbolic_compressed_block m_scb;
+    physical_compressed_block m_pcb;
 };
 
 #endif

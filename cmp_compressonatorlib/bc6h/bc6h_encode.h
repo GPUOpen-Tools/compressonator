@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2014-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2014-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -34,46 +34,60 @@
 //#define USE_KNOWN_PATTERNS            // Enable this if you want to bipass using user images and use the known 32 BC6H patterns
 
 #ifdef DEBUG_PATTERNS
-#define TOP_OFFSET          0
-#define BASE_OFFSET         0
+#define TOP_OFFSET 0
+#define BASE_OFFSET 0
 #define RANDOM_NOISE_LEVEL 10
 #endif
 
 #define NOISE_BAND_WIDTH 0.2
-#define LEVEL_BAND_GAP   0.2
+#define LEVEL_BAND_GAP 0.2
 
-#define DELTA_UP         0
-#define DELTA_RIGHT      1
-#define DELTA_DOWN       2
-#define DELTA_LEFT       3
+#define DELTA_UP 0
+#define DELTA_RIGHT 1
+#define DELTA_DOWN 2
+#define DELTA_LEFT 3
 
-
-class BC6HBlockEncoder {
-  public:
-
-    BC6HBlockEncoder(CMP_BC6H_BLOCK_PARAMETERS user_options) {
-        m_quality                 = user_options.fQuality;
-        m_useMonoShapePatterns    = user_options.bUsePatternRec;
-        m_isSigned                = user_options.bIsSigned;
-        m_ModeMask                = user_options.dwMask;
-        m_Exposure                = user_options.fExposure;
-        m_bAverageEndPoint        = true;
-        m_DiffLevel               = 0.01f;
+class BC6HBlockEncoder
+{
+public:
+    BC6HBlockEncoder(CMP_BC6H_BLOCK_PARAMETERS user_options)
+    {
+        m_quality              = user_options.fQuality;
+        m_useMonoShapePatterns = user_options.bUsePatternRec;
+        m_isSigned             = user_options.bIsSigned;
+        m_ModeMask             = user_options.dwMask;
+        m_Exposure             = user_options.fExposure;
+        m_bAverageEndPoint     = true;
+        m_DiffLevel            = 0.01f;
     };
 
-    ~BC6HBlockEncoder() {};
+    ~BC6HBlockEncoder(){};
 
-    float   CompressBlock(float in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],BYTE   out[COMPRESSED_BLOCK_SIZE]);
-    void    clampF16Max(float EndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG]);
-    void    AverageEndPoint(float EndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], float iEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int max_subsets, int mode);
-    void    QuantizeEndPointToF16Prec(float  EndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int iEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int max_subsets, int prec);
-    void    SwapIndices(int iEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int iIndices[3][MAX_SUBSET_SIZE], int  entryCount[MAX_SUBSETS], int max_subsets, int mode, int shape_pattern);
-    bool   TransformEndPoints(AMD_BC6H_Format &BC6H_data, int iEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG], int oEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG],int max_subsets, int mode);
+    float CompressBlock(float in[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG], BYTE out[COMPRESSED_BLOCK_SIZE]);
+    void  clampF16Max(float EndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG]);
+    void  AverageEndPoint(float EndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG],
+                          float iEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG],
+                          int   max_subsets,
+                          int   mode);
+    void  QuantizeEndPointToF16Prec(float EndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG],
+                                    int   iEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG],
+                                    int   max_subsets,
+                                    int   prec);
+    void  SwapIndices(int iEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG],
+                      int iIndices[3][MAX_SUBSET_SIZE],
+                      int entryCount[MAX_SUBSETS],
+                      int max_subsets,
+                      int mode,
+                      int shape_pattern);
+    bool  TransformEndPoints(AMD_BC6H_Format& BC6H_data,
+                             int              iEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG],
+                             int              oEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG],
+                             int              max_subsets,
+                             int              mode);
 
-  private:
-
+private:
 #ifdef DEBUG_PATTERNS
-    float DoPixelNoise();                        // Used for debugging... adds existing shape patterns with random noise
+    float DoPixelNoise();  // Used for debugging... adds existing shape patterns with random noise
 #endif
 
     /*
@@ -81,44 +95,39 @@ class BC6HBlockEncoder {
     int BC6HBlockEncoder::FindPattern();
     */
 
-    float    FindBestPattern(AMD_BC6H_Format &BC6H_data,
-                             bool    TwoRegionShapes,
-                             int    shape_pattern);
+    float FindBestPattern(AMD_BC6H_Format& BC6H_data, bool TwoRegionShapes, int shape_pattern);
 
+    float EncodePattern(AMD_BC6H_Format& BC6H_data, float error);
 
-    float    EncodePattern(AMD_BC6H_Format &BC6H_data,
-                           float  error);
-
-    void    SaveCompressedBlockData(AMD_BC6H_Format &BC6H_data,
-                                    int oEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG],
-                                    int iIndices[3][MAX_SUBSET_SIZE],
-                                    int max_subsets,
-                                    int mode);
-
+    void SaveCompressedBlockData(AMD_BC6H_Format& BC6H_data,
+                                 int              oEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG],
+                                 int              iIndices[3][MAX_SUBSET_SIZE],
+                                 int              max_subsets,
+                                 int              mode);
 
     // ==========================================================
     // Reserved Feature
     // ==========================================================
-    bool    m_useMonoShapePatterns;
+    bool m_useMonoShapePatterns;
 
     // ==========================================================
     // Bulky temporary data used during compression of a block
     // ==========================================================
-    int     m_sortedModes[MAX_PARTITIONS];
+    int m_sortedModes[MAX_PARTITIONS];
 
     // This stores the min and max for the components of the block, and the ranges
-    float  m_blockMin[MAX_DIMENSION_BIG];
-    float  m_blockMax[MAX_DIMENSION_BIG];
-    float  m_blockRange[MAX_DIMENSION_BIG];
-    float  m_blockMaxRange;
+    float m_blockMin[MAX_DIMENSION_BIG];
+    float m_blockMax[MAX_DIMENSION_BIG];
+    float m_blockRange[MAX_DIMENSION_BIG];
+    float m_blockMaxRange;
 
     // data setup at initialization time
-    float  m_quality;
-    DWORD   m_ModeMask;
-    bool    m_isSigned;
-    float  m_Exposure;
-    bool    m_bAverageEndPoint;         // Enables Averaging Endpoints for low bits modes
-    float   m_DiffLevel;                // Threashhold for Channel diferance to set Averages value of channels on Endpoints
+    float m_quality;
+    DWORD m_ModeMask;
+    bool  m_isSigned;
+    float m_Exposure;
+    bool  m_bAverageEndPoint;  // Enables Averaging Endpoints for low bits modes
+    float m_DiffLevel;         // Threashhold for Channel diferance to set Averages value of channels on Endpoints
 };
 
 #endif

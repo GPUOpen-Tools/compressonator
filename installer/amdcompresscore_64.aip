@@ -27,7 +27,7 @@
     <ROW Property="ProductCode" Value="1033:{FB88015A-B8A8-4908-8936-4D90AC16389C} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="CompressonatorCore"/>
-    <ROW Property="ProductVersion" Value="4.4.0" Type="32"/>
+    <ROW Property="ProductVersion" Value="4.5.0" Type="32"/>
     <ROW Property="SETUP_FILE_NAME" Value="CompressonatorCore_x64_4.1."/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND;AI_SETUPEXEPATH;SETUPEXEDIR"/>
     <ROW Property="UpgradeCode" Value="{78D0379B-C01A-49C4-A8C7-A41904A35199}"/>
@@ -48,7 +48,7 @@
     <ROW Directory="SHORTCUTDIR" Directory_Parent="TARGETDIR" DefaultDir="SHORTC~1|SHORTCUTDIR" IsPseudoRoot="1"/>
     <ROW Directory="Samples_Dir" Directory_Parent="APPDIR" DefaultDir="examples" DirectoryOptions="3"/>
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
-    <ROW Directory="VS2015_Dir" Directory_Parent="Libs_Dir" DefaultDir="VS2019" DirectoryOptions="3"/>
+    <ROW Directory="VS2015_Dir" Directory_Parent="Libs_Dir" DefaultDir="bin" DirectoryOptions="3"/>
     <ROW Directory="core_example1_Dir" Directory_Parent="Samples_Dir" DefaultDir="CORE_E~1|core_example1" DirectoryOptions="3"/>
     <ROW Directory="encoders_Dir" Directory_Parent="Libs_Dir" DefaultDir="encoders" DirectoryOptions="3"/>
     <ROW Directory="x64_Dir" Directory_Parent="VS2015_Dir" DefaultDir="x64" DirectoryOptions="3"/>
@@ -132,9 +132,7 @@
     <ROW File="bc7_encode_kernel.hlsl" Component_="bc1_cmp.h" FileName="BC7_EN~1.HLS|bc7_encode_kernel.hlsl" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\cmp_core\shaders\bc7_encode_kernel.hlsl" SelfReg="false" NextFile="bcn_common_api.h"/>
     <ROW File="bcn_common_api.h" Component_="bc1_cmp.h" FileName="BCN_CO~1.H|bcn_common_api.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\cmp_core\shaders\bcn_common_api.h" SelfReg="false" NextFile="bcn_common_kernel.h"/>
     <ROW File="bcn_common_kernel.h" Component_="bc1_cmp.h" FileName="BCN_CO~2.H|bcn_common_kernel.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\cmp_core\shaders\bcn_common_kernel.h" SelfReg="false" NextFile="cmp_core.h"/>
-    <ROW File="cmp_core.h" Component_="cmp_core.h" FileName="cmp_core.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\cmp_core\source\cmp_core.h" SelfReg="false" NextFile="cmp_math_func.h"/>
-    <ROW File="cmp_math_func.h" Component_="cmp_core.h" FileName="CMP_MA~1.H|cmp_math_func.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\cmp_core\source\cmp_math_func.h" SelfReg="false" NextFile="cmp_math_vec4.h"/>
-    <ROW File="cmp_math_vec4.h" Component_="cmp_core.h" FileName="CMP_MA~2.H|cmp_math_vec4.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\cmp_core\source\cmp_math_vec4.h" SelfReg="false" NextFile="core_example1.sln"/>
+    <ROW File="cmp_core.h" Component_="cmp_core.h" FileName="cmp_core.h" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\cmp_core\source\cmp_core.h" SelfReg="false" NextFile="core_example1.sln"/>
     <ROW File="core_example1.sln" Component_="core_example1.sln" FileName="CORE_E~1.SLN|core_example1.sln" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\examples\core_example1\core_example1.sln" SelfReg="false" NextFile="core_example1.vcxproj"/>
     <ROW File="core_example1.vcxproj" Component_="core_example1.sln" FileName="CORE_E~1.VCX|core_example1.vcxproj" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\examples\core_example1\core_example1.vcxproj" SelfReg="false" NextFile="core_example1.vcxproj.filters"/>
     <ROW File="core_example1.vcxproj.filters" Component_="core_example1.sln" FileName="CORE_E~1.FIL|core_example1.vcxproj.filters" Version="65535.65535.65535.65535" Attributes="0" SourcePath="..\examples\core_example1\core_example1.vcxproj.filters" SelfReg="false" NextFile="coreexample.cpp"/>

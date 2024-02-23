@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Advanced Micro Devices, Inc. All rights reserved
+// Copyright (c) 2021-2024 Advanced Micro Devices, Inc. All rights reserved
 // Copyright (c) 2004-2006    ATI Technologies Inc.
 //
 // Example1: Console application that demonstrates how to use the Compressonator Framework Lib
@@ -28,7 +28,6 @@
 //     CMP_Framework_xx.lib  For static libs xx is either MD, MT or MDd or MTd,
 //                      When using DLL builds make sure the  CMP_Framework_xx_DLL.dll is in exe path
 
-
 #include <stdio.h>
 #include <string>
 
@@ -41,7 +40,8 @@
 #ifdef _WIN32
 #include <windows.h>
 #include <time.h>
-double timeStampsec() {
+double timeStampsec()
+{
     static LARGE_INTEGER frequency;
     if (frequency.QuadPart == 0)
         QueryPerformanceFrequency(&frequency);
@@ -52,13 +52,13 @@ double timeStampsec() {
 }
 #endif
 
-
-CMP_BOOL g_bAbortCompression = false;   // If set true current compression will abort
+CMP_BOOL g_bAbortCompression = false;  // If set true current compression will abort
 
 //---------------------------------------------------------------------------
 // Sample loop back code called for each compression block been processed
 //---------------------------------------------------------------------------
-CMP_BOOL CompressionCallback(CMP_FLOAT fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+CMP_BOOL CompressionCallback(CMP_FLOAT fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
+{
     UNREFERENCED_PARAMETER(pUser1);
     UNREFERENCED_PARAMETER(pUser2);
 
@@ -67,11 +67,13 @@ CMP_BOOL CompressionCallback(CMP_FLOAT fProgress, CMP_DWORD_PTR pUser1, CMP_DWOR
     return g_bAbortCompression;
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
 #ifdef _WIN32
     double start_time = timeStampsec();
 #endif
-    if (argc < 5) {
+    if (argc < 5)
+    {
         std::printf("Example1 SourceFile DestFile Format Quality\n");
         std::printf("This example shows how to compress a single image by generating mipmap levels\n");
         std::printf("then compressing it using the compression format and quality settings\n");
@@ -82,28 +84,34 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    const char*     pszSourceFile = argv[1];
-    const char*     pszDestFile   = argv[2];
-    CMP_FORMAT      destFormat    = CMP_ParseFormat(argv[3]);
-    CMP_ERROR       cmp_status;
-    CMP_FLOAT       fQuality;
+    const char* pszSourceFile = argv[1];
+    const char* pszDestFile   = argv[2];
+    CMP_FORMAT  destFormat    = CMP_ParseFormat(argv[3]);
+    CMP_ERROR   cmp_status;
+    CMP_FLOAT   fQuality;
 
-    try {
+    try
+    {
         fQuality = std::stof(argv[4]);
-        if (fQuality < 0.0f) {
+        if (fQuality < 0.0f)
+        {
             fQuality = 0.0f;
             std::printf("Warning: Quality setting is out of range using 0.0\n");
         }
-        if (fQuality > 1.0f) {
+        if (fQuality > 1.0f)
+        {
             fQuality = 1.0f;
             std::printf("Warning: Quality setting is out of range using 1.0\n");
         }
-    } catch (...) {
+    }
+    catch (...)
+    {
         std::printf("Error: Unable to process quality setting\n");
         return -1;
     }
 
-    if (destFormat == CMP_FORMAT_Unknown) {
+    if (destFormat == CMP_FORMAT_Unknown)
+    {
         std::printf("Error: Unsupported destination format\n");
         return 0;
     }
@@ -120,8 +128,9 @@ int main(int argc, char* argv[]) {
     CMP_MipSet MipSetIn;
     memset(&MipSetIn, 0, sizeof(CMP_MipSet));
     cmp_status = CMP_LoadTexture(pszSourceFile, &MipSetIn);
-    if (cmp_status != CMP_OK) {
-        std::printf("Error %d: Loading source file!\n",cmp_status);
+    if (cmp_status != CMP_OK)
+    {
+        std::printf("Error %d: Loading source file!\n", cmp_status);
         return -1;
     }
 
@@ -129,8 +138,9 @@ int main(int argc, char* argv[]) {
     // generate mipmap level for the source image, if not already generated
     //----------------------------------------------------------------------
 
-    if (MipSetIn.m_nMipLevels <= 1) {
-        CMP_INT requestLevel = 10; // Request 10 miplevels for the source image
+    if (MipSetIn.m_nMipLevels <= 1)
+    {
+        CMP_INT requestLevel = 10;  // Request 10 miplevels for the source image
 
         //------------------------------------------------------------------------
         // Checks what the minimum image size will be for the requested mip levels
@@ -149,15 +159,15 @@ int main(int argc, char* argv[]) {
     //==========================
     // Set Compression Options
     //==========================
-    KernelOptions   kernel_options;
+    KernelOptions kernel_options;
     memset(&kernel_options, 0, sizeof(KernelOptions));
 
-    kernel_options.format   = destFormat;   // Set the format to process
-    kernel_options.fquality = fQuality;     // Set the quality of the result
-    kernel_options.threads  = 0;            // Auto setting will enable maxium number of threads for processing
+    kernel_options.format   = destFormat;  // Set the format to process
+    kernel_options.fquality = fQuality;    // Set the quality of the result
+    kernel_options.threads  = 0;           // Auto setting will enable maxium number of threads for processing
 
     //=====================================================
-    // example of using BC1 encoder options 
+    // example of using BC1 encoder options
     // kernel_options.bc15 is valid for BC1 to BC5 formats
     //=====================================================
     if (destFormat == CMP_FORMAT_BC1)
@@ -185,7 +195,8 @@ int main(int argc, char* argv[]) {
     // Compress the texture using Compressonator Lib
     //===============================================
     cmp_status = CMP_ProcessTexture(&MipSetIn, &MipSetCmp, kernel_options, CompressionCallback);
-    if (cmp_status != CMP_OK) {
+    if (cmp_status != CMP_OK)
+    {
         CMP_FreeMipSet(&MipSetIn);
         std::printf("Compression returned an error %d\n", cmp_status);
         return cmp_status;
@@ -198,8 +209,9 @@ int main(int argc, char* argv[]) {
     CMP_FreeMipSet(&MipSetIn);
     CMP_FreeMipSet(&MipSetCmp);
 
-    if (cmp_status != CMP_OK) {
-        std::printf("Error %d: Saving processed file %s!\n",cmp_status,pszDestFile);
+    if (cmp_status != CMP_OK)
+    {
+        std::printf("Error %d: Saving processed file %s!\n", cmp_status, pszDestFile);
         return -1;
     }
 

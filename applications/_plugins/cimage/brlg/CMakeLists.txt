@@ -21,5 +21,5 @@ target_link_libraries(Image_BRLG
     )
 
 set_target_properties(Image_BRLG PROPERTIES 
-    FOLDER "Plugin_Static/ImageIO"
+    FOLDER ${PROJECT_FOLDER_SDK_PLUGIN_STATIC}
     )

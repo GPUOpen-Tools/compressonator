@@ -43,7 +43,7 @@ target_link_libraries(Mesh_Tootle
 target_compile_definitions(Mesh_Tootle PRIVATE BUILD_AS_PLUGIN_DLL=1)
 
 set_target_properties(Mesh_Tootle PROPERTIES 
-        FOLDER "Plugin_Dynamic/Mesh_Compression"
+        FOLDER ${PROJECT_FOLDER_SDK_PLUGIN_DYNAMIC}
         RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/bin/debug/plugins"
         RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin/release/plugins"
         )

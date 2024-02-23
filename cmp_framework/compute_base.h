@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2016    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2016-2024    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -31,34 +31,36 @@
 #include "common_kerneldef.h"
 #include "texture.h"
 
-namespace CMP_Compute_Base {
+namespace CMP_Compute_Base
+{
 
-class RenderWindow {
-  public:
-    RenderWindow() {};
-    virtual ~RenderWindow() {};
+class RenderWindow
+{
+public:
+    RenderWindow(){};
+    virtual ~RenderWindow(){};
 };
 
-class ComputeBase: public RenderWindow {
-  public:
-    ComputeBase() {};
-    virtual ~ComputeBase() {};
+class ComputeBase : public RenderWindow
+{
+public:
+    ComputeBase(){};
+    virtual ~ComputeBase(){};
 
-    virtual CMP_ERROR   Compress(KernelOptions *Options, MipSet &SrcTexture, MipSet &destTexture,CMP_Feedback_Proc pFeedback) = 0;
-    virtual void        SetComputeOptions(ComputeOptions *options) = 0;
-    virtual float       GetProcessElapsedTimeMS() = 0;
-    virtual float       GetMTxPerSec() = 0;
-    virtual int         GetBlockSize() = 0;
-    virtual const char* GetDeviceName() = 0;
-    virtual const char* GetVersion() = 0;
-    virtual int         GetMaxUCores() = 0;
+    virtual CMP_ERROR   Compress(KernelOptions* Options, MipSet& SrcTexture, MipSet& destTexture, CMP_Feedback_Proc pFeedback) = 0;
+    virtual void        SetComputeOptions(ComputeOptions* options)                                                             = 0;
+    virtual float       GetProcessElapsedTimeMS()                                                                              = 0;
+    virtual float       GetMTxPerSec()                                                                                         = 0;
+    virtual int         GetBlockSize()                                                                                         = 0;
+    virtual const char* GetDeviceName()                                                                                        = 0;
+    virtual const char* GetVersion()                                                                                           = 0;
+    virtual int         GetMaxUCores()                                                                                         = 0;
 
-  private:
+private:
 };
-}
-
+}  // namespace CMP_Compute_Base
 
 const CMP_CHAR* GetEncodeWithDesc(CMP_Compute_type nFormat);
 bool            cmp_recompile_shader(std::string m_sourceShaderFile);
 
-#endif // !COMPUTE_BASE_H
+#endif  // !COMPUTE_BASE_H

@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -35,7 +35,8 @@
 
 CSetApplicationOptions::CSetApplicationOptions(const QString title, QWidget* parent)
     : m_title(title)
-    , m_parent(parent) {
+    , m_parent(parent)
+{
     setWindowTitle(title);
     Qt::WindowFlags flags(Qt::Dialog | Qt::WindowCloseButtonHint | Qt::WindowTitleHint);
     setWindowFlags(flags);
@@ -48,7 +49,8 @@ CSetApplicationOptions::CSetApplicationOptions(const QString title, QWidget* par
     m_layoutV       = new QVBoxLayout(this);
 
     m_browser = m_theController->getTreeBrowser();
-    if (m_browser) {
+    if (m_browser)
+    {
         m_browser->setHeaderVisible(false);
         m_browser->SetBrowserClick(true);
         m_browser->setResizeMode(QtTreePropertyBrowser::ResizeToContents);  // follow this comment Note#1
@@ -82,7 +84,8 @@ CSetApplicationOptions::CSetApplicationOptions(const QString title, QWidget* par
     setLayout(m_layoutV);
 }
 
-void CSetApplicationOptions::onImageViewDecodeChanged(QVariant& value) {
+void CSetApplicationOptions::onImageViewDecodeChanged(QVariant& value)
+{
     C_Application_Options::ImageDecodeWith decodewith = (C_Application_Options::ImageDecodeWith&)value;
 
     if (decodewith == C_Application_Options::ImageDecodeWith::CPU)
@@ -100,7 +103,8 @@ void CSetApplicationOptions::onImageViewDecodeChanged(QVariant& value) {
         g_gpudecodeFormat = MIPIMAGE_FORMAT::Format_QImage;
 }
 
-void CSetApplicationOptions::onImageEncodeChanged(QVariant& value) {
+void CSetApplicationOptions::onImageEncodeChanged(QVariant& value)
+{
     g_Application_Options.m_ImageEncode = (C_Application_Options::ImageEncodeWith&)value;
 
     if (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::CPU)
@@ -108,40 +112,47 @@ void CSetApplicationOptions::onImageEncodeChanged(QVariant& value) {
     else
         g_useCPUEncode = false;
 
-    QtProperty *m_qproperty;
+    QtProperty* m_qproperty;
 
     m_qproperty = m_theController->getProperty(APP_Use_GPU_To_Generate_MipMaps);
-    if (m_qproperty) {
+    if (m_qproperty)
+    {
         m_qproperty->setEnabled((g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_HW));
     }
 
     m_qproperty = m_theController->getProperty(APP_Use_SRGB_Frames_While_Encoding);
-    if (m_qproperty) {
+    if (m_qproperty)
+    {
         m_qproperty->setEnabled((g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::GPU_HW));
     }
 }
 
-void CSetApplicationOptions::onLogResultsChanged(QVariant& value) {
+void CSetApplicationOptions::onLogResultsChanged(QVariant& value)
+{
     m_propAnalysisTable = m_theController->getProperty(APP_Show_Analysis_Results_Table);
-    if (m_propAnalysisTable) {
+    if (m_propAnalysisTable)
+    {
         m_propAnalysisTable->setEnabled((bool&)value);
     }
 }
 
-void CSetApplicationOptions::onClose() {
+void CSetApplicationOptions::onClose()
+{
     g_useCPUDecode = (g_Application_Options.m_ImageViewDecode == C_Application_Options::ImageDecodeWith::CPU);
     g_useCPUEncode = (g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::CPU);
     emit OnAppSettingHide();
     close();
 }
 
-CSetApplicationOptions::~CSetApplicationOptions() {
+CSetApplicationOptions::~CSetApplicationOptions()
+{
 }
 
 // -----------------------------------------------------------
 // Signaled when items focus has changed on th property view
 // ----------------------------------------
-void CSetApplicationOptions::oncurrentItemChanged(QtBrowserItem* item) {
+void CSetApplicationOptions::oncurrentItemChanged(QtBrowserItem* item)
+{
     if (!item)
         return;
     m_infotext->clear();
@@ -155,7 +166,8 @@ void CSetApplicationOptions::oncurrentItemChanged(QtBrowserItem* item) {
     text = treeItem->propertyName();
     text.replace(QString("_"), QString(" "));
 
-    if (text.compare(APP_Decompress_image_views_using) == 0) {
+    if (text.compare(APP_Decompress_image_views_using) == 0)
+    {
         m_infotext->append("<b>Compressed image views</b>");
         m_infotext->append("For compressed images this option selects how images are decompressed for viewing.");
         m_infotext->append("<b>Note:</b>");
@@ -165,7 +177,8 @@ void CSetApplicationOptions::oncurrentItemChanged(QtBrowserItem* item) {
         m_infotext->append("For ETCn, GPU Decompress with DirectX is not supported");
         m_infotext->append("For HDR image view, decode with OpenGL is not supported. It may appear darker.");
     }
-    if (text.compare(APP_compress_image_using) == 0) {
+    if (text.compare(APP_compress_image_using) == 0)
+    {
         m_infotext->append("<b>Compressed image</b>");
         m_infotext->append("For compressed images this option selects how images are compressed either with CPU,HPC,GPU_DirectX, GPU_OpenCL or GPU_HW.");
         m_infotext->append("HPC runs codecs optimized for vector extensions and SPMD processing on CPU.");
@@ -179,23 +192,35 @@ void CSetApplicationOptions::oncurrentItemChanged(QtBrowserItem* item) {
         m_infotext->append(
             "Only BC1 to BC7 format are supported for HPC and GPU, if you choose other formats or a shader compile fails on first use, processing with "
             "generalized CPU instructions will be used");
-    } else if (text.compare(APP_Reload_image_views_on_selection) == 0) {
+    }
+    else if (text.compare(APP_Reload_image_views_on_selection) == 0)
+    {
         m_infotext->append("<b>Reload image views</b>");
         m_infotext->append("Refreshes image cache views when an image is processed or a setting has changed\n");
-    } else if (text.compare(APP_Load_recent_project_on_startup) == 0) {
+    }
+    else if (text.compare(APP_Load_recent_project_on_startup) == 0)
+    {
         m_infotext->append("<b>Load recent project</b>");
         m_infotext->append("Reloads the last project session each time the application is started");
-    } else if (text.compare(APP_Close_all_image_views_prior_to_process) == 0) {
+    }
+    else if (text.compare(APP_Close_all_image_views_prior_to_process) == 0)
+    {
         m_infotext->append("<b>Close all image views prior to processing</b>");
         m_infotext->append("This will free up system memory, to avoid out of memory issues when processing large files");
-    } else if (text.compare(APP_Mouse_click_on_icon_to_view_image) == 0) {
+    }
+    else if (text.compare(APP_Mouse_click_on_icon_to_view_image) == 0)
+    {
         m_infotext->append("<b>Mouse click on icon to view image</b>");
         m_infotext->append("Mouse click on icons will display a image view, clicking on the items text will update the Properties page only");
-    } else if (text.compare(APP_Set_Image_Diff_Contrast) == 0) {
+    }
+    else if (text.compare(APP_Set_Image_Diff_Contrast) == 0)
+    {
         m_infotext->append("<b>Set Image Diff Contrast</b>");
         m_infotext->append(
             "Sets the contrast of pixels for image view diff, default is 20.0 using 1.0 returns pixels to original diff contrast, min is 1 max is 200");
-    } else if (text.compare(APP_Set_Number_of_Threads) == 0) {
+    }
+    else if (text.compare(APP_Set_Number_of_Threads) == 0)
+    {
         m_infotext->append("<b>Set Number of Threads</b>");
         m_infotext->append("Sets the number of threads to use for texture compression, max is 128 threads distributed over multiple cores");
         m_infotext->append("Default 0 sets auto detection, where the total threads = number of processor cores, if auto detection fails default = 8");
@@ -204,15 +229,21 @@ void CSetApplicationOptions::oncurrentItemChanged(QtBrowserItem* item) {
         sprintf(buff, "Max number of processors [%d]", processors);
         m_infotext->append(buff);
         m_infotext->append("<b>Restart the application for the new settings to take effect<b>");
-    } else if (text.compare(APP_Use_GPU_To_Generate_MipMaps) == 0) {
+    }
+    else if (text.compare(APP_Use_GPU_To_Generate_MipMaps) == 0)
+    {
         m_infotext->append("<b>Use GPU To Generate MipMaps</b>");
         m_infotext->append(
             "Generates max number of MipMap levels for the image using the GPU hardware, this option is only enabled when EncodeWith is set to GPU_HW");
-    } else if (text.compare(APP_Use_SRGB_Frames_While_Encoding) == 0) {
+    }
+    else if (text.compare(APP_Use_SRGB_Frames_While_Encoding) == 0)
+    {
         m_infotext->append("<b>Use SRGB Frames While Encoding</b>");
         m_infotext->append(
             "Encoded frames will use SRGB frame buffer when encoding with GPU hardware, this option is only enabled when EncodeWith is set to GPU_HW");
-    } else if (text.compare(APP_Show_MSE_PSNR_SSIM_Results) == 0) {
+    }
+    else if (text.compare(APP_Show_MSE_PSNR_SSIM_Results) == 0)
+    {
         m_infotext->append("<b>Show MSE, PSNR and SSIM_Results</b>");
         m_infotext->append("Show these values after processing compressed images");
         m_infotext->append("<b>Note</b> Analysis is not supported for processes that are: Lossless, HDR to LDR or LDR to HDR");
@@ -222,23 +253,28 @@ void CSetApplicationOptions::oncurrentItemChanged(QtBrowserItem* item) {
         m_infotext->append("<b>Show Analysis Results Table</b>");
         m_infotext->append("Show all Process Times, PSNR and SSIM results for compressed images in a table view");
         m_infotext->append("<b>Note</b> Results are not shown for processes that are: Lossless, HDR to LDR or LDR to HDR");
-    } else if (text.compare(APP_Render_Models_with) == 0) {
+    }
+    else if (text.compare(APP_Render_Models_with) == 0)
+    {
         m_infotext->append("<b>Selects how to render 3DModels files</b>");
     }
-    else if (text.compare(APP_Use_Original_File_Names) == 0) {
+    else if (text.compare(APP_Use_Original_File_Names) == 0)
+    {
         m_infotext->append("<b>Use Original File Names</b>");
         m_infotext->append("The destination file name will default to using the same name as the source file.");
         m_infotext->append("This will only apply to the first destination for each source file to prevent file overwriting.");
     }
 }
 
-void CSetApplicationOptions::UpdateViewData() {
+void CSetApplicationOptions::UpdateViewData()
+{
     m_theController->setObject(&g_Application_Options, true, true);
     g_useCPUDecode = g_Application_Options.m_ImageViewDecode == C_Application_Options::ImageDecodeWith::CPU;
     g_useCPUEncode = g_Application_Options.m_ImageEncode == C_Application_Options::ImageEncodeWith::CPU;
 }
 
-void CSetApplicationOptions::SaveSettings(QString SettingsFile, QSettings::Format Format) {
+void CSetApplicationOptions::SaveSettings(QString SettingsFile, QSettings::Format Format)
+{
     QSettings settings(SettingsFile, Format);
     QVariant  var;
     QString   name;
@@ -246,16 +282,20 @@ void CSetApplicationOptions::SaveSettings(QString SettingsFile, QSettings::Forma
     int count      = g_Application_Options.metaObject()->propertyCount();
     int parent_cnt = g_Application_Options.metaObject()->superClass()->propertyCount();
 
-    for (int i = 0; i < parent_cnt; ++i) {
-        if (g_Application_Options.metaObject()->superClass()->property(i).isStored(&g_Application_Options)) {
+    for (int i = 0; i < parent_cnt; ++i)
+    {
+        if (g_Application_Options.metaObject()->superClass()->property(i).isStored(&g_Application_Options))
+        {
             var  = g_Application_Options.metaObject()->superClass()->property(i).read(&g_Application_Options);
             name = g_Application_Options.metaObject()->superClass()->property(i).name();
             settings.setValue(name, var);
         }
     }
 
-    for (int i = 0; i < count; ++i) {
-        if (g_Application_Options.metaObject()->property(i).isStored(&g_Application_Options)) {
+    for (int i = 0; i < count; ++i)
+    {
+        if (g_Application_Options.metaObject()->property(i).isStored(&g_Application_Options))
+        {
             var  = g_Application_Options.metaObject()->property(i).read(&g_Application_Options);
             name = g_Application_Options.metaObject()->property(i).name();
             settings.setValue(name, var);
@@ -263,15 +303,18 @@ void CSetApplicationOptions::SaveSettings(QString SettingsFile, QSettings::Forma
     }
 }
 
-void CSetApplicationOptions::LoadSettings(QString SettingsFile, QSettings::Format Format) {
+void CSetApplicationOptions::LoadSettings(QString SettingsFile, QSettings::Format Format)
+{
     QSettings settings(SettingsFile, Format);
     QVariant  var;
     QString   name;
     int       count      = g_Application_Options.metaObject()->propertyCount();
     int       parent_cnt = g_Application_Options.metaObject()->superClass()->propertyCount();
 
-    for (int i = 0; i < parent_cnt; ++i) {
-        if (g_Application_Options.metaObject()->superClass()->property(i).isStored(&g_Application_Options)) {
+    for (int i = 0; i < parent_cnt; ++i)
+    {
+        if (g_Application_Options.metaObject()->superClass()->property(i).isStored(&g_Application_Options))
+        {
             name = g_Application_Options.metaObject()->superClass()->property(i).name();
             var  = g_Application_Options.metaObject()->superClass()->property(i).read(&g_Application_Options);
             var  = settings.value(name, var);
@@ -280,26 +323,33 @@ void CSetApplicationOptions::LoadSettings(QString SettingsFile, QSettings::Forma
         }
     }
 
-    for (int i = 0; i < count; ++i) {
-        if (g_Application_Options.metaObject()->property(i).isStored(&g_Application_Options)) {
+    for (int i = 0; i < count; ++i)
+    {
+        if (g_Application_Options.metaObject()->property(i).isStored(&g_Application_Options))
+        {
             name = g_Application_Options.metaObject()->property(i).name();
             var  = g_Application_Options.metaObject()->property(i).read(&g_Application_Options);
             var  = settings.value(name, var);
             name.replace(QString("_"), QString(" "));
-            if (name.compare(APP_compress_image_using) == 0) {
+            if (name.compare(APP_compress_image_using) == 0)
+            {
                 int                                    value  = var.value<int>();
                 C_Application_Options::ImageEncodeWith encode = (C_Application_Options::ImageEncodeWith)value;
                 g_Application_Options.setImageEncode(encode);
             }
-            if (name.compare(APP_Decompress_image_views_using) == 0) {
+            if (name.compare(APP_Decompress_image_views_using) == 0)
+            {
                 int                                    value      = var.value<int>();
                 C_Application_Options::ImageDecodeWith decodeWith = (C_Application_Options::ImageDecodeWith)value;
                 g_Application_Options.setImageViewDecode(decodeWith);
-            } else if (name.compare(APP_Render_Models_with) == 0) {
+            }
+            else if (name.compare(APP_Render_Models_with) == 0)
+            {
                 int                                     value  = var.value<int>();
                 C_Application_Options::RenderModelsWith render = (C_Application_Options::RenderModelsWith)value;
                 g_Application_Options.setGLTFRender(render);
-            } else
+            }
+            else
                 g_Application_Options.metaObject()->property(i).write(&g_Application_Options, var);
         }
     }

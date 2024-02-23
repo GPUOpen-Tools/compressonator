@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -31,53 +31,51 @@
 #include <QGridLayout>
 #include <QLabel>
 
-
-class CModelConvert : public QWidget {
+class CModelConvert : public QWidget
+{
     Q_OBJECT
 
-  public:
-
-    CModelConvert(const QString title, QWidget *parent);
+public:
+    CModelConvert(const QString title, QWidget* parent);
     ~CModelConvert();
-    void setSourceFile(const QString source);
+    void    setSourceFile(const QString source);
     QString SetDefaultExt(QString FilePathName);
-    void clearStatus();
+    void    clearStatus();
 
-  private:
-    void closeEvent(QCloseEvent * event);
-    void dragEnterEvent(QDragEnterEvent *event);
-    void dropEvent(QDropEvent *event);
-
+private:
+    void closeEvent(QCloseEvent* event);
+    void dragEnterEvent(QDragEnterEvent* event);
+    void dropEvent(QDropEvent* event);
 
     // Common for all
-    QWidget                     *m_newWidget;
-    QGridLayout                 *m_layout;
-    const QString                m_title;
-    QWidget                     *m_parent;
-    QStatusBar                  *m_statusBar;
-    QLabel                      *m_labelStatus;
+    QWidget*      m_newWidget;
+    QGridLayout*  m_layout;
+    const QString m_title;
+    QWidget*      m_parent;
+    QStatusBar*   m_statusBar;
+    QLabel*       m_labelStatus;
 
-    QString                      m_RecentDir;
-    QString                      m_SupportedModelFormats;
+    QString m_RecentDir;
+    QString m_SupportedModelFormats;
 
-    QLineEdit                   *m_sourceFile;
-    QLineEdit                   *m_destFile;
+    QLineEdit* m_sourceFile;
+    QLineEdit* m_destFile;
 
-    QPushButton                 *PBConvert;
+    QPushButton* PBConvert;
 
-  Q_SIGNALS:
+Q_SIGNALS:
 
-    void convertModel(int levels, QTreeWidgetItem *item);
+    void convertModel(int levels, QTreeWidgetItem* item);
 
-  public Q_SLOTS:
+public Q_SLOTS:
     void onExit();
     void onConvert();
 
     void onOpenSourceFile();
     void onOpenDestinationFile();
 
-  public:
-    QTreeWidgetItem *m_mipsitem;
+public:
+    QTreeWidgetItem* m_mipsitem;
 };
 
 #endif

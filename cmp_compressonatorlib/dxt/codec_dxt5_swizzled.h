@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -29,24 +29,42 @@
 #ifndef _CODEC_DXT5_SWIZZLED_H_INCLUDED_
 #define _CODEC_DXT5_SWIZZLED_H_INCLUDED_
 
+#include "codec_common.h"
 #include "codec_dxtc.h"
 
-class CCodec_DXT5_Swizzled : public CCodec_DXTC {
-  public:
+class CCodec_DXT5_Swizzled : public CCodec_DXTC
+{
+public:
     CCodec_DXT5_Swizzled(CodecType codecType);
     virtual ~CCodec_DXT5_Swizzled();
 
-    virtual CodecError Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Compress_Fast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Compress_SuperFast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Compress(CCodecBuffer&       bufferIn,
+                                CCodecBuffer&       bufferOut,
+                                Codec_Feedback_Proc pFeedbackProc = NULL,
+                                CMP_DWORD_PTR       pUser1        = NULL,
+                                CMP_DWORD_PTR       pUser2        = NULL);
+    virtual CodecError Compress_Fast(CCodecBuffer&       bufferIn,
+                                     CCodecBuffer&       bufferOut,
+                                     Codec_Feedback_Proc pFeedbackProc = NULL,
+                                     CMP_DWORD_PTR       pUser1        = NULL,
+                                     CMP_DWORD_PTR       pUser2        = NULL);
+    virtual CodecError Compress_SuperFast(CCodecBuffer&       bufferIn,
+                                          CCodecBuffer&       bufferOut,
+                                          Codec_Feedback_Proc pFeedbackProc = NULL,
+                                          CMP_DWORD_PTR       pUser1        = NULL,
+                                          CMP_DWORD_PTR       pUser2        = NULL);
+    virtual CodecError Decompress(CCodecBuffer&       bufferIn,
+                                  CCodecBuffer&       bufferOut,
+                                  Codec_Feedback_Proc pFeedbackProc = NULL,
+                                  CMP_DWORD_PTR       pUser1        = NULL,
+                                  CMP_DWORD_PTR       pUser2        = NULL);
 
-  protected:
-    virtual void ReadBlock(CCodecBuffer& buffer, CMP_DWORD x, CMP_DWORD y, CMP_BYTE block[BLOCK_SIZE_4X4X4]) = 0;
+protected:
+    virtual void ReadBlock(CCodecBuffer& buffer, CMP_DWORD x, CMP_DWORD y, CMP_BYTE block[BLOCK_SIZE_4X4X4])  = 0;
     virtual void WriteBlock(CCodecBuffer& buffer, CMP_DWORD x, CMP_DWORD y, CMP_BYTE block[BLOCK_SIZE_4X4X4]) = 0;
 
-    virtual void ReadBlock(CCodecBuffer& buffer, CMP_DWORD x, CMP_DWORD y, CODECFLOAT block[BLOCK_SIZE_4X4X4]) = 0;
+    virtual void ReadBlock(CCodecBuffer& buffer, CMP_DWORD x, CMP_DWORD y, CODECFLOAT block[BLOCK_SIZE_4X4X4])  = 0;
     virtual void WriteBlock(CCodecBuffer& buffer, CMP_DWORD x, CMP_DWORD y, CODECFLOAT block[BLOCK_SIZE_4X4X4]) = 0;
 };
 
-#endif // !defined(_CODEC_DXT5_SWIZZLED_H_INCLUDED_)
+#endif  // !defined(_CODEC_DXT5_SWIZZLED_H_INCLUDED_)

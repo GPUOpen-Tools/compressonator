@@ -2,19 +2,21 @@
 # Compressonator
 [![CMake](https://github.com/GPUOpen-Tools/compressonator/actions/workflows/cmake.yml/badge.svg)](https://github.com/GPUOpen-Tools/compressonator/actions/workflows/cmake.yml)
 ![download](https://img.shields.io/github/downloads/GPUOpen-Tools/Compressonator/total.svg)
-![download](https://img.shields.io/github/downloads/GPUOpen-Tools/Compressonator/V4.4.19/total)
+![download](https://img.shields.io/github/downloads/GPUOpen-Tools/Compressonator/V4.5.52/total.svg)
 
 *Download the latest revision for changes that have been made since the last major release by clicking the CMake button above or the link [here](https://github.com/GPUOpen-Tools/compressonator/actions/workflows/cmake.yml). Currently, only Compressonator Framework and Compressonator CLI are built every revision.*
 
+***NOTE: Compressonator v4.5 requires version 1.1 of the Brotli-G SDK to build which is not yet available, but will be very soon. In the meantime you can grab the prebuilt binaries from the releases page.***
+
 Compressonator is a set of tools to allow artists and developers to more easily create compressed texture assets or model mesh optimizations and easily visualize the quality impact of various compression and rendering technologies.  It consists of a GUI application, a command line application and an SDK for easy integration into a developer tool chain.
 
-Compressonator supports Microsoft Windows®, Linux and Mac builds.
+Compressonator supports Microsoft Windows® and Linux builds.
 
 For more details goto the online Compressonator Documents: http://compressonator.readthedocs.io/en/latest/ 
 
 ## Build System Updates ##
 The code is undergoing a build setup update. This notice will be removed when the changes are completed!
-Currently: To use the VS2019 sln builds run build\fetch_dependencies.py to fetch required external lib dependencies into a Common folder
+Currently: To use the sln builds run build\fetch_dependencies.py to fetch required external lib dependencies into a Common folder
 above this repository.
 
 
@@ -363,7 +365,7 @@ C:\>CompressonatorCLI -fd BC7 .\images .results
 C:\>CompressonatorCLI -log -fd BC7 .\images\ruby.png ruby_bc7.dds
 ```
 ```
-CompressonatorCLI Performace Log v1.0
+CompressonatorCLI Performance Log v1.0
 
 Source        : .\images\ruby.png, Height 416, Wideth 576, Size 0.936 MBytes
 Destination   : ruby_bc7.dds

@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2020-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -21,21 +21,17 @@
 // THE SOFTWARE.
 //=====================================================================
 
-
 #include "apc_encode.h"
 
+void (*APC_CompressBlock)(void* srcblock, void* outblock, void* blockoptions) = NULL;
 
-void (*APC_CompressBlock)(void *srcblock, void *outblock, void *blockoptions) = NULL;
-
-double APCBlockEncoder::CompressBlock(
-    CMP_BYTE      *srcblock,
-    CMP_BYTE      outblock[COMPRESSED_BLOCK_SIZE]) {
-    if (APC_CompressBlock) {
+double APCBlockEncoder::CompressBlock(CMP_BYTE* srcblock, CMP_BYTE outblock[COMPRESSED_BLOCK_SIZE])
+{
+    if (APC_CompressBlock)
+    {
         APC_Encode APCEncode_local;
         APCEncode_local.m_quality = m_quality;
         APC_CompressBlock(srcblock, outblock, &APCEncode_local);
     }
     return (0);
 }
-
-

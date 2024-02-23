@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2014-2018  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2014-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -30,17 +30,13 @@
 
 #include "gt_definitions.h"
 
-class GTCBlockDecoder {
-  public:
-    GTCBlockDecoder() {};
-    ~GTCBlockDecoder() {};
+class GTCBlockDecoder
+{
+public:
+    GTCBlockDecoder(){};
+    ~GTCBlockDecoder(){};
 
-    void DecompressBlock(
-        CMP_BYTE   out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-        CMP_BYTE   cmp[COMPRESSED_BLOCK_SIZE]
-    );
-
+    void DecompressBlock(CMP_BYTE out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG], CMP_BYTE cmp[COMPRESSED_BLOCK_SIZE]);
 };
-
 
 #endif

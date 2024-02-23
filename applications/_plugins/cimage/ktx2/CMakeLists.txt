@@ -54,6 +54,5 @@ endif()
 
 
 set_target_properties(Image_KTX2 PROPERTIES 
-    FOLDER "Plugin_Static/ImageIO"
-    # USE_FOLDERS ON
-    )
+    FOLDER ${PROJECT_FOLDER_SDK_PLUGIN_STATIC}
+)

@@ -1,6 +1,6 @@
 // AMD DeferredTiledBasedLightingD3D12 sample code
 //
-// Copyright(c) 2017 Advanced Micro Devices, Inc.All rights reserved.
+// Copyright(c) 2017-2024 Advanced Micro Devices, Inc.All rights reserved.
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -52,7 +52,7 @@ class Vulkan_Renderer
     : public QVulkanWindowRenderer
 #endif
 {
-  public:
+public:
 #ifdef USE_QT10
     Vulkan_Renderer(QVulkanWindow* w);
 
@@ -63,28 +63,29 @@ class Vulkan_Renderer
 
     void startNextFrame() override;
 
-  private:
-    QVulkanWindow* m_window;
+private:
+    QVulkanWindow*          m_window;
     QVulkanDeviceFunctions* m_devFuncs;
-    float m_green = 0;
+    float                   m_green = 0;
 #else
     Vulkan_Renderer(void* w);
 #endif
 
-  public:
-    struct State {
-        float time;
+public:
+    struct State
+    {
+        float      time;
         CMP_Camera camera;
         CMP_Camera light;
-        float depthBias;
-        float exposure;
-        float iblFactor;
-        float spotLightIntensity;
-        float glow;
-        int toneMapper;
-        bool bDrawBoundingBoxes;
-        bool bDrawSkyDome;
-        bool bGammaTestPattern;
+        float      depthBias;
+        float      exposure;
+        float      iblFactor;
+        float      spotLightIntensity;
+        float      glow;
+        int        toneMapper;
+        bool       bDrawBoundingBoxes;
+        bool       bDrawSkyDome;
+        bool       bGammaTestPattern;
     };
 
     void OnCreate(CMP_DeviceVK* pDevice);
@@ -97,33 +98,33 @@ class Vulkan_Renderer
     void UnloadScene();
     void OnRender(State* pState, SwapChainVK* pSwapChain);
 
-  private:
+private:
     CMP_DeviceVK* m_pDevice;
 
-    CommandListRingVK m_CommandListRing;
+    CommandListRingVK       m_CommandListRing;
     CMP_DynamicBufferRingVK m_ConstantBufferRing;
     CMP_StaticBufferPoolVK  m_StaticBufferPool;
 
     // Initialize helper classes
     CMP_ResourceViewHeapsVK m_Heaps;
     CMP_UploadHeapVK        m_UploadHeap;
-    ImGUIVK m_ImGUI;
-    CMP_GltfPbrVK*      m_gltfPBR;
-    GltfDepthPass* m_gltfDepth;
-    GltfBBoxPassVK* m_gltfBBox;
-    TriangleVK m_triangle;
-    Texture m_depthBuffer;
-    Texture m_shadowMap;
+    ImGUIVK                 m_ImGUI;
+    CMP_GltfPbrVK*          m_gltfPBR;
+    GltfDepthPass*          m_gltfDepth;
+    GltfBBoxPassVK*         m_gltfBBox;
+    TriangleVK              m_triangle;
+    Texture                 m_depthBuffer;
+    Texture                 m_shadowMap;
 
     //RenderToSwapChainPass           m_renderToSwapChainPass;
 
     unsigned int m_Width;
     unsigned int m_Height;
 
-    VkRect2D m_scissor;
+    VkRect2D   m_scissor;
     VkViewport m_viewport;
 
-    VkRect2D m_shadowScissor;
+    VkRect2D   m_shadowScissor;
     VkViewport m_shadowViewport;
 
     VkRenderPass m_render_pass_color;
@@ -131,7 +132,7 @@ class Vulkan_Renderer
     VkRenderPass m_render_pass_shadow;
 
     VkFramebuffer* m_pFrameBuffers;
-    VkFramebuffer m_pShadowMapBuffers;
+    VkFramebuffer  m_pShadowMapBuffers;
 
     SwapChainVK* m_pSwapChain;
 };

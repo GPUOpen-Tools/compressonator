@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -30,17 +30,18 @@
 #include "compressonator.h"
 #include "hdr_encode.h"
 
-
-CMP_BOOL    g_LibraryInitialized = FALSE;
-static BC7BlockDecoder  g_Decoder;
+CMP_BOOL               g_LibraryInitialized = FALSE;
+static BC7BlockDecoder g_Decoder;
 
 //
 // One time initialization for the library
 //
 //
 //
-extern "C" BC_ERROR CMP_InitializeBCLibrary() {
-    if(g_LibraryInitialized) {
+extern "C" BC_ERROR CMP_InitializeBCLibrary()
+{
+    if (g_LibraryInitialized)
+    {
         return BC_ERROR_LIBRARY_ALREADY_INITIALIZED;
     }
 
@@ -50,18 +51,26 @@ extern "C" BC_ERROR CMP_InitializeBCLibrary() {
     return BC_ERROR_NONE;
 }
 
-
-extern "C" BC_ERROR CMP_CreateBC7Encoder( double quality, CMP_BOOL restrictColour, CMP_BOOL restrictAlpha, CMP_DWORD modeMask, double performance, BC7BlockEncoder** encoder ) {
-    if(!g_LibraryInitialized) {
+extern "C" BC_ERROR CMP_CreateBC7Encoder(double            quality,
+                                         CMP_BOOL          restrictColour,
+                                         CMP_BOOL          restrictAlpha,
+                                         CMP_DWORD         modeMask,
+                                         double            performance,
+                                         BC7BlockEncoder** encoder)
+{
+    if (!g_LibraryInitialized)
+    {
         return BC_ERROR_LIBRARY_NOT_INITIALIZED;
     }
 
-    if ( !encoder ) {
+    if (!encoder)
+    {
         return BC_ERROR_INVALID_PARAMETERS;
     }
 
     *encoder = new BC7BlockEncoder(modeMask, TRUE, quality, restrictColour, restrictAlpha, performance);
-    if ( !encoder ) {
+    if (!encoder)
+    {
         return BC_ERROR_OUT_OF_MEMORY;
     }
 
@@ -73,32 +82,37 @@ extern "C" BC_ERROR CMP_CreateBC7Encoder( double quality, CMP_BOOL restrictColou
 //
 //
 //
-extern "C" BC_ERROR CMP_EncodeBC7Block( BC7BlockEncoder* encoder, double  in[BC_BLOCK_PIXELS][MAX_DIMENSION_BIG], CMP_BYTE* out ) {
-    if(!g_LibraryInitialized) {
+extern "C" BC_ERROR CMP_EncodeBC7Block(BC7BlockEncoder* encoder, double in[BC_BLOCK_PIXELS][MAX_DIMENSION_BIG], CMP_BYTE* out)
+{
+    if (!g_LibraryInitialized)
+    {
         return BC_ERROR_LIBRARY_NOT_INITIALIZED;
     }
 
-    if( !encoder || !in || !out ) {
+    if (!encoder || !in || !out)
+    {
         return BC_ERROR_INVALID_PARAMETERS;
     }
 
-    encoder->CompressBlock( in, out );
+    encoder->CompressBlock(in, out);
 
     return BC_ERROR_NONE;
 }
-
 
 //
 // Decode a block and write it to the output
 //
 //
 //
-extern "C" BC_ERROR CMP_DecodeBC7Block(CMP_BYTE *in, double  out[BC_BLOCK_PIXELS][MAX_DIMENSION_BIG] ) {
-    if(!g_LibraryInitialized) {
+extern "C" BC_ERROR CMP_DecodeBC7Block(CMP_BYTE* in, double out[BC_BLOCK_PIXELS][MAX_DIMENSION_BIG])
+{
+    if (!g_LibraryInitialized)
+    {
         return BC_ERROR_LIBRARY_NOT_INITIALIZED;
     }
 
-    if( !in || !out ) {
+    if (!in || !out)
+    {
         return BC_ERROR_INVALID_PARAMETERS;
     }
 
@@ -106,18 +120,20 @@ extern "C" BC_ERROR CMP_DecodeBC7Block(CMP_BYTE *in, double  out[BC_BLOCK_PIXELS
     return BC_ERROR_NONE;
 }
 
-
 //
 // Destroys encoder object
 //
 //
 //
-extern "C" BC_ERROR CMP_DestroyBC7Encoder( BC7BlockEncoder* encoder ) {
-    if(!g_LibraryInitialized) {
+extern "C" BC_ERROR CMP_DestroyBC7Encoder(BC7BlockEncoder* encoder)
+{
+    if (!g_LibraryInitialized)
+    {
         return BC_ERROR_LIBRARY_NOT_INITIALIZED;
     }
 
-    if( !encoder ) {
+    if (!encoder)
+    {
         return BC_ERROR_INVALID_PARAMETERS;
     }
 
@@ -131,8 +147,10 @@ extern "C" BC_ERROR CMP_DestroyBC7Encoder( BC7BlockEncoder* encoder ) {
 //
 //
 //
-extern "C" BC_ERROR CMP_ShutdownBCLibrary(void) {
-    if(!g_LibraryInitialized) {
+extern "C" BC_ERROR CMP_ShutdownBCLibrary(void)
+{
+    if (!g_LibraryInitialized)
+    {
         return BC_ERROR_LIBRARY_NOT_INITIALIZED;
     }
     Quant_DeInit();
@@ -140,4 +158,3 @@ extern "C" BC_ERROR CMP_ShutdownBCLibrary(void) {
 
     return BC_ERROR_NONE;
 }
-

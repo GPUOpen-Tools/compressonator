@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2018-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,8 +27,6 @@
 #include "cmp_resourceviewheapsdx12.h"
 #include "cmp_uploadheapdx12.h"
 
-#include "cmp_defines.h"
-
 #include "imgui.h"
 
 #include <QtGui/qopenglextrafunctions.h>
@@ -50,70 +48,73 @@ class QMouseEvent;
 class QWheelEvent;
 class QKeyEvent;
 
-
-class QImGUI_WindowWrapper_DX12 {
-  public:
-    virtual ~QImGUI_WindowWrapper_DX12() {}
-    virtual void installEventFilter(QObject *object) = 0;
-    virtual QSize size() const = 0;
-    virtual qreal devicePixelRatio() const = 0;
-    virtual bool isActive() const = 0;
-    virtual QPoint mapFromGlobal(const QPoint &p) const = 0;
+class QImGUI_WindowWrapper_DX12
+{
+public:
+    virtual ~QImGUI_WindowWrapper_DX12()
+    {
+    }
+    virtual void   installEventFilter(QObject* object)  = 0;
+    virtual QSize  size() const                         = 0;
+    virtual qreal  devicePixelRatio() const             = 0;
+    virtual bool   isActive() const                     = 0;
+    virtual QPoint mapFromGlobal(const QPoint& p) const = 0;
 };
 
-class ImGuiRenderer_DX12 : public QObject, QOpenGLExtraFunctions {
+class ImGuiRenderer_DX12 : public QObject, QOpenGLExtraFunctions
+{
     Q_OBJECT
-  public:
+public:
     ImGuiRenderer_DX12();
     ~ImGuiRenderer_DX12();
 
-    void Draw(ID3D12GraphicsCommandList *pCmdLst);
+    void Draw(ID3D12GraphicsCommandList* pCmdLst);
 
-    void initialize(
-        QImGUI_WindowWrapper_DX12 *window,
-        ID3D12Device* pDevice,
-        UploadHeapDX12 *pUploadHeap,
-        ResourceViewHeapsDX12 *pHeaps,
-        DynamicBufferRingDX12 *pConstantBufferRing,
-        UINT node,
-        UINT nodemask);
+    void initialize(QImGUI_WindowWrapper_DX12* window,
+                    ID3D12Device*              pDevice,
+                    UploadHeapDX12*            pUploadHeap,
+                    ResourceViewHeapsDX12*     pHeaps,
+                    DynamicBufferRingDX12*     pConstantBufferRing,
+                    UINT                       node,
+                    UINT                       nodemask);
 
     void newFrame();
-    bool eventFilter(QObject *watched, QEvent *event);
+    bool eventFilter(QObject* watched, QEvent* event);
 
-  private:
+private:
+    void OnCreate(ID3D12Device*          pDevice,
+                  UploadHeapDX12*        pUploadHeap,
+                  ResourceViewHeapsDX12* pHeaps,
+                  DynamicBufferRingDX12* pConstantBufferRing,
+                  UINT                   node,
+                  UINT                   nodemask);
 
-    void OnCreate(ID3D12Device* pDevice, UploadHeapDX12 *pUploadHeap, ResourceViewHeapsDX12 *pHeaps, DynamicBufferRingDX12 *pConstantBufferRing, UINT node, UINT nodemask);
-
-    void onMousePressedChange(QMouseEvent *event);
-    void onWheel(QWheelEvent *event);
-    void onKeyPressRelease(QKeyEvent *event);
+    void onMousePressedChange(QMouseEvent* event);
+    void onWheel(QWheelEvent* event);
+    void onKeyPressRelease(QKeyEvent* event);
 
     std::unique_ptr<QImGUI_WindowWrapper_DX12> m_window;
-    double       g_Time = 0.0f;
-    bool         g_MousePressed[3] = { false, false, false };
-    float        g_MouseWheel = 0.0f;
-    GLuint       g_FontTexture = 0;
-    int          g_ShaderHandle = 0, g_VertHandle = 0, g_FragHandle = 0;
-    int          g_AttribLocationTex = 0, g_AttribLocationProjMtx = 0;
-    int          g_AttribLocationPosition = 0, g_AttribLocationUV = 0, g_AttribLocationColor = 0;
-    unsigned int g_VboHandle = 0, g_VaoHandle = 0, g_ElementsHandle = 0;
+    double                                     g_Time            = 0.0f;
+    bool                                       g_MousePressed[3] = {false, false, false};
+    float                                      g_MouseWheel      = 0.0f;
+    GLuint                                     g_FontTexture     = 0;
+    int                                        g_ShaderHandle = 0, g_VertHandle = 0, g_FragHandle = 0;
+    int                                        g_AttribLocationTex = 0, g_AttribLocationProjMtx = 0;
+    int                                        g_AttribLocationPosition = 0, g_AttribLocationUV = 0, g_AttribLocationColor = 0;
+    unsigned int                               g_VboHandle = 0, g_VaoHandle = 0, g_ElementsHandle = 0;
 
     // DX12
-    ID3D12Device              *m_pDevice;
-    ResourceViewHeapsDX12     *m_pResourceViewHeaps;
-    DynamicBufferRingDX12     *m_pConstBuf;
+    ID3D12Device*          m_pDevice;
+    ResourceViewHeapsDX12* m_pResourceViewHeaps;
+    DynamicBufferRingDX12* m_pConstBuf;
 
-    ID3D12Resource            *m_pTexture2D;
-    ID3D12PipelineState       *m_pPipelineState;
-    ID3D12RootSignature       *m_pRootSignature;
+    ID3D12Resource*      m_pTexture2D;
+    ID3D12PipelineState* m_pPipelineState;
+    ID3D12RootSignature* m_pRootSignature;
 
-    SAMPLER                    m_sampler;
-    CBV_SRV_UAV                m_pTextureSRV;
+    SAMPLER     m_sampler;
+    CBV_SRV_UAV m_pTextureSRV;
 
     UINT m_node;
     UINT m_nodeMask;
-
 };
-
-

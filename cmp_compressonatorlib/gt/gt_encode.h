@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2014-2018  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2014-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -31,24 +31,20 @@
 #include <float.h>
 #include "gt_definitions.h"
 
-class GTCBlockEncoder {
-  public:
-
-    GTCBlockEncoder(
-        double quality
-    ) {
+class GTCBlockEncoder
+{
+public:
+    GTCBlockEncoder(double quality)
+    {
         m_quality = (float)quality;
     };
 
-    ~GTCBlockEncoder()    {    };
+    ~GTCBlockEncoder(){};
 
     // This routine compresses a block and returns the RMS error
-    double CompressBlock(
-        CMP_BYTE  *in,
-        CMP_BYTE  out[COMPRESSED_BLOCK_SIZE]
-    );
+    double CompressBlock(CMP_BYTE* in, CMP_BYTE out[COMPRESSED_BLOCK_SIZE]);
 
-  private:
+private:
     // Global data setup at initialisation time
     float m_quality;
 };

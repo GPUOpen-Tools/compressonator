@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2018  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -76,27 +76,24 @@
 #ifndef _CODEC_ETC2_H_INCLUDED_
 #define _CODEC_ETC2_H_INCLUDED_
 
-#include "common.h"
 #include "codec_block_4x4.h"
-#include "compressonator_tc.h"
-#include "compressonatorxcodec.h"
+#include "codec_common.h"
 
 #define ATC_OFFSET_ALPHA 0
 #define ATC_OFFSET_RGB 2
 
-#ifdef  USE_ETCPACK
+#ifdef USE_ETCPACK
 #include "etcpack.h"
 #include "etcpack_lib.h"
 #endif
 
-typedef char             int8;
-typedef unsigned char   uint8;
-typedef short           int16;
-typedef unsigned short uint16;
-typedef int             int32;
-typedef unsigned int   uint32;
-typedef unsigned long long  uint64;
-
+typedef char               int8;
+typedef unsigned char      uint8;
+typedef short              int16;
+typedef unsigned short     uint16;
+typedef int                int32;
+typedef unsigned int       uint32;
+typedef unsigned long long uint64;
 
 #define SWIZZLE_DWORD(i) ((((i >> 24) & BYTE_MASK)) | (((i >> 16) & BYTE_MASK) << 8) | (((i >> 8) & BYTE_MASK) << 16) | ((i & BYTE_MASK) << 24))
 
@@ -104,7 +101,7 @@ typedef unsigned long long  uint64;
 #define USE_CMP_ETC2
 #endif
 
-#define     CMP_CLAMP(ll,x,ul) (((x)<(ll)) ? (ll) : (((x)>(ul)) ? (ul) : (x)))
+#define CMP_CLAMP(ll, x, ul) (((x) < (ll)) ? (ll) : (((x) > (ul)) ? (ul) : (x)))
 
 extern int   g_alphaTable[256][8];
 extern int   cmp_alphaBase[16][4];
@@ -114,18 +111,18 @@ extern uint8 cmp_getbit(uint8 input, int frompos, int topos);
 
 #ifdef USE_CMP_ETC2
 
-extern void  cmp_decompressETC21BitAlpha(uint64 block, uint32 &pixel, uint32 x, uint32 y);
-extern void  cmp_decompressETC2Pixel(uint64 block, uint32 &pixel, uint32 x, uint32 y);
-extern void  cmp_decompressRGBABlockAlpha(CMP_BYTE* alphadata, CMP_BYTE* alphaimg);
+extern void cmp_decompressETC21BitAlpha(uint64 block, uint32& pixel, uint32 x, uint32 y);
+extern void cmp_decompressETC2Pixel(uint64 block, uint32& pixel, uint32 x, uint32 y);
+extern void cmp_decompressRGBABlockAlpha(CMP_BYTE* alphadata, CMP_BYTE* alphaimg);
 
-extern void  cmp_setupAlphaTable();
-extern void  cmp_compressBlockAlphaFast(uint8 * data, uint8* returnData);
-extern void  cmp_compressBlockETC2FastPerceptual(uint8 *img, uint8 *imgdec, unsigned int &compressed1, unsigned int &compressed2);
-extern void  cmp_compressBlockETC2Fast(uint8 *img, uint8* alphaimg, uint8 *imgdec, unsigned int &compressed1, unsigned int &compressed2);
+extern void cmp_setupAlphaTable();
+extern void cmp_compressBlockAlphaFast(uint8* data, uint8* returnData);
+extern void cmp_compressBlockETC2FastPerceptual(uint8* img, uint8* imgdec, unsigned int& compressed1, unsigned int& compressed2);
+extern void cmp_compressBlockETC2Fast(uint8* img, uint8* alphaimg, uint8* imgdec, unsigned int& compressed1, unsigned int& compressed2);
 #endif
 
-
-enum IMG_DATA_FORMAT {
+enum IMG_DATA_FORMAT
+{
     IMG_DATA_FORMAT_INVALID = 0,
     IMG_DATA_FORMAT_ETC2_RGB,
     IMG_DATA_FORMAT_ETC2_RGBA,
@@ -134,24 +131,24 @@ enum IMG_DATA_FORMAT {
     IMG_DATA_FORMAT_ETC2_RGBA1
 };
 
-
-class CCodec_ETC2 : public CCodec_Block_4x4 {
-  public:
+class CCodec_ETC2 : public CCodec_Block_4x4
+{
+public:
     CCodec_ETC2(CodecType codecType);
     virtual ~CCodec_ETC2();
 
-  protected:
+protected:
     bool m_fast = true;
 
-    CodecError  CompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2]);
-    void        DecompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2]);
+    CodecError CompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2]);
+    void       DecompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2]);
 
-    CodecError  CompressRGBA1Block(CMP_BYTE rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2]);
-    void        DecompressRGBA1Block(CMP_BYTE rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2]);
+    CodecError CompressRGBA1Block(CMP_BYTE rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2]);
+    void       DecompressRGBA1Block(CMP_BYTE rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2]);
 
-    CodecError  CompressRGBABlock(CMP_BYTE rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[4]);
-    void        DecompressRGBABlock(CMP_BYTE rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[4]);
+    CodecError CompressRGBABlock(CMP_BYTE rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[4]);
+    void       DecompressRGBABlock(CMP_BYTE rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[4]);
 
-    void        setupAlphaTable();
+    void setupAlphaTable();
 };
-#endif // !defined(_CODEC_ATC_H_INCLUDED_)
+#endif  // !defined(_CODEC_ATC_H_INCLUDED_)

@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2014-2018  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2014-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,14 +28,15 @@
 #ifndef _CODEC_BASIS_H_INCLUDED_
 #define _CODEC_BASIS_H_INCLUDED_
 
-#include "compressonator.h"
-
 #ifdef USE_BASIS
 
+#include "codec_common.h"
 #include "codec_dxtc.h"
+#include "compressonator.h"
 
-class CCodec_BASIS : public CCodec_DXTC {
-  public:
+class CCodec_BASIS : public CCodec_DXTC
+{
+public:
     CCodec_BASIS();
     ~CCodec_BASIS();
 
@@ -44,28 +45,40 @@ class CCodec_BASIS : public CCodec_DXTC {
     virtual bool SetParameter(const CMP_CHAR* /*pszParamName*/, CODECFLOAT /*fValue*/);
 
     // Required interfaces
-    virtual CodecError Compress             (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Compress_Fast        (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Compress_SuperFast   (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Decompress           (CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Compress(CCodecBuffer&       bufferIn,
+                                CCodecBuffer&       bufferOut,
+                                Codec_Feedback_Proc pFeedbackProc = NULL,
+                                CMP_DWORD_PTR       pUser1        = NULL,
+                                CMP_DWORD_PTR       pUser2        = NULL);
+    virtual CodecError Compress_Fast(CCodecBuffer&       bufferIn,
+                                     CCodecBuffer&       bufferOut,
+                                     Codec_Feedback_Proc pFeedbackProc = NULL,
+                                     CMP_DWORD_PTR       pUser1        = NULL,
+                                     CMP_DWORD_PTR       pUser2        = NULL);
+    virtual CodecError Compress_SuperFast(CCodecBuffer&       bufferIn,
+                                          CCodecBuffer&       bufferOut,
+                                          Codec_Feedback_Proc pFeedbackProc = NULL,
+                                          CMP_DWORD_PTR       pUser1        = NULL,
+                                          CMP_DWORD_PTR       pUser2        = NULL);
+    virtual CodecError Decompress(CCodecBuffer&       bufferIn,
+                                  CCodecBuffer&       bufferOut,
+                                  Codec_Feedback_Proc pFeedbackProc = NULL,
+                                  CMP_DWORD_PTR       pUser1        = NULL,
+                                  CMP_DWORD_PTR       pUser2        = NULL);
 
-
-  private:
-
+private:
     // BASIS Quality level
     float m_quality;
 
-    CMP_BOOL     m_LibraryInitialized;
+    CMP_BOOL m_LibraryInitialized;
 
     // Encoder interfaces
-    CodecError    InitializeBASISLibrary();
-    CodecError    EncodeBASISBlock(
-        CMP_BYTE   *in, //[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
-        CMP_BYTE   *out
-    );
-    CodecError    FinishBASISEncoding(void);
+    CodecError InitializeBASISLibrary();
+    CodecError EncodeBASISBlock(CMP_BYTE* in,  //[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG],
+                                CMP_BYTE* out);
+    CodecError FinishBASISEncoding(void);
 };
 
-#endif // USE_BASIS
+#endif  // USE_BASIS
 
-#endif // !defined(_CODEC_BASIS_H_INCLUDED_)
+#endif  // !defined(_CODEC_BASIS_H_INCLUDED_)

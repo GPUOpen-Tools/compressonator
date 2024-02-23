@@ -1,15 +1,57 @@
 ; CompressonatorLib.def : Declares the module parameters for the DLL.
 
 EXPORTS
-    CMP_CalculateBufferSize
-    CMP_ConvertTexture
-    CMP_CreateBC6HEncoder
-    CMP_CreateBC7Encoder
-    CMP_EncodeBC7Block
-    CMP_EncodeBC6HBlock
-    CMP_DecodeBC6HBlock
-    CMP_DecodeBC7Block
-    CMP_DestroyBC6HEncoder
-    CMP_DestroyBC7Encoder
-    CMP_InitializeBCLibrary
-    CMP_ShutdownBCLibrary
+
+CMP_MaxFacesOrSlices
+
+CMP_InitializeBCLibrary
+CMP_ShutdownBCLibrary
+
+CMP_CreateBC6HEncoder
+CMP_CreateBC7Encoder
+CMP_EncodeBC6HBlock
+CMP_EncodeBC7Block
+CMP_DecodeBC6HBlock
+CMP_DecodeBC7Block
+CMP_DestroyBC6HEncoder
+CMP_DestroyBC7Encoder
+
+CMP_CalculateBufferSize
+CMP_ConvertTexture
+
+CMP_CalcMaxMipLevel
+CMP_CalcMinMipSize
+CMP_GenerateMIPLevelsEx
+CMP_GenerateMIPLevels
+CMP_CreateCompressMipSet
+CMP_CreateMipSet
+
+CMP_getFormat_nChannels
+CMP_MipSetAnlaysis
+
+CMP_ConvertMipTexture
+
+CMP_LoadTexture
+CMP_SaveTexture
+CMP_ProcessTexture
+CMP_CompressTexture
+CMP_Format2FourCC
+CMP_ParseFormat
+CMP_NumberOfProcessors
+CMP_FreeMipSet
+CMP_GetMipLevel
+CMP_GetPerformanceStats
+CMP_GetDeviceInfo
+CMP_IsCompressedFormat
+CMP_IsFloatFormat
+
+CMP_CreateComputeLibrary
+CMP_DestroyComputeLibrary
+CMP_SetComputeOptions
+
+CMP_CreateBlockEncoder
+CMP_CompressBlock
+CMP_CompressBlockXY
+CMP_DestroyBlockEncoder
+
+CMP_InitFramework

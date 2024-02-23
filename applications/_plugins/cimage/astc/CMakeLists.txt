@@ -24,5 +24,5 @@ if (UNIX)
     target_compile_definitions(Image_ASTC PRIVATE _LINUX)
 endif()
 
-set_target_properties(Image_ASTC PROPERTIES FOLDER "Plugin_Static/ImageIO")
+set_target_properties(Image_ASTC PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_PLUGIN_STATIC})
 

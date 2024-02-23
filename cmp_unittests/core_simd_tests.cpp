@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2023 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2023-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -35,7 +35,7 @@ TEST_CASE("Enabling_SIMD", "[SIMD]")
 {
     CHECK(GetEnabledSIMDExtension() > 0);
     CHECK(GetEnabledSIMDExtension() <= 3);
-    
+
     DisableSIMD();
     CHECK(GetEnabledSIMDExtension() == 0);
 
@@ -59,7 +59,7 @@ static void LoopedBC1Compression(CMP_BYTE* srcData, unsigned int numBlocks)
     {
         for (unsigned int i = 0; i < numBlocks; ++i)
         {
-            CompressBlockBC1(srcData + i*16, 16, compressedData, 0);
+            CompressBlockBC1(srcData + i * 16, 16, compressedData, 0);
         }
     }
 }
@@ -84,7 +84,7 @@ TEST_CASE("BC1_Timing", "[SIMD]")
 
     REQUIRE(imageData != 0);
 
-    unsigned int numBlocks = texture.m_nWidth/4 * texture.m_nHeight/4;
+    unsigned int numBlocks = texture.m_nWidth / 4 * texture.m_nHeight / 4;
 
     unsigned char compressedData[16];
 
@@ -116,7 +116,6 @@ TEST_CASE("BC1_Timing", "[SIMD]")
     }
     else
         printf("Skipping SSE test because it is not supported on the current CPU.\n");
-    
 
     // AVX2 encoding
 
@@ -135,7 +134,6 @@ TEST_CASE("BC1_Timing", "[SIMD]")
     else
         printf("Skipping AVX test because it is not supported on the current CPU.\n");
 
-
     // AVX-512 encoding
 
     if (EnableAVX512() == CGU_CORE_OK)
@@ -152,7 +150,7 @@ TEST_CASE("BC1_Timing", "[SIMD]")
     }
     else
         printf("Skipping AVX-512 test because it is not supported on the current CPU.\n");
-    
+
     printf("\n");
 }
 
@@ -174,9 +172,9 @@ TEST_CASE("BC1_Compression", "[SIMD]")
 
     REQUIRE(imageData != 0);
 
-    unsigned int numBlocks = texture.m_nWidth/4 * texture.m_nHeight/4;
+    unsigned int numBlocks = texture.m_nWidth / 4 * texture.m_nHeight / 4;
 
-    unsigned char* referenceData = (unsigned char*)calloc(numBlocks, 8);
+    unsigned char* referenceData  = (unsigned char*)calloc(numBlocks, 8);
     unsigned char* compressedData = (unsigned char*)calloc(numBlocks, 8);
 
     // Original Reference Encoding
@@ -187,12 +185,11 @@ TEST_CASE("BC1_Compression", "[SIMD]")
 
     for (unsigned int i = 0; i < numBlocks; ++i)
     {
-        int result = CompressBlockBC1(imageData->m_pbData + i*16, 16, referenceData + i*8, 0);
+        int result = CompressBlockBC1(imageData->m_pbData + i * 16, 16, referenceData + i * 8, 0);
         REQUIRE(result == CGU_CORE_OK);
     }
 
     printf("Compression complete.\n\n");
-
 
     // SSE encoding
 
@@ -202,17 +199,16 @@ TEST_CASE("BC1_Compression", "[SIMD]")
 
         for (unsigned int i = 0; i < numBlocks; ++i)
         {
-            int result = CompressBlockBC1(imageData->m_pbData + i*16, 16, compressedData + i*8, 0);
+            int result = CompressBlockBC1(imageData->m_pbData + i * 16, 16, compressedData + i * 8, 0);
             REQUIRE(result == CGU_CORE_OK);
         }
 
-        CHECK(memcmp(referenceData, compressedData, numBlocks*8) == 0);
+        CHECK(memcmp(referenceData, compressedData, numBlocks * 8) == 0);
 
         printf("Compression complete.\n\n");
     }
     else
         printf("Skipping SSE test because it is not supported on the current CPU.\n");
-    
 
     // AVX2 encoding
 
@@ -222,17 +218,16 @@ TEST_CASE("BC1_Compression", "[SIMD]")
 
         for (unsigned int i = 0; i < numBlocks; ++i)
         {
-            int result = CompressBlockBC1(imageData->m_pbData + i*16, 16, compressedData + i*8, 0);
+            int result = CompressBlockBC1(imageData->m_pbData + i * 16, 16, compressedData + i * 8, 0);
             REQUIRE(result == CGU_CORE_OK);
         }
 
-        CHECK(memcmp(referenceData, compressedData, numBlocks*8) == 0);
+        CHECK(memcmp(referenceData, compressedData, numBlocks * 8) == 0);
 
         printf("Compression complete.\n\n");
     }
     else
         printf("Skipping AVX test because it is not supported on the current CPU.\n");
-
 
     // AVX-512 encoding
 
@@ -242,17 +237,16 @@ TEST_CASE("BC1_Compression", "[SIMD]")
 
         for (unsigned int i = 0; i < numBlocks; ++i)
         {
-            int result = CompressBlockBC1(imageData->m_pbData + i*16, 16, compressedData + i*8, 0);
+            int result = CompressBlockBC1(imageData->m_pbData + i * 16, 16, compressedData + i * 8, 0);
             REQUIRE(result == CGU_CORE_OK);
         }
 
-        CHECK(memcmp(referenceData, compressedData, numBlocks*8) == 0);
+        CHECK(memcmp(referenceData, compressedData, numBlocks * 8) == 0);
 
         printf("Compression complete.\n\n");
     }
     else
         printf("Skipping AVX-512 test because it is not supported on the current CPU.\n");
-    
+
     printf("\n");
 }
-

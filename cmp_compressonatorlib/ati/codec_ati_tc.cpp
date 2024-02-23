@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -29,28 +29,31 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////////////
 
-CCodec_ATI_TC::CCodec_ATI_TC(CodecType codecType) :
-    CCodec_Block_4x4(codecType) {
-
+CCodec_ATI_TC::CCodec_ATI_TC(CodecType codecType)
+    : CCodec_Block_4x4(codecType)
+{
 }
 
-CCodec_ATI_TC::~CCodec_ATI_TC() {
-
+CCodec_ATI_TC::~CCodec_ATI_TC()
+{
 }
 
-CodecError CCodec_ATI_TC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2) {
+CodecError CCodec_ATI_TC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, DWORD_PTR pUser1, DWORD_PTR pUser2)
+{
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
 
-    if(bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
+    if (bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
         return CE_Unknown;
 
     const ATI_TC_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
     const ATI_TC_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
 
-    for(ATI_TC_DWORD j = 0; j < dwBlocksY; j++) {
+    for (ATI_TC_DWORD j = 0; j < dwBlocksY; j++)
+    {
         ATI_TC_DWORD compressedBlock[4];
-        for(ATI_TC_DWORD i = 0; i < dwBlocksX; i++) {
+        for (ATI_TC_DWORD i = 0; i < dwBlocksX; i++)
+        {
             /*            ATI_TC_BYTE cAlphaBlock[BLOCK_SIZE_4X4];
                                     bufferIn.ReadBlockR(i*4, j*4, 4, 4, cAlphaBlock);
                                     CompressAlphaBlock(cAlphaBlock, &compressedBlock[dwXOffset]);
@@ -60,9 +63,10 @@ CodecError CCodec_ATI_TC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferO
 
                                     bufferOut.WriteBlock(i*4, j*4, compressedBlock, 4);*/
         }
-        if(pFeedbackProc) {
+        if (pFeedbackProc)
+        {
             float fProgress = 100.f * (j * dwBlocksX) / (dwBlocksX * dwBlocksY);
-            if(pFeedbackProc(fProgress, pUser1, pUser2))
+            if (pFeedbackProc(fProgress, pUser1, pUser2))
                 return CE_Aborted;
         }
     }
@@ -70,18 +74,21 @@ CodecError CCodec_ATI_TC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferO
     return CE_OK;
 }
 
-CodecError CCodec_ATI_TC::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut) {
+CodecError CCodec_ATI_TC::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut)
+{
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
 
-    if(bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
+    if (bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
         return CE_Unknown;
 
     const ATI_TC_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
     const ATI_TC_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
 
-    for(ATI_TC_DWORD j = 0; j < dwBlocksY; j++) {
-        for(ATI_TC_DWORD i = 0; i < dwBlocksX; i++) {
+    for (ATI_TC_DWORD j = 0; j < dwBlocksY; j++)
+    {
+        for (ATI_TC_DWORD i = 0; i < dwBlocksX; i++)
+        {
             /*            ATI_TC_DWORD compressedBlock[4];
                         bufferIn.ReadBlock(i*4, j*4, compressedBlock, 4);
 
@@ -106,4 +113,4 @@ CodecError CCodec_ATI_TC::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& buffe
     return CE_OK;
 }
 
-#endif // SUPPORT_ATI_TC
+#endif  // SUPPORT_ATI_TC

@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2023 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2023-2024, Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -33,7 +33,7 @@ TEST_CASE("Square Texture", "[MIPMAP]")
 {
     const std::string inputTexturePath = TEST_DATA_PATH + std::string("/mipmap_128x128.png");
 
-    CMP_ERROR error;
+    CMP_ERROR  error;
     CMP_MipSet texture = {};
 
     error = CMP_LoadTexture(inputTexturePath.c_str(), &texture);
@@ -76,7 +76,7 @@ TEST_CASE("Square Texture", "[MIPMAP]")
         CHECK(texture.m_nMipLevels == 2);
     }
 
-        SECTION("Minimum Size 70")
+    SECTION("Minimum Size 70")
     {
         error = (CMP_ERROR)CMP_GenerateMIPLevels(&texture, 70);
         REQUIRE(error == CMP_OK);
@@ -97,7 +97,7 @@ TEST_CASE("Tall_Texture", "[MIPMAP]")
 {
     const std::string inputTexturePath = TEST_DATA_PATH + std::string("/mipmap_128x512.png");
 
-    CMP_ERROR error;
+    CMP_ERROR  error;
     CMP_MipSet texture = {};
 
     error = CMP_LoadTexture(inputTexturePath.c_str(), &texture);
@@ -152,7 +152,7 @@ TEST_CASE("Wide_Texture", "[MIPMAP]")
 {
     const std::string inputTexturePath = TEST_DATA_PATH + std::string("/mipmap_512x128.png");
 
-    CMP_ERROR error;
+    CMP_ERROR  error;
     CMP_MipSet texture = {};
 
     error = CMP_LoadTexture(inputTexturePath.c_str(), &texture);
@@ -207,7 +207,7 @@ TEST_CASE("Non_Regular_Texture", "[MIPMAP]")
 {
     const std::string inputTexturePath = TEST_DATA_PATH + std::string("/ruby.bmp");
 
-    CMP_ERROR error;
+    CMP_ERROR  error;
     CMP_MipSet texture = {};
 
     error = CMP_LoadTexture(inputTexturePath.c_str(), &texture);
@@ -241,7 +241,7 @@ TEST_CASE("Get_Max_Mipmap_Levels", "[MIPMAP]")
 
     CHECK(CMP_CalcMaxMipLevel(128, 128, false) == 8);
     CHECK(CMP_CalcMaxMipLevel(130, 130, false) == 8);
-    
+
     CHECK(CMP_CalcMaxMipLevel(128, 512, false) == 10);
     CHECK(CMP_CalcMaxMipLevel(512, 128, false) == 10);
 
@@ -306,9 +306,9 @@ TEST_CASE("Filter Gamma", "[MIPMAP]")
 {
     const std::string inputTexturePath = TEST_DATA_PATH + std::string("/mipmap_128x128.png");
 
-    CMP_ERROR error;
-    CMP_MipSet texture = {};
-    CMP_MipSet texture2 = {};
+    CMP_ERROR         error;
+    CMP_MipSet        texture      = {};
+    CMP_MipSet        texture2     = {};
     CMP_CFilterParams CFilterParam = {};
 
     error = CMP_LoadTexture(inputTexturePath.c_str(), &texture);
@@ -320,9 +320,9 @@ TEST_CASE("Filter Gamma", "[MIPMAP]")
     CHECK(texture.m_nMipLevels == 1);
 
     CFilterParam.dwMipFilterOptions = 0;
-    CFilterParam.nFilterType = 0;
-    CFilterParam.nMinSize = 1;
-    CFilterParam.fGammaCorrection = 1;
+    CFilterParam.nFilterType        = 0;
+    CFilterParam.nMinSize           = 1;
+    CFilterParam.fGammaCorrection   = 1;
 
     error = (CMP_ERROR)CMP_GenerateMIPLevelsEx(&texture, &CFilterParam);
     REQUIRE(error == CMP_OK);
@@ -332,7 +332,7 @@ TEST_CASE("Filter Gamma", "[MIPMAP]")
     REQUIRE(imageData != 0);
 
     CMP_INT colorScore = imageData->m_pcData->rgba[0] + imageData->m_pcData->rgba[1] + imageData->m_pcData->rgba[2];
-    
+
     SECTION("Filter Gamma 2.0")
     {
         CFilterParam.fGammaCorrection = 2;
@@ -350,4 +350,3 @@ TEST_CASE("Filter Gamma", "[MIPMAP]")
         CHECK(adjustedScore < colorScore);
     }
 }
-

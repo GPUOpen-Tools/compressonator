@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2021 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2021-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -65,36 +65,36 @@
 using namespace std;
 
 #ifdef _DEBUG
-#define CMP_EXTERNAL_LibExt    "d.lib"
+#define CMP_EXTERNAL_LibExt "d.lib"
 #else
-#define CMP_EXTERNAL_LibExt    ".lib"
+#define CMP_EXTERNAL_LibExt ".lib"
 #endif
 
 #if (OPTION_CMP_OPENCV == 1)
 #if ((CV_VERSION_EPOCH == 2) || (CV_VERSION_MAJOR < 4))
-    #if defined(_WIN32)
-    #define OpenCV_core_Lib "opencv_core" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
-    #define OpenCV_highgui_Lib "opencv_highgui" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
-    #define OpenCV_imgproc_Lib "opencv_imgproc" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
-    #else
-    #define OpenCV_core_Lib "opencv_core" CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CVAUX_STR(CV_VERSION_REVISION) CMP_EXTERNAL_LibExt
-    #define OpenCV_highgui_Lib "opencv_highgui" CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CVAUX_STR(CV_VERSION_REVISION) CMP_EXTERNAL_LibExt
-    #define OpenCV_imgproc_Lib "opencv_imgproc" CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CVAUX_STR(CV_VERSION_REVISION) CMP_EXTERNAL_LibExt
-    #endif
-
-    #pragma comment(lib, OpenCV_core_Lib)
-    #pragma comment(lib, OpenCV_highgui_Lib)
-    #pragma comment(lib, OpenCV_imgproc_Lib)
+#if defined(_WIN32)
+#define OpenCV_core_Lib "opencv_core" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
+#define OpenCV_highgui_Lib "opencv_highgui" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
+#define OpenCV_imgproc_Lib "opencv_imgproc" CVAUX_STR(CV_VERSION_EPOCH) CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CMP_EXTERNAL_LibExt
 #else
-    #define OpenCV_world_Lib "opencv_world" CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CVAUX_STR(CV_VERSION_REVISION) CMP_EXTERNAL_LibExt
-    #pragma comment(lib, OpenCV_world_Lib)
+#define OpenCV_core_Lib "opencv_core" CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CVAUX_STR(CV_VERSION_REVISION) CMP_EXTERNAL_LibExt
+#define OpenCV_highgui_Lib "opencv_highgui" CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CVAUX_STR(CV_VERSION_REVISION) CMP_EXTERNAL_LibExt
+#define OpenCV_imgproc_Lib "opencv_imgproc" CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CVAUX_STR(CV_VERSION_REVISION) CMP_EXTERNAL_LibExt
+#endif
+
+#pragma comment(lib, OpenCV_core_Lib)
+#pragma comment(lib, OpenCV_highgui_Lib)
+#pragma comment(lib, OpenCV_imgproc_Lib)
+#else
+#define OpenCV_world_Lib "opencv_world" CVAUX_STR(CV_VERSION_MAJOR) CVAUX_STR(CV_VERSION_MINOR) CVAUX_STR(CV_VERSION_REVISION) CMP_EXTERNAL_LibExt
+#pragma comment(lib, OpenCV_world_Lib)
 #endif
 #endif
 
 #if (OPTION_CMP_QT == 1)
-#define Qt5_core_Lib        "Qt5Core" CMP_EXTERNAL_LibExt
-#define Qt5_gui_Lib         "Qt5Gui" CMP_EXTERNAL_LibExt
-#define Qt5_widgets_Lib     "Qt5Widgets" CMP_EXTERNAL_LibExt
+#define Qt5_core_Lib "Qt5Core" CMP_EXTERNAL_LibExt
+#define Qt5_gui_Lib "Qt5Gui" CMP_EXTERNAL_LibExt
+#define Qt5_widgets_Lib "Qt5Widgets" CMP_EXTERNAL_LibExt
 
 #pragma comment(lib, Qt5_core_Lib)
 #pragma comment(lib, Qt5_gui_Lib)
@@ -106,37 +106,39 @@ DECLARE_PLUGIN(Plugin_Canalysis)
 SET_PLUGIN_TYPE("IMAGE")
 SET_PLUGIN_NAME("ANALYSIS")
 #else
-void *make_Plugin_CAnalysis() {
+void* make_Plugin_CAnalysis()
+{
     return new Plugin_Canalysis;
 }
 #endif
 
-#define TEST_TOLERANCE 5 //for 4x4 test block omly
+#define TEST_TOLERANCE 5  //for 4x4 test block omly
 
-Plugin_Canalysis::Plugin_Canalysis() {
+Plugin_Canalysis::Plugin_Canalysis()
+{
     //default tolerance values
-    tolerance_mse     = 1.0100;
-    tolerance_psnr    = 0.9900;
-    tolerance_psnrb   = 0.9900;
-    tolerance_psnrg   = 0.9900;
-    tolerance_psnrr   = 0.9900;
-    tolerance_ssim    = 0.9995;
-    tolerance_ssimb   = 0.9995;
-    tolerance_ssimg   = 0.9995;
-    tolerance_ssimr   = 0.9995;
+    tolerance_mse   = 1.0100;
+    tolerance_psnr  = 0.9900;
+    tolerance_psnrb = 0.9900;
+    tolerance_psnrg = 0.9900;
+    tolerance_psnrr = 0.9900;
+    tolerance_ssim  = 0.9995;
+    tolerance_ssimb = 0.9995;
+    tolerance_ssimg = 0.9995;
+    tolerance_ssimr = 0.9995;
 
 #if (OPTION_CMP_QT == 1)
-    m_imageloader     = NULL;
+    m_imageloader = NULL;
 #endif
 
-    m_MipSrcImages    = NULL;
-    m_MipDestImages   = NULL;
-    m_MipDiffImages   = NULL;
-    m_RGBAChannels    = 0b1111;
-
+    m_MipSrcImages  = NULL;
+    m_MipDestImages = NULL;
+    m_MipDiffImages = NULL;
+    m_RGBAChannels  = 0b1111;
 }
 
-Plugin_Canalysis::~Plugin_Canalysis() {
+Plugin_Canalysis::~Plugin_Canalysis()
+{
 #if (OPTION_CMP_QT == 1)
     if (m_MipSrcImages)
         m_imageloader->clearMipImages(&m_MipSrcImages);
@@ -148,33 +150,37 @@ Plugin_Canalysis::~Plugin_Canalysis() {
 #endif
 }
 
-int Plugin_Canalysis::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion) {
-    pPluginVersion->dwAPIVersionMajor       = TC_API_VERSION_MAJOR;
-    pPluginVersion->dwAPIVersionMinor       = TC_API_VERSION_MINOR;
-    pPluginVersion->dwPluginVersionMajor    = TC_PLUGIN_VERSION_MAJOR;
-    pPluginVersion->dwPluginVersionMinor    = TC_PLUGIN_VERSION_MINOR;
+int Plugin_Canalysis::TC_PluginGetVersion(TC_PluginVersion* pPluginVersion)
+{
+    pPluginVersion->dwAPIVersionMajor    = TC_API_VERSION_MAJOR;
+    pPluginVersion->dwAPIVersionMinor    = TC_API_VERSION_MINOR;
+    pPluginVersion->dwPluginVersionMajor = TC_PLUGIN_VERSION_MAJOR;
+    pPluginVersion->dwPluginVersionMinor = TC_PLUGIN_VERSION_MINOR;
     return 0;
 }
 
-std::string f2Str(float data, int prec) {
+std::string f2Str(float data, int prec)
+{
     std::string s(16, '\0');
-    char pstr[6] = "%.xf";
-    pstr[2] = 48+(prec%10); // prec is limited from 0..9
+    char        pstr[6] = "%.xf";
+    pstr[2]             = 48 + (prec % 10);  // prec is limited from 0..9
     std::snprintf(&s[0], s.size(), pstr, data);
     return s;
 }
 
-void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char option) {
-    rapidxml::file<> *xmlResultsFile = nullptr;
-    rapidxml::file<> *xmlGoldenFile = nullptr;
+void Plugin_Canalysis::write(const REPORT_DATA& data, char* resultsFile, char option)
+{
+    rapidxml::file<>*        xmlResultsFile = nullptr;
+    rapidxml::file<>*        xmlGoldenFile  = nullptr;
     rapidxml::xml_document<> xmlDoc;
     rapidxml::xml_document<> xmlGoldDoc;
 
-    std::string diffName = "";
+    std::string diffName     = "";
     std::string diffNodeName = "";
-    bool nodeExist = false;
+    bool        nodeExist    = false;
 
-    if (m_srcFile.size() > 0 && m_destFile.size() > 0) {
+    if (m_srcFile.size() > 0 && m_destFile.size() > 0)
+    {
         diffName = CMP_GetJustFileName(m_srcFile);
         diffName.append("_");
         diffName.append(CMP_GetJustFileName(m_destFile));
@@ -183,9 +189,9 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
 
     auto allocateNewElement = [&](rapidxml::xml_node<>* parent, const std::string name, std::string data) {
         rapidxml::xml_node<>* newElement = nullptr;
-        char* pName = parent->document()->allocate_string(name.c_str());
-        char* pData = parent->document()->allocate_string(data.c_str());
-        newElement = xmlDoc.allocate_node(rapidxml::node_type::node_element, pName, pData);
+        char*                 pName      = parent->document()->allocate_string(name.c_str());
+        char*                 pData      = parent->document()->allocate_string(data.c_str());
+        newElement                       = xmlDoc.allocate_node(rapidxml::node_type::node_element, pName, pData);
         parent->append_node(newElement);
     };
 
@@ -195,62 +201,78 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
         parent->first_node(pName)->value(pData);
     };
 
-    if (CMP_FileExists(resultsFile)) {
+    if (CMP_FileExists(resultsFile))
+    {
         // Create and parse an xml file (note: we do not want data nodes)
         xmlResultsFile = new rapidxml::file<>(resultsFile);
         xmlDoc.parse<rapidxml::parse_no_data_nodes>(xmlResultsFile->data());
 
         // traverse pt
         rapidxml::xml_node<>* levelElement = xmlDoc.first_node("ANALYSIS");
-        for (rapidxml::xml_node<> *child = levelElement->first_node(); child != nullptr; child = child->next_sibling()) {
-            if (std::string(child->name()) == "DATA") { //gui
-                if (option == 's') { //ssim
-                    modifyElement(child, "SSIM",        f2Str(data.SSIM,        4));
-                    modifyElement(child, "SSIM_BLUE",   f2Str(data.SSIM_Blue,   4));
-                    modifyElement(child, "SSIM_GREEN",  f2Str(data.SSIM_Green,  4));
-                    modifyElement(child, "SSIM_RED",    f2Str(data.SSIM_Red,    4));
+        for (rapidxml::xml_node<>* child = levelElement->first_node(); child != nullptr; child = child->next_sibling())
+        {
+            if (std::string(child->name()) == "DATA")
+            {  //gui
+                if (option == 's')
+                {  //ssim
+                    modifyElement(child, "SSIM", f2Str(data.SSIM, 4));
+                    modifyElement(child, "SSIM_BLUE", f2Str(data.SSIM_Blue, 4));
+                    modifyElement(child, "SSIM_GREEN", f2Str(data.SSIM_Green, 4));
+                    modifyElement(child, "SSIM_RED", f2Str(data.SSIM_Red, 4));
                     nodeExist = true;
-                } else if (option == 'p') { //psnr
-                    modifyElement(child, "MSE",         f2Str(data.MSE,         4).c_str());
-                    modifyElement(child, "PSNR",        f2Str(data.PSNR,        1).c_str());
-                    modifyElement(child, "PSNR_BLUE",   f2Str(data.PSNR_Blue,   1).c_str());
-                    modifyElement(child, "PSNR_GREEN",  f2Str(data.PSNR_Green,  1).c_str());
-                    modifyElement(child, "PSNR_RED",    f2Str(data.PSNR_Red,    1).c_str());
+                }
+                else if (option == 'p')
+                {  //psnr
+                    modifyElement(child, "MSE", f2Str(data.MSE, 4).c_str());
+                    modifyElement(child, "PSNR", f2Str(data.PSNR, 1).c_str());
+                    modifyElement(child, "PSNR_BLUE", f2Str(data.PSNR_Blue, 1).c_str());
+                    modifyElement(child, "PSNR_GREEN", f2Str(data.PSNR_Green, 1).c_str());
+                    modifyElement(child, "PSNR_RED", f2Str(data.PSNR_Red, 1).c_str());
                     nodeExist = true;
-                } else {
-                    modifyElement(child, "MSE",         f2Str(data.MSE,         1).c_str());
-                    modifyElement(child, "SSIM",        f2Str(data.SSIM,        4).c_str());
-                    modifyElement(child, "SSIM_BLUE",   f2Str(data.SSIM_Blue,   4).c_str());
-                    modifyElement(child, "SSIM_GREEN",  f2Str(data.SSIM_Green,  4).c_str());
-                    modifyElement(child, "SSIM_RED",    f2Str(data.SSIM_Red,    4).c_str());
-                    modifyElement(child, "PSNR",        f2Str(data.PSNR,        1).c_str());
-                    modifyElement(child, "PSNR_BLUE",   f2Str(data.PSNR_Blue,   1).c_str());
-                    modifyElement(child, "PSNR_GREEN",  f2Str(data.PSNR_Green,  1).c_str());
-                    modifyElement(child, "PSNR_RED",    f2Str(data.PSNR_Red,    1).c_str());
+                }
+                else
+                {
+                    modifyElement(child, "MSE", f2Str(data.MSE, 1).c_str());
+                    modifyElement(child, "SSIM", f2Str(data.SSIM, 4).c_str());
+                    modifyElement(child, "SSIM_BLUE", f2Str(data.SSIM_Blue, 4).c_str());
+                    modifyElement(child, "SSIM_GREEN", f2Str(data.SSIM_Green, 4).c_str());
+                    modifyElement(child, "SSIM_RED", f2Str(data.SSIM_Red, 4).c_str());
+                    modifyElement(child, "PSNR", f2Str(data.PSNR, 1).c_str());
+                    modifyElement(child, "PSNR_BLUE", f2Str(data.PSNR_Blue, 1).c_str());
+                    modifyElement(child, "PSNR_GREEN", f2Str(data.PSNR_Green, 1).c_str());
+                    modifyElement(child, "PSNR_RED", f2Str(data.PSNR_Red, 1).c_str());
                     nodeExist = true;
                     break;
                 }
-            } else if (std::string(child->name()) == diffName) { //cmdline, node exist
-                modifyElement(child, "MSE",             f2Str(data.MSE,         1).c_str());
-                modifyElement(child, "SSIM",            f2Str(data.SSIM,        4).c_str());
-                modifyElement(child, "SSIM_BLUE",       f2Str(data.SSIM_Blue,   4).c_str());
-                modifyElement(child, "SSIM_GREEN",      f2Str(data.SSIM_Green,  4).c_str());
-                modifyElement(child, "SSIM_RED",        f2Str(data.SSIM_Red,    4).c_str());
-                modifyElement(child, "PSNR",            f2Str(data.PSNR,        1).c_str());
-                modifyElement(child, "PSNR_BLUE",       f2Str(data.PSNR_Blue,   1).c_str());
-                modifyElement(child, "PSNR_GREEN",      f2Str(data.PSNR_Green,  1).c_str());
-                modifyElement(child, "PSNR_RED",        f2Str(data.PSNR_Red,    1).c_str());
-                if (data.srcdecodePattern[0]!='\0') {
+            }
+            else if (std::string(child->name()) == diffName)
+            {  //cmdline, node exist
+                modifyElement(child, "MSE", f2Str(data.MSE, 1).c_str());
+                modifyElement(child, "SSIM", f2Str(data.SSIM, 4).c_str());
+                modifyElement(child, "SSIM_BLUE", f2Str(data.SSIM_Blue, 4).c_str());
+                modifyElement(child, "SSIM_GREEN", f2Str(data.SSIM_Green, 4).c_str());
+                modifyElement(child, "SSIM_RED", f2Str(data.SSIM_Red, 4).c_str());
+                modifyElement(child, "PSNR", f2Str(data.PSNR, 1).c_str());
+                modifyElement(child, "PSNR_BLUE", f2Str(data.PSNR_Blue, 1).c_str());
+                modifyElement(child, "PSNR_GREEN", f2Str(data.PSNR_Green, 1).c_str());
+                modifyElement(child, "PSNR_RED", f2Str(data.PSNR_Red, 1).c_str());
+                if (data.srcdecodePattern[0] != '\0')
+                {
                     modifyElement(child, "FAIL_SRCDECODEPATTERN", data.srcdecodePattern);
-                } else {
-                    while (rapidxml::xml_node<> *grandChild = child->first_node("FAIL_SRCDECODEPATTERN"))
+                }
+                else
+                {
+                    while (rapidxml::xml_node<>* grandChild = child->first_node("FAIL_SRCDECODEPATTERN"))
                         child->remove_node(grandChild);
                 }
 
-                if (data.destdecodePattern[0] != '\0') {
+                if (data.destdecodePattern[0] != '\0')
+                {
                     modifyElement(child, "FAIL_DESTDECODEPATTERN", data.destdecodePattern);
-                } else {
-                    while (rapidxml::xml_node<> *grandChild = child->first_node("FAIL_DESTDECODEPATTERN"))
+                }
+                else
+                {
+                    while (rapidxml::xml_node<>* grandChild = child->first_node("FAIL_DESTDECODEPATTERN"))
                         child->remove_node(grandChild);
                 }
 
@@ -259,19 +281,20 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
             }
         }
 
-        if (!nodeExist) { //cmdline, node not exist
-            rapidxml::xml_node<> *newTree = xmlDoc.allocate_node(rapidxml::node_type::node_element, diffNodeName.c_str());
+        if (!nodeExist)
+        {  //cmdline, node not exist
+            rapidxml::xml_node<>* newTree = xmlDoc.allocate_node(rapidxml::node_type::node_element, diffNodeName.c_str());
             levelElement->append_node(newTree);
 
-            allocateNewElement(newTree, "MSE",        f2Str(data.MSE,         1));
-            allocateNewElement(newTree, "SSIM",       f2Str(data.SSIM,        4));
-            allocateNewElement(newTree, "SSIM_BLUE",  f2Str(data.SSIM_Blue,   4));
-            allocateNewElement(newTree, "SSIM_GREEN", f2Str(data.SSIM_Green,  4));
-            allocateNewElement(newTree, "SSIM_RED",   f2Str(data.SSIM_Red,    4));
-            allocateNewElement(newTree, "PSNR",       f2Str(data.PSNR,        1));
-            allocateNewElement(newTree, "PSNR_BLUE",  f2Str(data.PSNR_Blue,   1));
-            allocateNewElement(newTree, "PSNR_GREEN", f2Str(data.PSNR_Green,  1));
-            allocateNewElement(newTree, "PSNR_RED",   f2Str(data.PSNR_Red,    1));
+            allocateNewElement(newTree, "MSE", f2Str(data.MSE, 1));
+            allocateNewElement(newTree, "SSIM", f2Str(data.SSIM, 4));
+            allocateNewElement(newTree, "SSIM_BLUE", f2Str(data.SSIM_Blue, 4));
+            allocateNewElement(newTree, "SSIM_GREEN", f2Str(data.SSIM_Green, 4));
+            allocateNewElement(newTree, "SSIM_RED", f2Str(data.SSIM_Red, 4));
+            allocateNewElement(newTree, "PSNR", f2Str(data.PSNR, 1));
+            allocateNewElement(newTree, "PSNR_BLUE", f2Str(data.PSNR_Blue, 1));
+            allocateNewElement(newTree, "PSNR_GREEN", f2Str(data.PSNR_Green, 1));
+            allocateNewElement(newTree, "PSNR_RED", f2Str(data.PSNR_Red, 1));
 
             if (data.srcdecodePattern[0] != '\0')
                 allocateNewElement(newTree, "FAIL_SRCDECODEPATTERN", data.srcdecodePattern);
@@ -279,7 +302,9 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
             if (data.destdecodePattern[0] != '\0')
                 allocateNewElement(newTree, "FAIL_DESTDECODEPATTERN", data.destdecodePattern);
         }
-    } else { //file not exist
+    }
+    else
+    {  //file not exist
         rapidxml::xml_node<>* decl = xmlDoc.allocate_node(rapidxml::node_declaration);
         decl->append_attribute(xmlDoc.allocate_attribute("version", "1.0"));
         decl->append_attribute(xmlDoc.allocate_attribute("encoding", "UTF-8"));
@@ -287,32 +312,35 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
 
         rapidxml::xml_node<>* rootNode = xmlDoc.allocate_node(rapidxml::node_type::node_element, "ANALYSIS");
         xmlDoc.append_node(rootNode);
-        if (option == 's' || option == 'p') { //only gui will have option ssim or psnr
+        if (option == 's' || option == 'p')
+        {  //only gui will have option ssim or psnr
             rapidxml::xml_node<>* newTree = xmlDoc.allocate_node(rapidxml::node_type::node_element, "DATA");
             rootNode->append_node(newTree);
 
-            allocateNewElement(newTree, "MSE",        f2Str(data.MSE,         1));
-            allocateNewElement(newTree, "SSIM",       f2Str(data.SSIM,        4));
-            allocateNewElement(newTree, "SSIM_BLUE",  f2Str(data.SSIM_Blue,   4));
-            allocateNewElement(newTree, "SSIM_GREEN", f2Str(data.SSIM_Green,  4));
-            allocateNewElement(newTree, "SSIM_RED",   f2Str(data.SSIM_Red,    4));
-            allocateNewElement(newTree, "PSNR",       f2Str(data.PSNR,        1));
-            allocateNewElement(newTree, "PSNR_BLUE",  f2Str(data.PSNR_Blue,   1));
-            allocateNewElement(newTree, "PSNR_GREEN", f2Str(data.PSNR_Green,  1));
-            allocateNewElement(newTree, "PSNR_RED",   f2Str(data.PSNR_Red,    1));
-        } else { //cmdline
+            allocateNewElement(newTree, "MSE", f2Str(data.MSE, 1));
+            allocateNewElement(newTree, "SSIM", f2Str(data.SSIM, 4));
+            allocateNewElement(newTree, "SSIM_BLUE", f2Str(data.SSIM_Blue, 4));
+            allocateNewElement(newTree, "SSIM_GREEN", f2Str(data.SSIM_Green, 4));
+            allocateNewElement(newTree, "SSIM_RED", f2Str(data.SSIM_Red, 4));
+            allocateNewElement(newTree, "PSNR", f2Str(data.PSNR, 1));
+            allocateNewElement(newTree, "PSNR_BLUE", f2Str(data.PSNR_Blue, 1));
+            allocateNewElement(newTree, "PSNR_GREEN", f2Str(data.PSNR_Green, 1));
+            allocateNewElement(newTree, "PSNR_RED", f2Str(data.PSNR_Red, 1));
+        }
+        else
+        {  //cmdline
             rapidxml::xml_node<>* newTree = xmlDoc.allocate_node(rapidxml::node_type::node_element, diffNodeName.c_str());
             rootNode->append_node(newTree);
 
-            allocateNewElement(newTree, "MSE",        f2Str(data.MSE,         1));
-            allocateNewElement(newTree, "SSIM",       f2Str(data.SSIM,        4));
-            allocateNewElement(newTree, "SSIM_BLUE",  f2Str(data.SSIM_Blue,   4));
-            allocateNewElement(newTree, "SSIM_GREEN", f2Str(data.SSIM_Green,  4));
-            allocateNewElement(newTree, "SSIM_RED",   f2Str(data.SSIM_Red,    4));
-            allocateNewElement(newTree, "PSNR",       f2Str(data.PSNR,        1));
-            allocateNewElement(newTree, "PSNR_BLUE",  f2Str(data.PSNR_Blue,   1));
-            allocateNewElement(newTree, "PSNR_GREEN", f2Str(data.PSNR_Green,  1));
-            allocateNewElement(newTree, "PSNR_RED",   f2Str(data.PSNR_Red,    1));
+            allocateNewElement(newTree, "MSE", f2Str(data.MSE, 1));
+            allocateNewElement(newTree, "SSIM", f2Str(data.SSIM, 4));
+            allocateNewElement(newTree, "SSIM_BLUE", f2Str(data.SSIM_Blue, 4));
+            allocateNewElement(newTree, "SSIM_GREEN", f2Str(data.SSIM_Green, 4));
+            allocateNewElement(newTree, "SSIM_RED", f2Str(data.SSIM_Red, 4));
+            allocateNewElement(newTree, "PSNR", f2Str(data.PSNR, 1));
+            allocateNewElement(newTree, "PSNR_BLUE", f2Str(data.PSNR_Blue, 1));
+            allocateNewElement(newTree, "PSNR_GREEN", f2Str(data.PSNR_Green, 1));
+            allocateNewElement(newTree, "PSNR_RED", f2Str(data.PSNR_Red, 1));
             if (data.srcdecodePattern[0] != '\0')
                 allocateNewElement(newTree, "FAIL_SRCDECODEPATTERN", data.srcdecodePattern);
 
@@ -328,44 +356,52 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
     delete xmlResultsFile;
 
     // Save to file
-    try {
+    try
+    {
         std::ofstream output(resultsFile);
         output << xmlAsString.c_str();
         output.close();
-    } catch (std::exception const& ex) {
+    }
+    catch (std::exception const& ex)
+    {
         printf("Can't write xml. %s", ex.what());
         return;
     }
 
     std::string result    = CMP_GetPath(resultsFile);
-    int lastindex = (int)result.find_last_of("/");
-    std::string goldFile = result.substr(0, lastindex + 1);
+    int         lastindex = (int)result.find_last_of("/");
+    std::string goldFile  = result.substr(0, lastindex + 1);
     goldFile.append("golden.xml");
 
     std::string toleranceFile = result.substr(0, lastindex + 1);
     toleranceFile.append("analysis_tolerance.xml");
 
-    if ((CMP_FileExists(toleranceFile))) {
-        rapidxml::file<> xmlToleranceFile(toleranceFile.c_str());
+    if ((CMP_FileExists(toleranceFile)))
+    {
+        rapidxml::file<>         xmlToleranceFile(toleranceFile.c_str());
         rapidxml::xml_document<> xmlToleranceDoc;
 
-        try {
+        try
+        {
             xmlToleranceDoc.parse<0>(xmlToleranceFile.data());
-        } catch (std::exception exc) {
+        }
+        catch (std::exception exc)
+        {
             printf("Can't read golden.xml. %s", exc.what());
             return;
         }
 
-
-        rapidxml::xml_node<> *levelElement = xmlToleranceDoc.first_node("ANALYSIS");
-        for (rapidxml::xml_node<> *child = levelElement->first_node(); child != NULL; child = child->next_sibling()) {
-            if (std::string(child->name()) == "TOLERANCE") {
-                tolerance_mse = 1.0000 + std::stod(child->first_node("MSE")->value());
-                tolerance_ssim = 1.0000 - std::stod(child->first_node("SSIM")->value());
+        rapidxml::xml_node<>* levelElement = xmlToleranceDoc.first_node("ANALYSIS");
+        for (rapidxml::xml_node<>* child = levelElement->first_node(); child != NULL; child = child->next_sibling())
+        {
+            if (std::string(child->name()) == "TOLERANCE")
+            {
+                tolerance_mse   = 1.0000 + std::stod(child->first_node("MSE")->value());
+                tolerance_ssim  = 1.0000 - std::stod(child->first_node("SSIM")->value());
                 tolerance_ssimb = 1.0000 - std::stod(child->first_node("SSIM_BLUE")->value());
                 tolerance_ssimg = 1.0000 - std::stod(child->first_node("SSIM_GREEN")->value());
                 tolerance_ssimr = 1.0000 - std::stod(child->first_node("SSIM_RED")->value());
-                tolerance_psnr = 1.0000 - std::stod(child->first_node("PSNR")->value());
+                tolerance_psnr  = 1.0000 - std::stod(child->first_node("PSNR")->value());
                 tolerance_psnrb = 1.0000 - std::stod(child->first_node("PSNR_BLUE")->value());
                 tolerance_psnrg = 1.0000 - std::stod(child->first_node("PSNR_GREEN")->value());
                 tolerance_psnrr = 1.0000 - std::stod(child->first_node("PSNR_RED")->value());
@@ -374,53 +410,69 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
         }
     }
     //analysis against golden.xml (gold reference) and reporting result
-    if ((CMP_FileExists(goldFile))) {
-        try {
+    if ((CMP_FileExists(goldFile)))
+    {
+        try
+        {
             xmlGoldenFile = new rapidxml::file<>(goldFile.c_str());
             xmlGoldDoc.parse<0>(xmlGoldenFile->data());
-        } catch (std::exception exc) {
+        }
+        catch (std::exception exc)
+        {
             delete xmlGoldenFile;
             printf("Can't read golden.xml. %s", exc.what());
             return;
         }
 
-        try {
+        try
+        {
             xmlResultsFile = new rapidxml::file<>(resultsFile);
             xmlDoc.parse<0>(xmlResultsFile->data());
-        } catch (std::exception exc) {
+        }
+        catch (std::exception exc)
+        {
             delete xmlResultsFile;
             printf("Can't read results.xml. %s", exc.what());
             return;
         }
 
-        auto checkFalureGoldAndResults = [&](rapidxml::xml_node<> *compare, rapidxml::xml_node<> *parent, const char *refName, const char* name, double value, bool gte=true) {
-            allocateNewElement(parent, refName, compare->first_node(name)->value());
-            if (gte) {
-                if (std::stod(parent->first_node(name)->value()) >= (std::stod(compare->first_node(name)->value()) * value)) {
-                    allocateNewElement(parent, std::string(name) + "_RESULT", "PASS");
-                    return false;
+        auto checkFalureGoldAndResults =
+            [&](rapidxml::xml_node<>* compare, rapidxml::xml_node<>* parent, const char* refName, const char* name, double value, bool gte = true) {
+                allocateNewElement(parent, refName, compare->first_node(name)->value());
+                if (gte)
+                {
+                    if (std::stod(parent->first_node(name)->value()) >= (std::stod(compare->first_node(name)->value()) * value))
+                    {
+                        allocateNewElement(parent, std::string(name) + "_RESULT", "PASS");
+                        return false;
+                    }
                 }
-            } else {
-                if (std::stod(parent->first_node(name)->value()) <= (std::stod(compare->first_node(name)->value()) * value)) {
-                    allocateNewElement(parent, refName, "PASS");
-                    return false;
+                else
+                {
+                    if (std::stod(parent->first_node(name)->value()) <= (std::stod(compare->first_node(name)->value()) * value))
+                    {
+                        allocateNewElement(parent, refName, "PASS");
+                        return false;
+                    }
                 }
-            }
 
-            allocateNewElement(parent, refName, "FAIL");
-            return true;
-        };
+                allocateNewElement(parent, refName, "FAIL");
+                return true;
+            };
 
-        int pass = 0;
-        int fail = 0;
-        int total = 0;
+        int  pass    = 0;
+        int  fail    = 0;
+        int  total   = 0;
         bool hasFail = false;
         // traverse pt for both golden and test files
-        rapidxml::xml_node<> *goldLevelElement = xmlGoldDoc.first_node("ANALYSIS");
-        for (rapidxml::xml_node<> *goldChild = goldLevelElement->first_node(); goldChild != NULL; goldChild = goldChild->next_sibling()) {
-            rapidxml::xml_node<> *levelElement = xmlDoc.first_node("ANALYSIS");
-            for (rapidxml::xml_node<> *child = levelElement->first_node(); child != NULL; child = child->next_sibling()) {
-                if (std::string(goldChild->name()) == std::string(child->name())) { //diff file node exist on both
+        rapidxml::xml_node<>* goldLevelElement = xmlGoldDoc.first_node("ANALYSIS");
+        for (rapidxml::xml_node<>* goldChild = goldLevelElement->first_node(); goldChild != NULL; goldChild = goldChild->next_sibling())
+        {
+            rapidxml::xml_node<>* levelElement = xmlDoc.first_node("ANALYSIS");
+            for (rapidxml::xml_node<>* child = levelElement->first_node(); child != NULL; child = child->next_sibling())
+            {
+                if (std::string(goldChild->name()) == std::string(child->name()))
+                {  //diff file node exist on both
                     total++;
                     if (checkFalureGoldAndResults(child, goldChild, "MSE_GOLDREF", "MSE", tolerance_mse, false))
                         hasFail = true;
@@ -444,10 +496,13 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
                         hasFail = true;
 
                     //if one of the above statistic fail, the test case (per image) is fail
-                    if (hasFail) {
+                    if (hasFail)
+                    {
                         hasFail = false;
                         fail++;
-                    } else if (!hasFail) {
+                    }
+                    else if (!hasFail)
+                    {
                         pass++;
                     }
                 }
@@ -458,9 +513,11 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
         xmlGoldDoc.clear();
         delete xmlGoldenFile;
 
-        if (option != 's' && option != 'p') { //only gui will have this option - s= ssim or p= psnr
+        if (option != 's' && option != 'p')
+        {  //only gui will have this option - s= ssim or p= psnr
             rapidxml::xml_node<>* root = xmlDoc.first_node("ANALYSIS");
-            if (!root) {
+            if (!root)
+            {
                 root = xmlDoc.allocate_node(rapidxml::node_type::node_element, "ANALYSIS");
                 xmlDoc.append_node(root);
             }
@@ -479,21 +536,25 @@ void Plugin_Canalysis::write(const REPORT_DATA& data, char *resultsFile, char op
             delete xmlResultsFile;
 
             // Save to file
-            try {
+            try
+            {
                 std::ofstream output(resultsFile);
                 output << xmlAsString.c_str();
                 output.close();
-            } catch (std::exception const& ex) {
+            }
+            catch (std::exception const& ex)
+            {
                 printf("Can't write xml. %s", ex.what());
                 return;
             }
         }
     }
-
 }
 
-void checkPattern(int* r, int* g, int* b, char *pattern, CMP_FORMAT format) {
-    if (format == CMP_FORMAT_ATI1N) { //BC4
+void checkPattern(int* r, int* g, int* b, char* pattern, CMP_FORMAT format)
+{
+    if (format == CMP_FORMAT_ATI1N)
+    {  //BC4
         // only test on red channel output
         if (*r <= (0 + TEST_TOLERANCE))
             *pattern = '2';
@@ -501,7 +562,9 @@ void checkPattern(int* r, int* g, int* b, char *pattern, CMP_FORMAT format) {
             *pattern = '1';
         else
             *pattern = '8';
-    } else {
+    }
+    else
+    {
         // 1=Red 2=Green 3=R+G 4=Blue 5=R+B 6=G+B 7=R+G+B
         if (*r <= (0 + TEST_TOLERANCE) && *g <= (0 + TEST_TOLERANCE) && *b <= (0 + TEST_TOLERANCE))
             *pattern = '0';
@@ -522,10 +585,10 @@ void checkPattern(int* r, int* g, int* b, char *pattern, CMP_FORMAT format) {
         else
             *pattern = '8';
     }
-
 }
 
-void  Plugin_Canalysis::generateBCtestResult(QImage *src, QImage *dest, REPORT_DATA &myReport) {
+void Plugin_Canalysis::generateBCtestResult(QImage* src, QImage* dest, REPORT_DATA& myReport)
+{
 #if (OPTION_CMP_QT == 1)
     int srcR = 0, srcG = 0, srcB = 0;
     int destR = 0, destG = 0, destB = 0;
@@ -539,17 +602,19 @@ void  Plugin_Canalysis::generateBCtestResult(QImage *src, QImage *dest, REPORT_D
 
     //form decode string for src amd dest image
     int index = 0;
-    for (int y = 0; y < 4; y++) {
-        for (int x = 0; x < 4; x++) {
+    for (int y = 0; y < 4; y++)
+    {
+        for (int x = 0; x < 4; x++)
+        {
             QRgb srcPixel = src->pixel(x, y);
             QRgb dstPixel = dest->pixel(x, y);
-            srcR = qRed(srcPixel);
-            srcG = qGreen(srcPixel);
-            srcB = qBlue (srcPixel);
+            srcR          = qRed(srcPixel);
+            srcG          = qGreen(srcPixel);
+            srcB          = qBlue(srcPixel);
 
-            destR = qRed  (dstPixel);
+            destR = qRed(dstPixel);
             destG = qGreen(dstPixel);
-            destB = qBlue (dstPixel);
+            destB = qBlue(dstPixel);
 
             checkPattern(&srcR, &srcG, &srcB, &srcPattern[index], m_Compressformat);
             checkPattern(&destR, &destG, &destB, &destPattern[index], m_Compressformat);
@@ -558,7 +623,8 @@ void  Plugin_Canalysis::generateBCtestResult(QImage *src, QImage *dest, REPORT_D
     }
 
     //compare and if not equal , write to myReport.decodePattern
-    if (strcmp(srcPattern, destPattern) != 0) {
+    if (strcmp(srcPattern, destPattern) != 0)
+    {
         strncpy(myReport.srcdecodePattern, srcPattern, 16);
         strncpy(myReport.destdecodePattern, destPattern, 16);
     }
@@ -656,10 +722,14 @@ bool Plugin_Canalysis::psnr(QImage *src, const cv::Mat& srcimg, QImage *dest, co
 */
 #endif
 
-void Plugin_Canalysis::setActiveChannels() {
-    if (m_MipDestImages) {
-        if (m_MipDestImages->mipset) {
-            switch(m_MipDestImages->mipset->m_format) {
+void Plugin_Canalysis::setActiveChannels()
+{
+    if (m_MipDestImages)
+    {
+        if (m_MipDestImages->mipset)
+        {
+            switch (m_MipDestImages->mipset->m_format)
+            {
             case CMP_FORMAT_ATI1N:
             case CMP_FORMAT_BC4:
             case CMP_FORMAT_BC4_S:        // All channels are used and equal, Red is used as active channel
@@ -678,52 +748,52 @@ void Plugin_Canalysis::setActiveChannels() {
     }
 }
 
-
-void Plugin_Canalysis::processSSIMResults() {
-    switch (m_RGBAChannels) {
+void Plugin_Canalysis::processSSIMResults()
+{
+    switch (m_RGBAChannels)
+    {
     case 0b0001:
-        report.data.SSIM_Red    = m_SSIM.val[2];
-        report.data.SSIM = report.data.SSIM_Red;
+        report.data.SSIM_Red = m_SSIM.val[2];
+        report.data.SSIM     = report.data.SSIM_Red;
         break;
     case 0b0011:
-        report.data.SSIM_Green  = m_SSIM.val[1];
-        report.data.SSIM_Red    = m_SSIM.val[2];
-        report.data.SSIM = (report.data.SSIM_Green + report.data.SSIM_Red) / 2;
+        report.data.SSIM_Green = m_SSIM.val[1];
+        report.data.SSIM_Red   = m_SSIM.val[2];
+        report.data.SSIM       = (report.data.SSIM_Green + report.data.SSIM_Red) / 2;
         break;
     default:
-        report.data.SSIM_Blue   = m_SSIM.val[0];
-        report.data.SSIM_Green  = m_SSIM.val[1];
-        report.data.SSIM_Red    = m_SSIM.val[2];
-        report.data.SSIM = (report.data.SSIM_Blue + report.data.SSIM_Green + report.data.SSIM_Red) / 3;
+        report.data.SSIM_Blue  = m_SSIM.val[0];
+        report.data.SSIM_Green = m_SSIM.val[1];
+        report.data.SSIM_Red   = m_SSIM.val[2];
+        report.data.SSIM       = (report.data.SSIM_Blue + report.data.SSIM_Green + report.data.SSIM_Red) / 3;
         break;
     }
 }
 
-
-
-int Plugin_Canalysis::TC_ImageDiff(const char * in1,
-                                   const char * in2,
-                                   const char *out,
-                                   char *resultsFile,
-                                   void *usrAnalysisData,
-                                   void *pluginManager,
-                                   void **cmipImages,
-                                   CMP_Feedback_Proc pFeedbackProc) {
-    if (pluginManager == NULL) return -1;
+int Plugin_Canalysis::TC_ImageDiff(const char*       in1,
+                                   const char*       in2,
+                                   const char*       out,
+                                   char*             resultsFile,
+                                   void*             usrAnalysisData,
+                                   void*             pluginManager,
+                                   void**            cmipImages,
+                                   CMP_Feedback_Proc pFeedbackProc)
+{
+    if (pluginManager == NULL)
+        return -1;
 
 #if (OPTION_CMP_QT == 1)
-    CMP_ANALYSIS_DATA *analysisData = (CMP_ANALYSIS_DATA *) usrAnalysisData;
+    CMP_ANALYSIS_DATA* analysisData = (CMP_ANALYSIS_DATA*)usrAnalysisData;
 
     if (m_imageloader == NULL)
         m_imageloader = new CImageLoader(pluginManager);
-
 
     QImage* srcImage  = NULL;
     QImage* destImage = NULL;
     QImage* diffImage = NULL;
 
-    if (m_imageloader) {
-
+    if (m_imageloader)
+    {
         if (m_MipSrcImages)
             m_imageloader->clearMipImages(&m_MipSrcImages);
         if (m_MipDestImages)
@@ -733,32 +803,40 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
         m_MipDestImages = m_imageloader->LoadPluginImage(QString::fromUtf8(in2).toStdString());
     }
 
-    if (m_MipSrcImages != NULL && m_MipDestImages != NULL) {
-
+    if (m_MipSrcImages != NULL && m_MipDestImages != NULL)
+    {
         // analyize the destination image type and set active channels to compare the source with
-        setActiveChannels(); 
+        setActiveChannels();
 
         // Analysis is only on top MipLevel and first cubemap face!
         // Need to update the code to handle all faces of cubemaps
-        if (m_MipSrcImages->QImage_list[0].size() >0) {
+        if (m_MipSrcImages->QImage_list[0].size() > 0)
+        {
             srcImage = m_MipSrcImages->QImage_list[0][0];
-        } else {
+        }
+        else
+        {
             printf("Error: Source Image cannot be loaded\n");
             return -1;
         }
 
-        if (m_MipDestImages->QImage_list[0].size() >0) {
+        if (m_MipDestImages->QImage_list[0].size() > 0)
+        {
             destImage = m_MipDestImages->QImage_list[0][0];
-        } else {
+        }
+        else
+        {
             printf("Error: Dest Image cannot be loaded\n");
             return -1;
         }
-    } else {
+    }
+    else
+    {
         printf("Error: Image(s) cannot be loaded\n");
         return -1;
     }
 
-    MipSet* mipset_src = (m_MipSrcImages->mipset              != NULL) ? m_MipSrcImages->mipset              : m_MipSrcImages->decompressedMipSet;
+    MipSet* mipset_src = (m_MipSrcImages->mipset != NULL) ? m_MipSrcImages->mipset : m_MipSrcImages->decompressedMipSet;
     MipSet* mipset_dst = (m_MipDestImages->decompressedMipSet != NULL) ? m_MipDestImages->decompressedMipSet : m_MipDestImages->mipset;
 
     if ((mipset_src == NULL) || (mipset_dst == NULL))
@@ -767,23 +845,21 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
         return -1;
     }
 
-    // Calculate MSE & PSNR 
-    CMP_AnalysisData pAnalysisData = { 0 };
+    // Calculate MSE & PSNR
+    CMP_AnalysisData pAnalysisData = {0};
     pAnalysisData.channelBitMap    = m_RGBAChannels;
 
-    
     if (CMP_MipSetAnlaysis(mipset_src, mipset_dst, 0, 0, &pAnalysisData) != CMP_OK)
     {
         printf("Error: Unable to calculate MSE and PSNR\n");
         return -1;
     }
 
-   report.data.PSNR = pAnalysisData.psnr;
-   report.data.PSNR_Red = pAnalysisData.psnrR;
-   report.data.PSNR_Green = pAnalysisData.psnrG;
-   report.data.PSNR_Blue = pAnalysisData.psnrB;
-   report.data.MSE = pAnalysisData.mse;
-
+    report.data.PSNR       = pAnalysisData.psnr;
+    report.data.PSNR_Red   = pAnalysisData.psnrR;
+    report.data.PSNR_Green = pAnalysisData.psnrG;
+    report.data.PSNR_Blue  = pAnalysisData.psnrB;
+    report.data.MSE        = pAnalysisData.mse;
 
     if (analysisData)
     {
@@ -807,25 +883,28 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
     }
 
     // Do SSIM using OpenCV
-    if (srcImage != NULL && destImage != NULL) {
-        m_srcFile = in1;
+    if (srcImage != NULL && destImage != NULL)
+    {
+        m_srcFile  = in1;
         m_destFile = in2;
 
         int w = srcImage->width() == destImage->width() ? srcImage->width() : -1;
         int h = srcImage->height() == destImage->height() ? srcImage->height() : -1;
 
-        if (w == -1 || h == -1) {
+        if (w == -1 || h == -1)
+        {
             printf("Error: Both images must be same size\n");
             return -1;
         }
 
-
-        if (cmipImages == NULL) { //cmdline enable both ssim and psnr
+        if (cmipImages == NULL)
+        {  //cmdline enable both ssim and psnr
 
 #if (OPTION_CMP_OPENCV == 1)
             cv::Mat srcimg  = QtOcv::image2Mat(*srcImage);
             cv::Mat destimg = QtOcv::image2Mat(*destImage);
-            if (srcimg.empty() || destimg.empty()) {
+            if (srcimg.empty() || destimg.empty())
+            {
                 printf("Error: Images fail to allocate for ssim analysis\n");
                 return -1;
             }
@@ -842,28 +921,33 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
             if ((strcmp(resultsFile, "") != 0))
                 write(report.data, resultsFile, 'a');
 
-            if (analysisData) {
+            if (analysisData)
+            {
                 analysisData->SSIM       = report.data.SSIM;
                 analysisData->SSIM_Red   = report.data.SSIM_Red;
                 analysisData->SSIM_Green = report.data.SSIM_Green;
                 analysisData->SSIM_Blue  = report.data.SSIM_Blue;
             }
-        } //
+        }  //
 
-        if ((strcmp(out, "") != 0)) {
+        if ((strcmp(out, "") != 0))
+        {
             diffImage = new QImage(w, h, QImage::Format_ARGB32);
             QColor src;
             QColor dest;
             QColor diff;
-            int r, g, b, a;
-            float fProgress = 0.0;
+            int    r, g, b, a;
+            float  fProgress = 0.0;
 
-            for (int y = 0; y < h; y++) {
-                for (int x = 0; x < w; x++) {
-                    src = QColor(srcImage->pixel(x, y));
+            for (int y = 0; y < h; y++)
+            {
+                for (int x = 0; x < w; x++)
+                {
+                    src  = QColor(srcImage->pixel(x, y));
                     dest = QColor(destImage->pixel(x, y));
                     r = g = b = a = 0;
-                    switch (m_RGBAChannels) {
+                    switch (m_RGBAChannels)
+                    {
                     case 0b0001:
                         r = qAbs(src.red() - dest.red());
                         break;
@@ -886,16 +970,20 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
                     diffImage->setPixel(x, y, diff.rgba());
                 }
 
-                if (pFeedbackProc) {
+                if (pFeedbackProc)
+                {
                     fProgress = 100.f * (y * w) / (w * h);
-                    if (pFeedbackProc(fProgress, NULL, NULL)) {
+                    if (pFeedbackProc(fProgress, NULL, NULL))
+                    {
                         printf("Analysis canceled!\n");
-                        return -1; //abort
+                        return -1;  //abort
                     }
                 }
             }
         }
-    } else {
+    }
+    else
+    {
         printf("Error: Image(s) cannot be loaded\n");
         return -1;
     }
@@ -903,82 +991,110 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
     //-------------------
     // Process Image Diff
     //-------------------
-    if (diffImage != NULL) {
-        if ((CMP_FileExists(out))) {
+    if (diffImage != NULL)
+    {
+        if ((CMP_FileExists(out)))
+        {
             QFile::remove(out);
         }
 
         bool saved = diffImage->save(out);
 
-        if (saved && cmipImages != NULL) { //gui
+        if (saved && cmipImages != NULL)
+        {  //gui
             delete diffImage;
             if (m_MipDiffImages)
                 m_imageloader->clearMipImages(&m_MipDiffImages);
 
             m_MipDiffImages = m_imageloader->LoadPluginImage(out);
-            if (m_MipDiffImages) {
+            if (m_MipDiffImages)
+            {
                 QFile::remove(out);
                 *cmipImages = m_MipDiffImages;
                 return 0;
-            } else {
+            }
+            else
+            {
                 return -1;
             }
-        } else if (saved && cmipImages == NULL) { //cmdline version pass in null
+        }
+        else if (saved && cmipImages == NULL)
+        {  //cmdline version pass in null
             delete diffImage;
-            if ((strcmp(out, "") == 0)) {
+            if ((strcmp(out, "") == 0))
+            {
                 QFile::remove(out);
             }
             return 0;
-        } else if (!saved && cmipImages != NULL) { //gui- saved fail due to admin right
+        }
+        else if (!saved && cmipImages != NULL)
+        {  //gui- saved fail due to admin right
             delete diffImage;
-            if ((strcmp(out, "") == 0)) {
+            if ((strcmp(out, "") == 0))
+            {
                 return 0;
-            } else {
+            }
+            else
+            {
                 QString appLocalPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
-                QString redirectOut = appLocalPath + "/diff.bmp";
+                QString redirectOut  = appLocalPath + "/diff.bmp";
                 redirectOut.replace("compressonatorcli", "compressonator");
                 saved = diffImage->save(redirectOut);
-                if (saved) {
+                if (saved)
+                {
                     if (m_MipDiffImages)
                         m_imageloader->clearMipImages(&m_MipDiffImages);
 
                     printf("User does not have admin right to the saved path. Diff image has been redirect saved to %s\n", redirectOut.toStdString().c_str());
                     m_MipDiffImages = m_imageloader->LoadPluginImage(redirectOut.toStdString());
-                    if (m_MipDiffImages) {
+                    if (m_MipDiffImages)
+                    {
                         QFile::remove(redirectOut);
                         *cmipImages = m_MipDiffImages;
                         return 0;
                     }
                     return -1;
-                } else {
+                }
+                else
+                {
                     printf("Error: Image(s) saved failed. Please run the app as admin.\n");
                     return -1;
                 }
             }
-        } else if (!saved && cmipImages == NULL) { //cmdline version pass in null- saved fail due to admin right
-            if ((strcmp(out, "") == 0)) {
+        }
+        else if (!saved && cmipImages == NULL)
+        {  //cmdline version pass in null- saved fail due to admin right
+            if ((strcmp(out, "") == 0))
+            {
                 delete diffImage;
                 return 0;
-            } else {
+            }
+            else
+            {
                 QString appLocalPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
-                QString redirectOut = appLocalPath + "/diff.bmp";
+                QString redirectOut  = appLocalPath + "/diff.bmp";
                 redirectOut.replace("compressonatorcli", "compressonator");
                 saved = diffImage->save(redirectOut);
                 delete diffImage;
-                if (saved) {
+                if (saved)
+                {
                     printf("User does not have admin right to the saved path. Diff image has been redirect saved to %s\n", redirectOut.toStdString().c_str());
                     return 0;
-                } else {
+                }
+                else
+                {
                     printf("Error: Image(s) saved failed. Please run the app as admin.\n");
                     return -1;
                 }
             }
-
-        } else { //failed to save image diff
+        }
+        else
+        {  //failed to save image diff
             printf("Error: Image(s) diff saved/write failed. Please try run the app as admin.\n");
             return -1;
         }
-    } else if ((strcmp(out, "") == 0))
+    }
+    else if ((strcmp(out, "") == 0))
         return 0;
     else
         return -1;
@@ -988,112 +1104,118 @@ int Plugin_Canalysis::TC_ImageDiff(const char * in1,
 #endif
 }
 
-int Plugin_Canalysis::TC_PSNR_MSE(const char * in1, const char * in2,  char *resultsFile, void *pluginManager, CMP_Feedback_Proc pFeedbackProc) {
-    if (pluginManager == NULL) return -1;
+int Plugin_Canalysis::TC_PSNR_MSE(const char* in1, const char* in2, char* resultsFile, void* pluginManager, CMP_Feedback_Proc pFeedbackProc)
+{
+    if (pluginManager == NULL)
+        return -1;
 
 #if (OPTION_CMP_QT == 1)
     if (m_imageloader == NULL)
         m_imageloader = new CImageLoader(pluginManager);
 
-    QImage* srcImage = NULL;
+    QImage* srcImage  = NULL;
     QImage* destImage = NULL;
 
-    if (m_imageloader) {
+    if (m_imageloader)
+    {
         m_MipSrcImages  = m_imageloader->LoadPluginImage(QString::fromUtf8(in1).toStdString());
         m_MipDestImages = m_imageloader->LoadPluginImage(QString::fromUtf8(in2).toStdString());
     }
 
-    if (m_MipSrcImages != NULL && m_MipDestImages != NULL) {
+    if (m_MipSrcImages != NULL && m_MipDestImages != NULL)
+    {
         setActiveChannels();
 
-        if (m_MipSrcImages->QImage_list[0].size() >0)
+        if (m_MipSrcImages->QImage_list[0].size() > 0)
             srcImage = m_MipSrcImages->QImage_list[0][0];
-        else {
+        else
+        {
             printf("Error: Source Image cannot be loaded\n");
             return -1;
         }
 
-        if (m_MipDestImages->QImage_list[0].size() >0)
+        if (m_MipDestImages->QImage_list[0].size() > 0)
             destImage = m_MipDestImages->QImage_list[0][0];
-        else {
+        else
+        {
             printf("Error: Dest Image cannot be loaded\n");
             return -1;
         }
-    } else {
+    }
+    else
+    {
         printf("Error: Image(s) cannot be loaded\n");
         return -1;
     }
 
-
-    if (srcImage != NULL && destImage != NULL) {
+    if (srcImage != NULL && destImage != NULL)
+    {
         int w = srcImage->width() == destImage->width() ? srcImage->width() : -1;
         int h = srcImage->height() == destImage->height() ? srcImage->height() : -1;
 
-        if (w == -1 || h == -1) {
+        if (w == -1 || h == -1)
+        {
             printf("Error: Both images must be same size\n");
             return -1;
         }
 
+        report.data.PSNR_Blue  = -1;
+        report.data.PSNR_Green = -1;
+        report.data.PSNR_Red   = -1;
 
-     report.data.PSNR_Blue  = -1;
-     report.data.PSNR_Green = -1;
-     report.data.PSNR_Red   = -1;
+        CMP_AnalysisData pAnalysisData = {0};
+        pAnalysisData.channelBitMap    = m_RGBAChannels;
 
-     CMP_AnalysisData pAnalysisData = {0};
-     pAnalysisData.channelBitMap    = m_RGBAChannels;
+        MipSet* mipset_src = (m_MipSrcImages->mipset != NULL) ? m_MipSrcImages->mipset : m_MipSrcImages->decompressedMipSet;
+        MipSet* mipset_dst = (m_MipDestImages->decompressedMipSet != NULL) ? m_MipDestImages->decompressedMipSet : m_MipDestImages->mipset;
 
-     MipSet* mipset_src = (m_MipSrcImages->mipset != NULL) ? m_MipSrcImages->mipset : m_MipSrcImages->decompressedMipSet;
-     MipSet* mipset_dst = (m_MipDestImages->decompressedMipSet != NULL) ? m_MipDestImages->decompressedMipSet : m_MipDestImages->mipset;
-
-     if ((mipset_src == NULL) || (mipset_dst == NULL))
-     {
-         printf("Error: Unable to read mipset data\n");
-         return -1;
-     }
-
-     if (CMP_MipSetAnlaysis(mipset_src, mipset_dst, 0, 0, &pAnalysisData) != CMP_OK)
-     {
-         printf("Error: Unable to calculate MSE and PSNR\n");
-         return -1;
-     }
-
-
-    report.data.PSNR = pAnalysisData.psnr;
-    report.data.PSNR_Red = pAnalysisData.psnrR;
-    report.data.PSNR_Green = pAnalysisData.psnrG;
-    report.data.PSNR_Blue = pAnalysisData.psnrB;
-    report.data.MSE = pAnalysisData.mse;
-
-    // cv::Mat srcimg  = QtOcv::image2Mat(*srcImage);
-    // cv::Mat destimg = QtOcv::image2Mat(*destImage);
-    // if (!&srcimg || !&destimg) {
-    //     printf("Error: Images fail to allocate for ssim analysis\n");
-    //     return -1;
-    // }
-    // 
-    // bool testpassed = psnr(srcImage, srcimg, destImage, destimg, report.data);
-    // if (!testpassed) {
-    //     printf("Error: Images analysis fail\n");
-    //     return -1;
-    // }
-
-    // Test images
-    if (srcImage->width() == 4 && srcImage->height() == 4)
-    {
-        generateBCtestResult(srcImage, destImage, report.data);
-        bool testpassed = report.data.PSNR > 0;
-        if (!testpassed)
+        if ((mipset_src == NULL) || (mipset_dst == NULL))
         {
-            printf("Error: Images analysis fail\n");
+            printf("Error: Unable to read mipset data\n");
             return -1;
         }
+
+        if (CMP_MipSetAnlaysis(mipset_src, mipset_dst, 0, 0, &pAnalysisData) != CMP_OK)
+        {
+            printf("Error: Unable to calculate MSE and PSNR\n");
+            return -1;
+        }
+
+        report.data.PSNR       = pAnalysisData.psnr;
+        report.data.PSNR_Red   = pAnalysisData.psnrR;
+        report.data.PSNR_Green = pAnalysisData.psnrG;
+        report.data.PSNR_Blue  = pAnalysisData.psnrB;
+        report.data.MSE        = pAnalysisData.mse;
+
+        // cv::Mat srcimg  = QtOcv::image2Mat(*srcImage);
+        // cv::Mat destimg = QtOcv::image2Mat(*destImage);
+        // if (!&srcimg || !&destimg) {
+        //     printf("Error: Images fail to allocate for ssim analysis\n");
+        //     return -1;
+        // }
+        //
+        // bool testpassed = psnr(srcImage, srcimg, destImage, destimg, report.data);
+        // if (!testpassed) {
+        //     printf("Error: Images analysis fail\n");
+        //     return -1;
+        // }
+
+        // Test images
+        if (srcImage->width() == 4 && srcImage->height() == 4)
+        {
+            generateBCtestResult(srcImage, destImage, report.data);
+            bool testpassed = report.data.PSNR > 0;
+            if (!testpassed)
+            {
+                printf("Error: Images analysis fail\n");
+                return -1;
+            }
+        }
+
+        write(report.data, resultsFile, 'p');
     }
-
-
-    write(report.data, resultsFile,'p');
-
-    } 
-    else {
+    else
+    {
         printf("Error: Image(s) cannot be loaded\n");
         return -1;
     }
@@ -1102,19 +1224,21 @@ int Plugin_Canalysis::TC_PSNR_MSE(const char * in1, const char * in2,  char *res
     printf("Error: Image PSNT MSE is not supported requires Qt\n");
     return -1;
 #endif
-
 }
 
-int Plugin_Canalysis::TC_SSIM(const char * in1, const char * in2, char *resultsFile, void *pluginManager, CMP_Feedback_Proc pFeedbackProc) {
-    if (pluginManager == NULL) return -1;
+int Plugin_Canalysis::TC_SSIM(const char* in1, const char* in2, char* resultsFile, void* pluginManager, CMP_Feedback_Proc pFeedbackProc)
+{
+    if (pluginManager == NULL)
+        return -1;
 
 #if (OPTION_CMP_QT == 1)
     if (m_imageloader == NULL)
         m_imageloader = new CImageLoader(pluginManager);
-    QImage* srcImage = NULL;
+    QImage* srcImage  = NULL;
     QImage* destImage = NULL;
 
-    if (m_imageloader) {
+    if (m_imageloader)
+    {
         if (m_MipSrcImages)
             m_imageloader->clearMipImages(&m_MipSrcImages);
 
@@ -1125,46 +1249,53 @@ int Plugin_Canalysis::TC_SSIM(const char * in1, const char * in2, char *resultsF
         m_MipDestImages = m_imageloader->LoadPluginImage(QString::fromUtf8(in2).toStdString());
     }
 
-    if (m_MipSrcImages != NULL && m_MipDestImages != NULL) {
+    if (m_MipSrcImages != NULL && m_MipDestImages != NULL)
+    {
         setActiveChannels();
-        if (m_MipSrcImages->QImage_list[0].size() >0)
+        if (m_MipSrcImages->QImage_list[0].size() > 0)
             srcImage = m_MipSrcImages->QImage_list[0][0];
-        else {
+        else
+        {
             printf("Error: Source Image cannot be loaded\n");
             return -1;
         }
 
-        if (m_MipDestImages->QImage_list[0].size() >0)
+        if (m_MipDestImages->QImage_list[0].size() > 0)
             destImage = m_MipDestImages->QImage_list[0][0];
-        else {
+        else
+        {
             printf("Error: Dest Image cannot be loaded\n");
             return -1;
         }
-    } else {
+    }
+    else
+    {
         printf("Error: Image(s) cannot be loaded\n");
         return -1;
     }
 
-
-    if (srcImage != NULL && destImage != NULL) {
+    if (srcImage != NULL && destImage != NULL)
+    {
         int w = srcImage->width() == destImage->width() ? srcImage->width() : -1;
         int h = srcImage->height() == destImage->height() ? srcImage->height() : -1;
 
-        if (w == -1 || h == -1) {
+        if (w == -1 || h == -1)
+        {
             printf("Error: Both images must be same size\n");
             return -1;
         }
 
-        report.data.SSIM_Blue   = 0;
-        report.data.SSIM_Green  = 0;
-        report.data.SSIM_Red    = 0;
-        report.data.SSIM        = 0;
+        report.data.SSIM_Blue  = 0;
+        report.data.SSIM_Green = 0;
+        report.data.SSIM_Red   = 0;
+        report.data.SSIM       = 0;
 
 #if (OPTION_CMP_OPENCV == 1)
         cv::Mat srcimg  = QtOcv::image2Mat(*srcImage);
         cv::Mat destimg = QtOcv::image2Mat(*destImage);
 
-        if (!&srcimg || !&destimg) {
+        if (!&srcimg || !&destimg)
+        {
             printf("Error: Images fail to allocate for ssim analysis\n");
             return -1;
         }
@@ -1176,9 +1307,10 @@ int Plugin_Canalysis::TC_SSIM(const char * in1, const char * in2, char *resultsF
         destimg.release();
 
 #endif
-        write(report.data, resultsFile,'s');
-
-    } else {
+        write(report.data, resultsFile, 's');
+    }
+    else
+    {
         printf("Error: Image(s) cannot be loaded\n");
         return -1;
     }

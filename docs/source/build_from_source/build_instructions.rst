@@ -42,10 +42,10 @@ Visual Studio 2019, but for newer versions you will need to install the correct 
 Building the SDK and Other Libraries
 ==============================================
 
-There are Visual Studio 19 project files provided in the "compressonator/vs2019" folder that can be used to build the SDK
+There are Visual Studio project files provided in the "compressonator/build_sdk" folder that can be used to build the SDK
 (also called cmp_compressonatorlib), the Core, and the Framework.
 
-There is a batch script provided in the "compressonator/scripts" folder named "windows_build_sdk.bat" if you'd prefer to run an automated
+There is a batch script provided in the "compressonator/build" folder named "windows_build_sdk.bat" if you'd prefer to run an automated
 script to build all the SDK libraries. Be warned that this script builds all variations of the SDK libraries (in both Release and Debug modes),
 so it can take quite a while to fully build.
 
@@ -53,14 +53,14 @@ The script can be called from the root Compressonator folder like:
 
 .. code-block:: console
 
-    call scripts/windows_build_sdk.bat
+    call build/windows_build_sdk.bat
 
 Building the GUI and CLI Applications
 ==============================================================
 
 Similar to the SDK libraries, there is a simple script you can call on Windows that will setup the environment and start the builds
 for the Compressonator applications. It does make some assumptions about the specific versions of Qt and the Vulkan SDK that are installed,
-so it might not work without some tweaking.  The batch script is located at "scripts/windows_build_apps.bat".
+so it might not work without some tweaking.  The batch script is located at "build/windows_build_apps.bat".
 
 If you'd prefer more customization, or wish to build from Linux, the steps to generate the projects and build the apps will be detailed
 in the remainder of this section.
@@ -68,10 +68,10 @@ in the remainder of this section.
 Preparing the Environment
 --------------------------
 
-**NOTE**: On Linux you will want to start by calling the "initsetup_ubuntu.sh" script in the "scripts" folder to download and install any
+**NOTE**: On Linux you will want to start by calling the "initsetup_ubuntu.sh" script in the "build" folder to download and install any
 other dependencies you might be missing.
 
-The first step is to execute the "fetch_dependencies.py" script located in the "scripts" folder, using a command like:
+The first step is to execute the "fetch_dependencies.py" script located in the "build" folder, using a command like:
 
 .. code-block:: console
 
@@ -173,7 +173,7 @@ Once Sphinx is installed, you can run the following from the root Compressonator
 
 .. code-block:: console
 
-    call scripts/windows_build_docs.bat
+    call build/windows_build_docs.bat
 
 For Linux users you need to call the make files directly in the "compressonator/docs/" folder, something like:
 

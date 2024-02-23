@@ -90,6 +90,7 @@ target_include_directories(CompressonatorCLI-bin
     ${PROJECT_SOURCE_DIR}/applications/_plugins/common
     ${PROJECT_SOURCE_DIR}/applications/_plugins/common/json
     ${PROJECT_SOURCE_DIR}/applications/_plugins/cmesh/mesh_optimizer
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/cimage
     ${PROJECT_SOURCE_DIR}/applications/_libs/gpu_decode
     ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_meshoptimizer
     ${PROJECT_SOURCE_DIR}/applications/_libs/cmp_math
@@ -229,7 +230,7 @@ endif()
 if(CMP_HOST_WINDOWS)
     if (OPTION_CMP_QT)
         set_target_properties(CompressonatorCLI-bin PROPERTIES 
-            FOLDER "Applications"
+            FOLDER ${PROJECT_FOLDER_APPS}
             VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$(Configuration)"
             AUTORCC ON
             AUTOMOC ON
@@ -237,7 +238,7 @@ if(CMP_HOST_WINDOWS)
         )
     else()
         set_target_properties(CompressonatorCLI-bin PROPERTIES 
-            FOLDER "Applications"
+            FOLDER ${PROJECT_FOLDER_APPS}
             VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$(Configuration)"
             OUTPUT_NAME "compressonatorcli"
         )
@@ -245,14 +246,14 @@ if(CMP_HOST_WINDOWS)
 else()
     if (OPTION_CMP_QT)
         set_target_properties(CompressonatorCLI-bin PROPERTIES 
-            FOLDER "Applications"
+            FOLDER ${PROJECT_FOLDER_APPS}
             AUTORCC ON
             AUTOMOC ON
             OUTPUT_NAME "compressonatorcli-bin"
         )
     else()
         set_target_properties(CompressonatorCLI-bin PROPERTIES 
-            FOLDER "Applications"
+            FOLDER ${PROJECT_FOLDER_APPS}
             OUTPUT_NAME "compressonatorcli-bin"
         )
     endif()

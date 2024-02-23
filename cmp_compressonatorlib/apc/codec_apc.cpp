@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2019  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2019-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,9 +26,11 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 
-#pragma warning(disable:4100)    // Ignore warnings of unreferenced formal parameters
+#pragma warning(disable : 4100)  // Ignore warnings of unreferenced formal parameters
 
 #ifdef _WIN32
+
+#include "codec_common.h"
 #include "common.h"
 
 #ifdef USE_APC
@@ -46,9 +48,9 @@
 
 #ifdef USE_FILEIO
 #include <stdio.h>
-FILE * gt_File = NULL;
-int gt_blockcount = 0;
-int gt_total_MSE = 0;
+FILE* gt_File       = NULL;
+int   gt_blockcount = 0;
+int   gt_total_MSE  = 0;
 #endif
 
 //
@@ -59,11 +61,14 @@ int gt_total_MSE = 0;
 // it should set the exit flag in the parameters to allow the tread to quit
 //
 
-unsigned int    _stdcall APCThreadProcEncode(void* param) {
-    APCEncodeThreadParam *tp = (APCEncodeThreadParam*)param;
+unsigned int _stdcall APCThreadProcEncode(void* param)
+{
+    APCEncodeThreadParam* tp = (APCEncodeThreadParam*)param;
 
-    while(tp->exit == FALSE) {
-        if(tp->run == TRUE) {
+    while (tp->exit == FALSE)
+    {
+        if (tp->run == TRUE)
+        {
             tp->encoder->CompressBlock(tp->in, tp->out);
             tp->run = false;
         }
@@ -74,19 +79,19 @@ unsigned int    _stdcall APCThreadProcEncode(void* param) {
     return 0;
 }
 
-
-static APCEncodeThreadParam *g_EncodeParameterStorage = NULL;
-
+static APCEncodeThreadParam* g_EncodeParameterStorage = NULL;
 
 //////////////////////////////////////////////////////////////////////////////
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////////////
 
-CCodec_APC::CCodec_APC() : CCodec_DXTC(CT_APC) {
-    m_LibraryInitialized   = false;
+CCodec_APC::CCodec_APC()
+    : CCodec_DXTC(CT_APC)
+{
+    m_LibraryInitialized = false;
 
-    m_Use_MultiThreading = true;
-    m_NumThreads = 8;
+    m_Use_MultiThreading   = true;
+    m_NumThreads           = 8;
     m_NumEncodingThreads   = m_NumThreads;
     m_EncodingThreadHandle = NULL;
     m_LiveThreads          = 0;
@@ -98,35 +103,43 @@ CCodec_APC::CCodec_APC() : CCodec_DXTC(CT_APC) {
     m_quality = 0.05f;
 }
 
+bool CCodec_APC::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue)
+{
+    if (sValue == NULL)
+        return false;
 
-bool CCodec_APC::SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue) {
-    if (sValue == NULL) return false;
-
-    if(strcmp(pszParamName, CodecParameters::NumThreads) == 0) {
-        m_NumThreads = (CMP_BYTE) std::stoi(sValue) & 0xFF;
+    if (strcmp(pszParamName, CodecParameters::NumThreads) == 0)
+    {
+        m_NumThreads         = (CMP_BYTE)std::stoi(sValue) & 0xFF;
         m_Use_MultiThreading = m_NumThreads > 1;
-    } else if (strcmp(pszParamName, "Quality") == 0) {
+    }
+    else if (strcmp(pszParamName, "Quality") == 0)
+    {
         m_quality = std::stof(sValue);
-        if ((m_quality < 0) || (m_quality > 1.0)) {
+        if ((m_quality < 0) || (m_quality > 1.0))
+        {
             return false;
         }
-    } else
+    }
+    else
         return CCodec_DXTC::SetParameter(pszParamName, sValue);
     return true;
 }
 
-
-
-bool CCodec_APC::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwValue) {
-    if(strcmp(pszParamName, CodecParameters::NumThreads) == 0) {
-        m_NumThreads = (CMP_BYTE) dwValue;
+bool CCodec_APC::SetParameter(const CMP_CHAR* pszParamName, CMP_DWORD dwValue)
+{
+    if (strcmp(pszParamName, CodecParameters::NumThreads) == 0)
+    {
+        m_NumThreads         = (CMP_BYTE)dwValue;
         m_Use_MultiThreading = m_NumThreads > 1;
-    } else
+    }
+    else
         return CCodec_DXTC::SetParameter(pszParamName, dwValue);
     return true;
 }
 
-bool CCodec_APC::SetParameter(const CMP_CHAR* pszParamName, CODECFLOAT fValue) {
+bool CCodec_APC::SetParameter(const CMP_CHAR* pszParamName, CODECFLOAT fValue)
+{
     if (strcmp(pszParamName, "Quality") == 0)
         m_quality = fValue;
     else
@@ -135,13 +148,15 @@ bool CCodec_APC::SetParameter(const CMP_CHAR* pszParamName, CODECFLOAT fValue) {
     return true;
 }
 
-
-CCodec_APC::~CCodec_APC() {
-    if (m_LibraryInitialized) {
-
-        if (m_Use_MultiThreading) {
+CCodec_APC::~CCodec_APC()
+{
+    if (m_LibraryInitialized)
+    {
+        if (m_Use_MultiThreading)
+        {
             // Tell all the live threads that they can exit when they have finished any current work
-            for(int i=0; i < m_LiveThreads; i++) {
+            for (int i = 0; i < m_LiveThreads; i++)
+            {
                 // If a thread is in the running state then we need to wait for it to finish
                 // any queued work from the producer before we can tell it to exit.
                 //
@@ -149,9 +164,11 @@ CCodec_APC::~CCodec_APC() {
                 // told the thread to run but it hasn't yet been scheduled - if we set
                 // the exit flag before it runs then its block will not be processed.
 #pragma warning(push)
-#pragma warning(disable:4127) //warning C4127: conditional expression is constant
-                while (1) {
-                    if (m_EncodeParameterStorage[i].run != TRUE) {
+#pragma warning(disable : 4127)  //warning C4127: conditional expression is constant
+                while (1)
+                {
+                    if (m_EncodeParameterStorage[i].run != TRUE)
+                    {
                         break;
                     }
                 }
@@ -161,22 +178,24 @@ CCodec_APC::~CCodec_APC() {
             }
 
             // Now wait for all threads to have exited
-            if (m_LiveThreads > 0) {
-                for (CMP_DWORD dwThread = 0; dwThread < m_LiveThreads; dwThread++) {
+            if (m_LiveThreads > 0)
+            {
+                for (CMP_DWORD dwThread = 0; dwThread < m_LiveThreads; dwThread++)
+                {
                     std::thread& curThread = m_EncodingThreadHandle[dwThread];
 
                     curThread.join();
                 }
             }
 
-            for (unsigned int i = 0; i < m_LiveThreads; i++) {
+            for (unsigned int i = 0; i < m_LiveThreads; i++)
+            {
                 std::thread& curThread = m_EncodingThreadHandle[i];
 
                 curThread = std::thread();
             }
 
-
-        } // MultiThreading
+        }  // MultiThreading
 
         m_EncodingThreadHandle = NULL;
 
@@ -184,15 +203,17 @@ CCodec_APC::~CCodec_APC() {
             delete[] m_EncodeParameterStorage;
         m_EncodeParameterStorage = NULL;
 
-
-        for (int i = 0; i < m_NumEncodingThreads; i++) {
-            if (m_encoder[i]) {
+        for (int i = 0; i < m_NumEncodingThreads; i++)
+        {
+            if (m_encoder[i])
+            {
                 delete m_encoder[i];
                 m_encoder[i] = NULL;
             }
         }
 
-        if (m_decoder) {
+        if (m_decoder)
+        {
             delete m_decoder;
             m_decoder = NULL;
         }
@@ -201,52 +222,56 @@ CCodec_APC::~CCodec_APC() {
     }
 }
 
-
-
-CodecError CCodec_APC::InitializeAPCLibrary() {
-    if (!m_LibraryInitialized) {
-
-        for(CMP_DWORD i=0; i < MAX_GT_THREADS; i++) {
+CodecError CCodec_APC::InitializeAPCLibrary()
+{
+    if (!m_LibraryInitialized)
+    {
+        for (CMP_DWORD i = 0; i < MAX_GT_THREADS; i++)
+        {
             m_encoder[i] = NULL;
         }
 
         // Create threaded encoder instances
-        m_LiveThreads = 0;
-        m_LastThread  = 0;
+        m_LiveThreads        = 0;
+        m_LastThread         = 0;
         m_NumEncodingThreads = min(m_NumThreads, MAX_GT_THREADS);
-        if (m_NumEncodingThreads == 0) m_NumEncodingThreads = 1;
+        if (m_NumEncodingThreads == 0)
+            m_NumEncodingThreads = 1;
         m_Use_MultiThreading = m_NumEncodingThreads > 1;
 
         m_EncodeParameterStorage = new APCEncodeThreadParam[m_NumEncodingThreads];
-        if (!m_EncodeParameterStorage) {
+        if (!m_EncodeParameterStorage)
+        {
             return CE_Unknown;
         }
 
         m_EncodingThreadHandle = new std::thread[m_NumEncodingThreads];
-        if (!m_EncodingThreadHandle) {
+        if (!m_EncodingThreadHandle)
+        {
             delete[] m_EncodeParameterStorage;
             m_EncodeParameterStorage = NULL;
 
             return CE_Unknown;
         }
 
-        CMP_DWORD   i;
+        CMP_DWORD i;
 
-        for(i=0; i < m_NumEncodingThreads; i++) {
+        for (i = 0; i < m_NumEncodingThreads; i++)
+        {
             // Create single encoder instance
             m_encoder[i] = new APCBlockEncoder(m_quality);
 
-
             // Cleanup if problem!
-            if (!m_encoder[i]) {
-
+            if (!m_encoder[i])
+            {
                 delete[] m_EncodeParameterStorage;
                 m_EncodeParameterStorage = NULL;
 
                 delete[] m_EncodingThreadHandle;
                 m_EncodingThreadHandle = NULL;
 
-                for (CMP_DWORD j = 0; j<i; j++) {
+                for (CMP_DWORD j = 0; j < i; j++)
+                {
                     delete m_encoder[j];
                     m_encoder[j] = NULL;
                 }
@@ -257,30 +282,28 @@ CodecError CCodec_APC::InitializeAPCLibrary() {
 #ifdef USE_DBGTRACE
             //DbgTrace(("Encoder[%d]:ModeMask %X, Quality %f",i,m_ModeMask,m_Quality));
 #endif
-
         }
 
         // Create the encoding threads in the suspended state
-        for (i = 0; i<m_NumEncodingThreads; i++) {
+        for (i = 0; i < m_NumEncodingThreads; i++)
+        {
             // Initialize thread parameters.
             m_EncodeParameterStorage[i].encoder = m_encoder[i];
             // Inform the thread that at the moment it doesn't have any work to do
             // but that it should wait for some and not exit
-            m_EncodeParameterStorage[i].run = FALSE;
+            m_EncodeParameterStorage[i].run  = FALSE;
             m_EncodeParameterStorage[i].exit = FALSE;
 
-            m_EncodingThreadHandle[i] = std::thread(
-                                            APCThreadProcEncode,
-                                            (void*)&m_EncodeParameterStorage[i]
-                                        );
+            m_EncodingThreadHandle[i] = std::thread(APCThreadProcEncode, (void*)&m_EncodeParameterStorage[i]);
             m_LiveThreads++;
         }
 
-
         // Create single decoder instance
         m_decoder = new APCBlockDecoder();
-        if(!m_decoder) {
-            for (CMP_DWORD j = 0; j<m_NumEncodingThreads; j++) {
+        if (!m_decoder)
+        {
+            for (CMP_DWORD j = 0; j < m_NumEncodingThreads; j++)
+            {
                 delete m_encoder[j];
                 m_encoder[j] = NULL;
             }
@@ -292,31 +315,34 @@ CodecError CCodec_APC::InitializeAPCLibrary() {
     return CE_OK;
 }
 
-
-CodecError CCodec_APC::EncodeAPCBlock(CMP_BYTE *in,  CMP_BYTE *out) {
+CodecError CCodec_APC::EncodeAPCBlock(CMP_BYTE* in, CMP_BYTE* out)
+{
 #ifdef USE_NOMULTITHREADING
     m_Use_MultiThreading = false;
 #endif
 
-    if (m_Use_MultiThreading) {
-        CMP_WORD   threadIndex;
+    if (m_Use_MultiThreading)
+    {
+        CMP_WORD threadIndex;
 
         // Loop and look for an available thread
         CMP_BOOL found = FALSE;
-        threadIndex = m_LastThread;
-        while (found == FALSE) {
-
+        threadIndex    = m_LastThread;
+        while (found == FALSE)
+        {
             if (m_EncodeParameterStorage == NULL)
                 return CE_Unknown;
 
-            if(m_EncodeParameterStorage[threadIndex].run == FALSE) {
+            if (m_EncodeParameterStorage[threadIndex].run == FALSE)
+            {
                 found = TRUE;
                 break;
             }
 
             // Increment and wrap the thread index
             threadIndex++;
-            if(threadIndex == m_LiveThreads) {
+            if (threadIndex == m_LiveThreads)
+            {
                 threadIndex = 0;
             }
         }
@@ -324,41 +350,47 @@ CodecError CCodec_APC::EncodeAPCBlock(CMP_BYTE *in,  CMP_BYTE *out) {
         m_LastThread = threadIndex;
 
         // Copy the input data into the thread storage
-        memcpy(m_EncodeParameterStorage[threadIndex].in,in,m_xdim * m_ydim * 4 * sizeof(CMP_BYTE));
+        memcpy(m_EncodeParameterStorage[threadIndex].in, in, m_xdim * m_ydim * 4 * sizeof(CMP_BYTE));
 
         // Set the output pointer for the thread to the provided location
         m_EncodeParameterStorage[threadIndex].out = out;
 
         // Tell the thread to start working
         m_EncodeParameterStorage[threadIndex].run = TRUE;
-    } else {
+    }
+    else
+    {
         // Copy the input data into the thread storage
-        memcpy(m_EncodeParameterStorage[0].in, in, m_xdim * m_ydim * 4  * sizeof(CMP_BYTE));
+        memcpy(m_EncodeParameterStorage[0].in, in, m_xdim * m_ydim * 4 * sizeof(CMP_BYTE));
 
         // Set the output pointer for the thread to write
         m_EncodeParameterStorage[0].out = out;
-        m_encoder[0]->CompressBlock(m_EncodeParameterStorage[0].in,m_EncodeParameterStorage[0].out);
+        m_encoder[0]->CompressBlock(m_EncodeParameterStorage[0].in, m_EncodeParameterStorage[0].out);
     }
     return CE_OK;
 }
 
-CodecError CCodec_APC::FinishAPCEncoding(void) {
-    if(!m_LibraryInitialized) {
+CodecError CCodec_APC::FinishAPCEncoding(void)
+{
+    if (!m_LibraryInitialized)
+    {
         return CE_Unknown;
     }
 
-    if (!m_EncodeParameterStorage) {
+    if (!m_EncodeParameterStorage)
+    {
         return CE_Unknown;
     }
 
-    if (m_Use_MultiThreading) {
-
+    if (m_Use_MultiThreading)
+    {
         // Wait for all the live threads to finish any current work
-        for(CMP_DWORD i=0; i < m_LiveThreads; i++) {
-
+        for (CMP_DWORD i = 0; i < m_LiveThreads; i++)
+        {
             // If a thread is in the running state then we need to wait for it to finish
             // its work from the producer
-            while (m_EncodeParameterStorage[i].run == TRUE) {
+            while (m_EncodeParameterStorage[i].run == TRUE)
+            {
                 std::this_thread::sleep_for(std::chrono::milliseconds(1));
             }
         }
@@ -366,14 +398,16 @@ CodecError CCodec_APC::FinishAPCEncoding(void) {
     return CE_OK;
 }
 
-CodecError CCodec_APC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+CodecError CCodec_APC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2)
+{
     CodecError err = InitializeAPCLibrary();
-    if (err != CE_OK) return err;
+    if (err != CE_OK)
+        return err;
 
     // Source image size
     int xsize = bufferIn.GetWidth();
     int ysize = bufferIn.GetHeight();
-    int zsize = 1; //todo: add depth to support 3d textures
+    int zsize = 1;  //todo: add depth to support 3d textures
 
     // Block sizes to partition the source data into for compression
     m_xdim = bufferOut.GetBlockWidth();
@@ -381,14 +415,14 @@ CodecError CCodec_APC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut,
     m_zdim = 1;
 
     CodecError result = CE_OK;
-    int xdim = m_xdim;
-    int ydim = m_ydim;
+    int        xdim   = m_xdim;
+    int        ydim   = m_ydim;
 
     //g_APCEncode.m_xdim = m_xdim;
     //g_APCEncode.m_ydim = m_ydim;
     //g_APCEncode.m_zdim = m_zdim;
 
-    uint8_t *bufferOutput = bufferOut.GetData();
+    uint8_t* bufferOutput = bufferOut.GetData();
 
     int x, y, z;
     int xblocks = (xsize + m_xdim - 1) / m_xdim;
@@ -399,31 +433,36 @@ CodecError CCodec_APC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut,
 
     float TotalBlocks = (float)(yblocks * xblocks);
 
-    CMP_BYTE *srcBlock = (CMP_BYTE *)malloc(xdim*ydim * 4);
+    CMP_BYTE* srcBlock = (CMP_BYTE*)malloc(xdim * ydim * 4);
 
-    for (z = 0; z < zblocks; z++) {
-        for (y = 0; y < yblocks; y++) {
-            for (x = 0; x < xblocks; x++) {
+    for (z = 0; z < zblocks; z++)
+    {
+        for (y = 0; y < yblocks; y++)
+        {
+            for (x = 0; x < xblocks; x++)
+            {
                 processingBlock++;
 
                 // Output block size for GTC is fixed at 16 bytes
-                offset = ((z * yblocks + y) * xblocks + x) * 16;
-                uint8_t *bp = bufferOutput + offset;
+                offset      = ((z * yblocks + y) * xblocks + x) * 16;
+                uint8_t* bp = bufferOutput + offset;
                 memset(srcBlock, 0, sizeof(srcBlock));
                 bufferIn.ReadBlockRGBA(x * m_xdim, y * m_ydim, (CMP_BYTE)m_xdim, (CMP_BYTE)m_ydim, srcBlock);
                 EncodeAPCBlock(srcBlock, bp);
             }
 
-            if (pFeedbackProc) {
-                if ((processingBlock % 10) == 0) {
+            if (pFeedbackProc)
+            {
+                if ((processingBlock % 10) == 0)
+                {
                     float fProgress = 100.f * ((float)(processingBlock) / TotalBlocks);
-                    if (pFeedbackProc(fProgress, pUser1, pUser2)) {
+                    if (pFeedbackProc(fProgress, pUser1, pUser2))
+                    {
                         result = CE_Aborted;
                         break;
                     }
                 }
             }
-
         }
     }
 
@@ -438,32 +477,40 @@ CodecError CCodec_APC::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut,
 }
 
 #ifdef USE_FILEIO_DECODE
-FILE * gt_File_Decode = NULL;
-char ModesUsed[CMP_MAXGTMODES+1];
+FILE* gt_File_Decode = NULL;
+char  ModesUsed[CMP_MAXGTMODES + 1];
 #endif
 
-CodecError CCodec_APC::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+CodecError CCodec_APC::Decompress(CCodecBuffer&       bufferIn,
+                                  CCodecBuffer&       bufferOut,
+                                  Codec_Feedback_Proc pFeedbackProc,
+                                  CMP_DWORD_PTR       pUser1,
+                                  CMP_DWORD_PTR       pUser2)
+{
     CodecError err = InitializeAPCLibrary();
-    if (err != CE_OK) return err;
+    if (err != CE_OK)
+        return err;
 
     m_xdim = bufferIn.GetBlockWidth();
     m_ydim = bufferIn.GetBlockHeight();
     m_zdim = 1;
 
-    if (m_xdim == 0) m_xdim = 4;
-    if (m_ydim == 0) m_ydim = 4;
+    if (m_xdim == 0)
+        m_xdim = 4;
+    if (m_ydim == 0)
+        m_ydim = 4;
 
     // Our Compressed data Blocks are always 128 bit long (4x4 blocks)
-    const CMP_DWORD imageWidth = bufferIn.GetWidth();
+    const CMP_DWORD imageWidth  = bufferIn.GetWidth();
     const CMP_DWORD imageHeight = bufferIn.GetHeight();
 
-    const CMP_DWORD CompBlockX   = m_xdim;
-    const CMP_DWORD CompBlockY   = m_ydim;
-    CMP_BYTE  Block_Width        = (CMP_BYTE)m_xdim;
-    CMP_BYTE  Block_Height       = (CMP_BYTE)m_ydim;
-    const CMP_DWORD dwBlocksX   = ((bufferIn.GetWidth() + (CompBlockX - 1)) / CompBlockX);
-    const CMP_DWORD dwBlocksY   = ((bufferIn.GetHeight() + (CompBlockY - 1)) / CompBlockY);
-    const CMP_DWORD dwBlocksZ   = 1;
+    const CMP_DWORD CompBlockX      = m_xdim;
+    const CMP_DWORD CompBlockY      = m_ydim;
+    CMP_BYTE        Block_Width     = (CMP_BYTE)m_xdim;
+    CMP_BYTE        Block_Height    = (CMP_BYTE)m_ydim;
+    const CMP_DWORD dwBlocksX       = ((bufferIn.GetWidth() + (CompBlockX - 1)) / CompBlockX);
+    const CMP_DWORD dwBlocksY       = ((bufferIn.GetHeight() + (CompBlockY - 1)) / CompBlockY);
+    const CMP_DWORD dwBlocksZ       = 1;
     const CMP_DWORD dwBufferInDepth = 1;
 
     // Override the current input buffer Pitch size  (Since it will be set according to the Compressed Block Sizes
@@ -471,59 +518,68 @@ CodecError CCodec_APC::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOu
     bufferIn.SetPitch(16 * dwBlocksX);
 
     // Output data size Pitch
-    CMP_DWORD  dwPitch = bufferOut.GetPitch();
+    CMP_DWORD dwPitch = bufferOut.GetPitch();
 
     // Output Buffer
-    CMP_BYTE *pDataOut = bufferOut.GetData();
+    CMP_BYTE* pDataOut = bufferOut.GetData();
 
+    const CMP_DWORD dwBlocksXY = dwBlocksX * dwBlocksY;
 
-    const CMP_DWORD dwBlocksXY = dwBlocksX*dwBlocksY;
-
-    for (CMP_DWORD cmpRowY = 0; cmpRowY < dwBlocksY; cmpRowY++) {      // Compressed images row = height
-        for (CMP_DWORD cmpColX = 0; cmpColX < dwBlocksX; cmpColX++) {  // Compressed images Col = width
-            union FBLOCKS {
-                CMP_BYTE    decodedBlock[144][4];            // max 12x12 block size
-                CMP_BYTE    destBlock[576];                  // max 12x12x4
-                CMP_DWORD   destBlockDW[BLOCK_SIZE_4X4];
+    for (CMP_DWORD cmpRowY = 0; cmpRowY < dwBlocksY; cmpRowY++)
+    {  // Compressed images row = height
+        for (CMP_DWORD cmpColX = 0; cmpColX < dwBlocksX; cmpColX++)
+        {  // Compressed images Col = width
+            union FBLOCKS
+            {
+                CMP_BYTE  decodedBlock[144][4];  // max 12x12 block size
+                CMP_BYTE  destBlock[576];        // max 12x12x4
+                CMP_DWORD destBlockDW[BLOCK_SIZE_4X4];
             } DecData;
 
             APC6_BLOCK compressedBlock;
-            int bufferSize= sizeof(compressedBlock) / sizeof(unsigned long);
+            int        bufferSize = sizeof(compressedBlock) / sizeof(unsigned long);
 
             bufferIn.ReadBlock(cmpColX * 4, cmpRowY * 4, compressedBlock.dwRawData, bufferSize);
 
             // Encode to the appropriate location in the compressed image
-            m_decoder->DecompressBlock(DecData.decodedBlock, (CMP_BYTE *)compressedBlock.dwRawData);
-
+            m_decoder->DecompressBlock(DecData.decodedBlock, (CMP_BYTE*)compressedBlock.dwRawData);
 
             // Now that we have a decoded block lets copy that data over to the target image buffer
-            CMP_DWORD outCol = cmpColX*Block_Width;
-            CMP_DWORD outRow = cmpRowY*Block_Height;
+            CMP_DWORD outCol    = cmpColX * Block_Width;
+            CMP_DWORD outRow    = cmpRowY * Block_Height;
             CMP_DWORD outImgRow = outRow;
             CMP_DWORD outImgCol = outCol;
 
-            for (int row = 0; row < Block_Height; row++) {
-                CMP_DWORD  nextRowCol = (outRow + row)*dwPitch + (outCol * 4);
-                CMP_BYTE*  pData = (CMP_BYTE*)(pDataOut + nextRowCol);
-                if ((outImgRow + row) < imageHeight) {
+            for (int row = 0; row < Block_Height; row++)
+            {
+                CMP_DWORD nextRowCol = (outRow + row) * dwPitch + (outCol * 4);
+                CMP_BYTE* pData      = (CMP_BYTE*)(pDataOut + nextRowCol);
+                if ((outImgRow + row) < imageHeight)
+                {
                     outImgCol = outCol;
-                    for (int col = 0; col < Block_Width; col++) {
+                    for (int col = 0; col < Block_Width; col++)
+                    {
                         CMP_DWORD w = outImgCol + col;
-                        if (w < imageWidth) {
-                            int index = row*Block_Width + col;
-                            *pData++ = (CMP_BYTE)DecData.decodedBlock[index][BC_COMP_RED];
-                            *pData++ = (CMP_BYTE)DecData.decodedBlock[index][BC_COMP_GREEN];
-                            *pData++ = (CMP_BYTE)DecData.decodedBlock[index][BC_COMP_BLUE];
-                            *pData++ = (CMP_BYTE)DecData.decodedBlock[index][BC_COMP_ALPHA];
-                        } else break;
+                        if (w < imageWidth)
+                        {
+                            int index = row * Block_Width + col;
+                            *pData++  = (CMP_BYTE)DecData.decodedBlock[index][BC_COMP_RED];
+                            *pData++  = (CMP_BYTE)DecData.decodedBlock[index][BC_COMP_GREEN];
+                            *pData++  = (CMP_BYTE)DecData.decodedBlock[index][BC_COMP_BLUE];
+                            *pData++  = (CMP_BYTE)DecData.decodedBlock[index][BC_COMP_ALPHA];
+                        }
+                        else
+                            break;
                     }
                 }
             }
         }
 
-        if (pFeedbackProc) {
+        if (pFeedbackProc)
+        {
             float fProgress = 100.f * (cmpRowY * dwBlocksX) / dwBlocksXY;
-            if (pFeedbackProc(fProgress, pUser1, pUser2)) {
+            if (pFeedbackProc(fProgress, pUser1, pUser2))
+            {
                 return CE_Aborted;
             }
         }
@@ -533,12 +589,22 @@ CodecError CCodec_APC::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOu
 }
 
 // Not implemented
-CodecError CCodec_APC::Compress_Fast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+CodecError CCodec_APC::Compress_Fast(CCodecBuffer&       bufferIn,
+                                     CCodecBuffer&       bufferOut,
+                                     Codec_Feedback_Proc pFeedbackProc,
+                                     CMP_DWORD_PTR       pUser1,
+                                     CMP_DWORD_PTR       pUser2)
+{
     return CE_OK;
 }
 
 // Not implemented
-CodecError CCodec_APC::Compress_SuperFast(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+CodecError CCodec_APC::Compress_SuperFast(CCodecBuffer&       bufferIn,
+                                          CCodecBuffer&       bufferOut,
+                                          Codec_Feedback_Proc pFeedbackProc,
+                                          CMP_DWORD_PTR       pUser1,
+                                          CMP_DWORD_PTR       pUser2)
+{
     return CE_OK;
 }
 

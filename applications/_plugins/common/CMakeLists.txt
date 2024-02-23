@@ -5,10 +5,10 @@ set (PLUGIN_COMMON_H   "")
 if (OPTION_CMP_QT)
     set(PLUGIN_COMMON_SRC_QT
         mipstoqimage.cpp
-        )
+    )
     set(PLUGIN_COMMON_INC_QT
         mipstoqimage.h
-        )
+    )
 else()
     set(PLUGIN_COMMON_SRC_QT)
     set(PLUGIN_COMMON_INC_QT)
@@ -72,9 +72,11 @@ target_include_directories(CMP_Common PRIVATE
   ${PROJECT_SOURCE_DIR}/cmp_framework
   ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
   ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib
+  ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib/common
   ${PROJECT_SOURCE_DIR}/applications/_plugins/common/gltf
   ${PROJECT_SOURCE_DIR}/cmp_core/shaders
   ${PROJECT_SOURCE_DIR}/cmp_core/source
+  ${PROJECT_SOURCE_DIR}/applications/_plugins/cimage
   ${PROJECT_SOURCE_DIR}/applications/_plugins/cmesh
   ${PROJECT_SOURCE_DIR}/applications/_plugins/cmesh/mesh_optimizer
   ${PROJECT_SOURCE_DIR}/applications/_libs/gpu_decode
@@ -85,11 +87,24 @@ target_include_directories(CMP_Common PRIVATE
   ${PROJECT_SOURCE_DIR}/../common/lib/ext/glm
   ${OpenCV_INCLUDE_DIRS}
   ${OpenEXR_INCLUDE_DIRS}
-  )
+)
 
 if (OPTION_CMP_QT)
     target_link_libraries(CMP_Common Qt5::Widgets)
 endif()
 
-set_target_properties(CMP_Common PROPERTIES FOLDER "Libs")
+if (OPTION_BUILD_BROTLIG)
+    target_include_directories(CMP_Common PUBLIC ${PROJECT_SOURCE_DIR}/cmp_compressonatorlib/brotlig)
+
+    # should there be an error if OPTION_CMP_DIRECTX isn't ON?
+    target_link_libraries(CMP_Common
+        ExtBrotlig
+        dxcompiler.lib
+        dxgi.lib
+        d3d12.lib
+        dxguid.lib
+    )
+endif()
+
+set_target_properties(CMP_Common PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_LIBS})
 

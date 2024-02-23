@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2022  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2022-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -39,7 +39,7 @@
 
 using namespace BrotliG;
 
-template<int N, typename T>
+template <int N, typename T>
 static inline T align(T a)
 {
     return (a + T(N) - 1) & ~(N - 1);
@@ -55,13 +55,23 @@ inline std::string HrToString(HRESULT hr)
 class HrException : public std::runtime_error
 {
 public:
-    HrException(HRESULT hr) : std::runtime_error(HrToString(hr)), m_hr(hr) {}
-    HRESULT Error() const { return m_hr; }
+    HrException(HRESULT hr)
+        : std::runtime_error(HrToString(hr))
+        , m_hr(hr)
+    {
+    }
+    HRESULT Error() const
+    {
+        return m_hr;
+    }
+
 private:
     const HRESULT m_hr;
 };
 
-#define SAFE_RELEASE(p) if (p) (p)->Release()
+#define SAFE_RELEASE(p) \
+    if (p)              \
+    (p)->Release()
 
 inline void ThrowIfFailed(HRESULT hr)
 {
@@ -100,57 +110,9 @@ inline void SetNameIndexed(ID3D12Object*, LPCWSTR, UINT)
 #define NAME_D3D12_OBJECT(x) SetName((x).Get(), L#x)
 #define NAME_D3D12_OBJECT_INDEXED(x, n) SetNameIndexed((x)[n].Get(), L#x, n)
 
-class PageStream
-{
-public:
-    static constexpr uint32_t sMaxTiles = (1 << 10) - 1;
-    static constexpr uint32_t sBrotligId = BROTLIG_STREAM_ID;
-
-#pragma pack(push, 1)
-
-    struct Header
-    {
-        uint8_t id;
-        uint8_t magic;
-
-        uint16_t startTile;
-
-        uint32_t maxReadSizeIdx : 2;
-        uint32_t tileSizeIdx : 2;
-        uint32_t numTiles : 10;
-        uint32_t lastTileSize : 18;
-
-        inline bool IsValid() const
-        {
-            return id == (magic ^ 0xff);
-        }
-
-        inline size_t GetUncompressedSize() const
-        {
-            return numTiles * GetTileSize() -
-                (lastTileSize == 0 ? 0 : GetTileSize() - lastTileSize);
-        }
-
-        inline size_t GetTileSize() const
-        {
-            return BROTLIG_MIN_PAGE_SIZE << tileSizeIdx;
-        }
-
-        inline size_t GetMaxReadSize() const
-        {
-            return BROTLIG_MIN_MAX_READ_SIZE << maxReadSizeIdx;
-        }
-    };
-
-#pragma pack(pop)
-
-    static_assert(sizeof(Header) == 8, "Tile stream header size overrun!");
-};
-
 // Helper function for acquiring the first available hardware adapter that supports Direct3D 12.
 // If no such adapter can be found, *ppAdapter will be set to nullptr.
-_Use_decl_annotations_
-void BrotligCompute::GetHardwareAdapter(IDXGIFactory2* pFactory, IDXGIAdapter1** ppAdapter)
+_Use_decl_annotations_ void BrotligCompute::GetHardwareAdapter(IDXGIFactory2* pFactory, IDXGIAdapter1** ppAdapter)
 {
     ComPtr<IDXGIAdapter1> adapter;
     *ppAdapter = nullptr;
@@ -186,11 +148,10 @@ bool BrotligCompute::Setup(uint32_t maxStreamsPerLaunch, uint32_t launchSize)
 
     maxStreamsPerLaunch = std::min<uint32_t>(maxStreamsPerLaunch, BROTLIG_GPUD_DEFAULT_MAX_STREAMS_PER_LAUNCH);
 
-    if (!m_initialized || m_maxStreamsPerLaunch != maxStreamsPerLaunch ||
-        m_launchSize != launchSize)
+    if (!m_initialized || m_maxStreamsPerLaunch != maxStreamsPerLaunch || m_launchSize != launchSize)
     {
         m_maxStreamsPerLaunch = maxStreamsPerLaunch;
-        m_launchSize = launchSize;
+        m_launchSize          = launchSize;
 
         InitResources();
     }
@@ -227,11 +188,7 @@ bool BrotligCompute::InitDevice()
         ComPtr<IDXGIAdapter> warpAdapter;
         ThrowIfFailed(factory->EnumWarpAdapter(IID_PPV_ARGS(&warpAdapter)));
 
-        ThrowIfFailed(D3D12CreateDevice(
-            warpAdapter.Get(),
-            D3D_FEATURE_LEVEL_12_0,
-            IID_PPV_ARGS(&m_device)
-        ));
+        ThrowIfFailed(D3D12CreateDevice(warpAdapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&m_device)));
 
         DXGI_ADAPTER_DESC desc;
         warpAdapter->GetDesc(&desc);
@@ -243,14 +200,10 @@ bool BrotligCompute::InitDevice()
         ComPtr<IDXGIAdapter1> hardwareAdapter;
         GetHardwareAdapter(factory.Get(), &hardwareAdapter);
 
-        ThrowIfFailed(D3D12CreateDevice(
-            hardwareAdapter.Get(),
-            D3D_FEATURE_LEVEL_12_0,
-            IID_PPV_ARGS(&m_device)
-        ));
+        ThrowIfFailed(D3D12CreateDevice(hardwareAdapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&m_device)));
     }
 
-    D3D12_FEATURE_DATA_SHADER_MODEL model{ D3D_SHADER_MODEL_6_5 };
+    D3D12_FEATURE_DATA_SHADER_MODEL model{D3D_SHADER_MODEL_6_5};
     ThrowIfFailed(m_device->CheckFeatureSupport(D3D12_FEATURE_SHADER_MODEL, &model, sizeof(model)));
 
     if (model.HighestShaderModel < D3D_SHADER_MODEL_6_0)
@@ -267,11 +220,10 @@ void BrotligCompute::InitResources()
 {
     // Queue
     {
-        D3D12_COMMAND_QUEUE_DESC queueDesc = { D3D12_COMMAND_LIST_TYPE_COMPUTE, 0, D3D12_COMMAND_QUEUE_FLAG_NONE };
+        D3D12_COMMAND_QUEUE_DESC queueDesc = {D3D12_COMMAND_LIST_TYPE_COMPUTE, 0, D3D12_COMMAND_QUEUE_FLAG_NONE};
         ThrowIfFailed(m_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_commandQueue)));
         ThrowIfFailed(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_COMPUTE, IID_PPV_ARGS(&m_commandAllocator)));
-        ThrowIfFailed(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_COMPUTE,
-            m_commandAllocator.Get(), nullptr, IID_PPV_ARGS(&m_commandList)));
+        ThrowIfFailed(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_COMPUTE, m_commandAllocator.Get(), nullptr, IID_PPV_ARGS(&m_commandList)));
         ThrowIfFailed(m_device->CreateFence(0, D3D12_FENCE_FLAG_SHARED, IID_PPV_ARGS(&m_fence)));
 
         m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
@@ -291,20 +243,18 @@ void BrotligCompute::InitResources()
 
             ComPtr<ID3DBlob> signature;
             ComPtr<ID3DBlob> error;
-            ThrowIfFailed(D3DX12SerializeVersionedRootSignature(&computeRootSignatureDesc,
-                D3D_ROOT_SIGNATURE_VERSION_1_1, &signature, &error));
+            ThrowIfFailed(D3DX12SerializeVersionedRootSignature(&computeRootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_1, &signature, &error));
 
             if (error)
                 printf("Root signature creation failed with: %s\n", (LPCSTR)error->GetBufferPointer());
 
-            ThrowIfFailed(m_device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(),
-                IID_PPV_ARGS(&m_rootSignature)));
+            ThrowIfFailed(m_device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&m_rootSignature)));
 
             NAME_D3D12_OBJECT(m_rootSignature);
         }
 
         ComPtr<IDxcLibrary> library;
-        HRESULT hr;
+        HRESULT             hr;
         ThrowIfFailed(DxcCreateInstance(CLSID_DxcLibrary, IID_PPV_ARGS(&library)));
 
         ComPtr<IDxcCompiler> compiler;
@@ -313,7 +263,7 @@ void BrotligCompute::InitResources()
         ComPtr<IDxcIncludeHandler> includeHandler;
         library->CreateIncludeHandler(&includeHandler);
 
-        uint32_t codePage = CP_UTF8;
+        uint32_t                 codePage = CP_UTF8;
         ComPtr<IDxcBlobEncoding> sourceBlob;
         hr = library->CreateBlobFromFile(p_sShaderName, &codePage, &sourceBlob);
         if (FAILED(hr))
@@ -327,7 +277,7 @@ void BrotligCompute::InitResources()
         }
 
         // Check supported shader model and SIMD width and configure the decompressor kernel accordingly
-        D3D12_FEATURE_DATA_SHADER_MODEL model{ D3D_SHADER_MODEL_6_5 };
+        D3D12_FEATURE_DATA_SHADER_MODEL model{D3D_SHADER_MODEL_6_5};
         ThrowIfFailed(m_device->CheckFeatureSupport(D3D12_FEATURE_SHADER_MODEL, &model, sizeof(model)));
 
         D3D12_FEATURE_DATA_D3D12_OPTIONS1 options1;
@@ -344,8 +294,8 @@ void BrotligCompute::InitResources()
         printf(options4.Native16BitShaderOpsSupported ? "Yes\n" : "No\n");
 
         bool bUseWaveIntrinsics = options1.WaveOps;
-        bool bUseWaveMatch = model.HighestShaderModel >= D3D_SHADER_MODEL_6_5;
-        bool b16bitTypes = options4.Native16BitShaderOpsSupported;
+        bool bUseWaveMatch      = model.HighestShaderModel >= D3D_SHADER_MODEL_6_5;
+        bool b16bitTypes        = options4.Native16BitShaderOpsSupported;
 
         WCHAR simdWidth[32];
         swprintf_s(simdWidth, L"-DSIMD_WIDTH=%d", options1.WaveLaneCountMin);
@@ -360,14 +310,21 @@ void BrotligCompute::InitResources()
             b16bitTypes ? L"-enable-16bit-types" : L""
         };*/
 
-        LPCWSTR args[] = {
-            L"-I..\\..\\brotlig\\src\\decoder\\"
-        };
+        LPCWSTR args[] = {L"-I..\\..\\brotlig\\src\\decoder\\"};
 
-        static LPCWSTR shaderModelName[] = { L"cs_6_0", L"cs_6_1", L"cs_6_2", L"cs_6_3", L"cs_6_4", L"cs_6_5" };
+        static LPCWSTR shaderModelName[] = {L"cs_6_0", L"cs_6_1", L"cs_6_2", L"cs_6_3", L"cs_6_4", L"cs_6_5"};
 
         ComPtr<IDxcOperationResult> result;
-        hr = compiler->Compile(sourceBlob.Get(), p_sShaderName, L"CSMain", shaderModelName[model.HighestShaderModel & 15], args, _countof(args), NULL, 0, includeHandler.Get(), &result);
+        hr = compiler->Compile(sourceBlob.Get(),
+                               p_sShaderName,
+                               L"CSMain",
+                               shaderModelName[model.HighestShaderModel & 15],
+                               args,
+                               _countof(args),
+                               NULL,
+                               0,
+                               includeHandler.Get(),
+                               &result);
 
         if (SUCCEEDED(hr))
             result->GetStatus(&hr);
@@ -391,14 +348,15 @@ void BrotligCompute::InitResources()
         result->GetResult(&computeShader);
 
         D3D12_COMPUTE_PIPELINE_STATE_DESC pipelineDesc = {};
-        pipelineDesc.pRootSignature = m_rootSignature.Get();
+        pipelineDesc.pRootSignature                    = m_rootSignature.Get();
 
-        pipelineDesc.CS.BytecodeLength = computeShader->GetBufferSize();
+        pipelineDesc.CS.BytecodeLength  = computeShader->GetBufferSize();
         pipelineDesc.CS.pShaderBytecode = computeShader->GetBufferPointer();
 
         // ThrowIfFailed(m_device->CreateComputePipelineState(&pipelineDesc, IID_PPV_ARGS(&m_pipelineState)));
         hr = m_device->CreateComputePipelineState(&pipelineDesc, IID_PPV_ARGS(&m_pipelineState));
-        if (!m_pipelineState) {
+        if (!m_pipelineState)
+        {
             printf("Fatal: pipeline state creation failed\n");
             exit(-1);
         }
@@ -408,13 +366,12 @@ void BrotligCompute::InitResources()
     {
         m_controlSize = sizeof(uint32_t) + 3 * sizeof(uint32_t) * m_maxStreamsPerLaunch;
 
-        ThrowIfFailed(m_device->CreateCommittedResource(
-            &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
-            D3D12_HEAP_FLAG_NONE,
-            &CD3DX12_RESOURCE_DESC::Buffer(BROTLIG_GPUD_DEFAULT_MAX_TEMP_BUFFER_SIZE + m_controlSize),
-            D3D12_RESOURCE_STATE_GENERIC_READ,
-            nullptr,
-            IID_PPV_ARGS(&m_uploadBuffer)));
+        ThrowIfFailed(m_device->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+                                                        D3D12_HEAP_FLAG_NONE,
+                                                        &CD3DX12_RESOURCE_DESC::Buffer(BROTLIG_GPUD_DEFAULT_MAX_TEMP_BUFFER_SIZE + m_controlSize),
+                                                        D3D12_RESOURCE_STATE_GENERIC_READ,
+                                                        nullptr,
+                                                        IID_PPV_ARGS(&m_uploadBuffer)));
 
         ThrowIfFailed(m_device->CreateCommittedResource(
             &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
@@ -432,21 +389,19 @@ void BrotligCompute::InitResources()
             nullptr,
             IID_PPV_ARGS(&m_outBuffer)));
 
-        ThrowIfFailed(m_device->CreateCommittedResource(
-            &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
-            D3D12_HEAP_FLAG_NONE,
-            &CD3DX12_RESOURCE_DESC::Buffer(m_controlSize, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS),
-            D3D12_RESOURCE_STATE_COMMON,
-            nullptr,
-            IID_PPV_ARGS(&m_controlBuffer)));
+        ThrowIfFailed(m_device->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),
+                                                        D3D12_HEAP_FLAG_NONE,
+                                                        &CD3DX12_RESOURCE_DESC::Buffer(m_controlSize, D3D12_RESOURCE_FLAG_ALLOW_UNORDERED_ACCESS),
+                                                        D3D12_RESOURCE_STATE_COMMON,
+                                                        nullptr,
+                                                        IID_PPV_ARGS(&m_controlBuffer)));
 
-        ThrowIfFailed(m_device->CreateCommittedResource(
-            &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_READBACK),
-            D3D12_HEAP_FLAG_NONE,
-            &CD3DX12_RESOURCE_DESC::Buffer(BROTLIG_GPUD_DEFAULT_MAX_TEMP_BUFFER_SIZE),
-            D3D12_RESOURCE_STATE_COPY_DEST,
-            nullptr,
-            IID_PPV_ARGS(&m_readbackBuffer)));
+        ThrowIfFailed(m_device->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_READBACK),
+                                                        D3D12_HEAP_FLAG_NONE,
+                                                        &CD3DX12_RESOURCE_DESC::Buffer(BROTLIG_GPUD_DEFAULT_MAX_TEMP_BUFFER_SIZE),
+                                                        D3D12_RESOURCE_STATE_COPY_DEST,
+                                                        nullptr,
+                                                        IID_PPV_ARGS(&m_readbackBuffer)));
 
         m_uploadBuffer->Map(0, nullptr, (void**)&m_pUploadPtr);
     }
@@ -457,18 +412,17 @@ void BrotligCompute::InitResources()
 void BrotligCompute::InitQueries()
 {
     D3D12_QUERY_HEAP_DESC heapDesc{};
-    heapDesc.Count = BROTLIG_GPUD_DEFAULT_MAX_QUERIES;
+    heapDesc.Count    = BROTLIG_GPUD_DEFAULT_MAX_QUERIES;
     heapDesc.NodeMask = 0;
-    heapDesc.Type = D3D12_QUERY_HEAP_TYPE_TIMESTAMP;
+    heapDesc.Type     = D3D12_QUERY_HEAP_TYPE_TIMESTAMP;
     m_device->CreateQueryHeap(&heapDesc, IID_PPV_ARGS(&m_queryHeap));
 
-    ThrowIfFailed(m_device->CreateCommittedResource(
-        &CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_READBACK),
-        D3D12_HEAP_FLAG_NONE,
-        &CD3DX12_RESOURCE_DESC::Buffer(BROTLIG_GPUD_DEFAULT_MAX_QUERIES * sizeof(uint64_t)),
-        D3D12_RESOURCE_STATE_COPY_DEST,
-        nullptr,
-        IID_PPV_ARGS(&m_queryReadback)));
+    ThrowIfFailed(m_device->CreateCommittedResource(&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_READBACK),
+                                                    D3D12_HEAP_FLAG_NONE,
+                                                    &CD3DX12_RESOURCE_DESC::Buffer(BROTLIG_GPUD_DEFAULT_MAX_QUERIES * sizeof(uint64_t)),
+                                                    D3D12_RESOURCE_STATE_COPY_DEST,
+                                                    nullptr,
+                                                    IID_PPV_ARGS(&m_queryReadback)));
 
     ThrowIfFailed(m_queryReadback->Map(0, nullptr, reinterpret_cast<void**>(&m_gpuTimes)));
 }
@@ -476,7 +430,7 @@ void BrotligCompute::InitQueries()
 void BrotligCompute::KickoffCompute()
 {
     ThrowIfFailed(m_commandList->Close());
-    ID3D12CommandList* ppCommandLists[] = { m_commandList.Get() };
+    ID3D12CommandList* ppCommandLists[] = {m_commandList.Get()};
     m_commandQueue->ExecuteCommandLists(1, ppCommandLists);
 
     UINT64 fenceValue = InterlockedIncrement(&m_fenceValue);
@@ -502,8 +456,7 @@ void BrotligCompute::EndTimestamp(uint32_t idx)
 
     // Resolve the data
     const uint64_t dstOffset = idx * 2 * sizeof(uint64_t);
-    m_commandList->ResolveQueryData(m_queryHeap.Get(), D3D12_QUERY_TYPE_TIMESTAMP,
-        idx * 2, 2, m_queryReadback.Get(), dstOffset);
+    m_commandList->ResolveQueryData(m_queryHeap.Get(), D3D12_QUERY_TYPE_TIMESTAMP, idx * 2, 2, m_queryReadback.Get(), dstOffset);
 }
 
 double BrotligCompute::GetDeltaTime(uint32_t idx)
@@ -531,8 +484,7 @@ void BrotligCompute::RemoveOutputBuffer(uint32_t outputId)
 
 bool BrotligCompute::AddInput(const uint8_t* ptr, size_t size, size_t outsize, uint32_t outputId)
 {
-    if (m_inputs.size() == m_maxStreamsPerLaunch ||
-        m_inBytes + align<BROTLIG_DATA_ALIGNMENT>(size) > BROTLIG_GPUD_DEFAULT_MAX_TEMP_BUFFER_SIZE ||
+    if (m_inputs.size() == m_maxStreamsPerLaunch || m_inBytes + align<BROTLIG_DATA_ALIGNMENT>(size) > BROTLIG_GPUD_DEFAULT_MAX_TEMP_BUFFER_SIZE ||
         m_outBytes + align<BROTLIG_DATA_ALIGNMENT>(outsize) > BROTLIG_GPUD_DEFAULT_MAX_TEMP_BUFFER_SIZE)
     {
         return false;
@@ -545,7 +497,7 @@ bool BrotligCompute::AddInput(const uint8_t* ptr, size_t size, size_t outsize, u
         throw("Corrupt stream.\n");
     }
 
-    if (header->Id != PageStream::sBrotligId)
+    if (header->Id != BROTLIG_STREAM_ID)
     {
         throw("Incorrect stream format: %d\n", header->Id);
     }
@@ -554,7 +506,8 @@ bool BrotligCompute::AddInput(const uint8_t* ptr, size_t size, size_t outsize, u
 
     if (m_outBytes + align<BROTLIG_DATA_ALIGNMENT>(outputSize) > BROTLIG_GPUD_DEFAULT_MAX_TEMP_BUFFER_SIZE)
     {
-        if (m_inputs.size() == 0) throw("Staging buffer is too small");
+        if (m_inputs.size() == 0)
+            throw("Staging buffer is too small");
         return false;
     }
 
@@ -567,10 +520,10 @@ bool BrotligCompute::AddInput(const uint8_t* ptr, size_t size, size_t outsize, u
 
     CompressedStream stream;
 
-    stream.inputPos = m_inBytes;
+    stream.inputPos  = m_inBytes;
     stream.inputSize = size;
 
-    stream.uncompPos = m_outBytes;
+    stream.uncompPos  = m_outBytes;
     stream.uncompSize = outputSize;
 
     stream.outputId = outputId;
@@ -586,7 +539,7 @@ bool BrotligCompute::AddInput(const uint8_t* ptr, size_t size, size_t outsize, u
 void BrotligCompute::ClearInputs()
 {
     m_inputs.clear();
-    m_inBytes = 0;
+    m_inBytes  = 0;
     m_outBytes = 0;
 }
 
@@ -610,29 +563,26 @@ bool BrotligCompute::Execute()
             *pControl++ = 0;
         }
 
-        m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_controlBuffer.Get(),
-            D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST));
+        m_commandList->ResourceBarrier(
+            1, &CD3DX12_RESOURCE_BARRIER::Transition(m_controlBuffer.Get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST));
 
-        m_commandList->CopyBufferRegion(m_controlBuffer.Get(), 0, m_uploadBuffer.Get(),
-            BROTLIG_GPUD_DEFAULT_MAX_TEMP_BUFFER_SIZE, 4 + m_inputs.size() * 12);
+        m_commandList->CopyBufferRegion(m_controlBuffer.Get(), 0, m_uploadBuffer.Get(), BROTLIG_GPUD_DEFAULT_MAX_TEMP_BUFFER_SIZE, 4 + m_inputs.size() * 12);
 
-        m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_controlBuffer.Get(),
-            D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_UNORDERED_ACCESS));
+        m_commandList->ResourceBarrier(
+            1, &CD3DX12_RESOURCE_BARRIER::Transition(m_controlBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_UNORDERED_ACCESS));
     }
 
     // Upload input (sub)streams
     {
-        m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_inBuffer.Get(),
-            D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST));
+        m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_inBuffer.Get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST));
 
         m_commandList->CopyBufferRegion(m_inBuffer.Get(), 0, m_uploadBuffer.Get(), 0, m_inBytes);
 
-        m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_inBuffer.Get(),
-            D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COMMON));
+        m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_inBuffer.Get(), D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_COMMON));
     }
 
-    m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_outBuffer.Get(),
-        D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_UNORDERED_ACCESS));
+    m_commandList->ResourceBarrier(
+        1, &CD3DX12_RESOURCE_BARRIER::Transition(m_outBuffer.Get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_UNORDERED_ACCESS));
 
     m_commandList->SetPipelineState(m_pipelineState.Get());
     m_commandList->SetComputeRootSignature(m_rootSignature.Get());
@@ -647,13 +597,13 @@ bool BrotligCompute::Execute()
 
     // Download output
     {
-        m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_outBuffer.Get(),
-            D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COPY_SOURCE));
+        m_commandList->ResourceBarrier(
+            1, &CD3DX12_RESOURCE_BARRIER::Transition(m_outBuffer.Get(), D3D12_RESOURCE_STATE_UNORDERED_ACCESS, D3D12_RESOURCE_STATE_COPY_SOURCE));
 
         m_commandList->CopyBufferRegion(m_readbackBuffer.Get(), 0, m_outBuffer.Get(), 0, m_outBytes);
 
-        m_commandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_outBuffer.Get(),
-            D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_UNORDERED_ACCESS));
+        m_commandList->ResourceBarrier(
+            1, &CD3DX12_RESOURCE_BARRIER::Transition(m_outBuffer.Get(), D3D12_RESOURCE_STATE_COPY_SOURCE, D3D12_RESOURCE_STATE_UNORDERED_ACCESS));
     }
 
     KickoffCompute();
@@ -667,15 +617,14 @@ bool BrotligCompute::Execute()
         if (it2 != m_outputList.end())
         {
             const auto& output = it2->second;
-            UINT8* tptr = pData + stream.uncompPos;
-            memcpy(output,
-                tptr, stream.uncompSize);
+            UINT8*      tptr   = pData + stream.uncompPos;
+            memcpy(output, tptr, stream.uncompSize);
         }
     }
 
     m_inputs.clear();
 
-    m_inBytes = 0;
+    m_inBytes  = 0;
     m_outBytes = 0;
 
     m_readbackBuffer->Unmap(0, nullptr);

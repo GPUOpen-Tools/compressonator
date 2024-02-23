@@ -28,7 +28,7 @@ target_include_directories(Mesh_Compressor PUBLIC
 target_compile_definitions(Mesh_Compressor PRIVATE BUILD_AS_PLUGIN_DLL=1)
 
 set_target_properties(Mesh_Compressor PROPERTIES 
-        FOLDER "Plugin_Dynamic/Mesh_Compression"
+        FOLDER ${PROJECT_FOLDER_SDK_PLUGIN_DYNAMIC}
         RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/bin/debug/plugins"
         RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin/release/plugins"
 )

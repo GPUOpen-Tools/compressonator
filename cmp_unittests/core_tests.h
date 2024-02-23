@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2020(c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2020-2024, Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -20,7 +20,6 @@
 // THE SOFTWARE.
 //
 //=====================================================================
-
 
 #ifndef CORE_TESTS_H
 #define CORE_TESTS_H

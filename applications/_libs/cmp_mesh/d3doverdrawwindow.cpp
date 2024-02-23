@@ -1,5 +1,5 @@
-/************************************************************************************//**
-// Copyright (c) 2006-2015 Advanced Micro Devices, Inc. All rights reserved.
+/************************************************************************************/ /**
+// Copyright (c) 2006-2024 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
@@ -9,73 +9,75 @@
 #include "fit.h"
 
 #ifdef _WIN32
-typedef struct _VERTEX {
+typedef struct _VERTEX
+{
     float x, y, z;
 } VERTEX;
 
-D3DOverdrawWindow::
-D3DOverdrawWindow(void) :
-    m_pViewpoint(0),
-    m_nViewpointCount(0) {
-    m_pSoup = NULL;
-    m_VB = NULL;
-    m_VD = NULL;
-    m_IB = NULL;
-    m_nTris = 0;
-    m_nVerts = 0;
-    m_fSize = 1;
-    m_vCenter = Vector3();
+D3DOverdrawWindow::D3DOverdrawWindow(void)
+    : m_pViewpoint(0)
+    , m_nViewpointCount(0)
+{
+    m_pSoup    = NULL;
+    m_VB       = NULL;
+    m_VD       = NULL;
+    m_IB       = NULL;
+    m_nTris    = 0;
+    m_nVerts   = 0;
+    m_fSize    = 1;
+    m_vCenter  = Vector3();
     m_bCullCCW = true;
 
-    for (unsigned int i = 0; i < NUM_QUERIES; i++) {
-        m_pOcclusionQuery[i] = NULL;
+    for (unsigned int i = 0; i < NUM_QUERIES; i++)
+    {
+        m_pOcclusionQuery[i]    = NULL;
         m_pOcclusionQueryPix[i] = NULL;
     }
-
 }
 
-int
-D3DOverdrawWindow::
-SetSoup(Soup* pSoup) {
-
+int D3DOverdrawWindow::SetSoup(Soup* pSoup)
+{
     // re-create vertex and index buffers
     m_pSoup = pSoup;
 
-    if (!SetVB()) {
+    if (!SetVB())
+    {
         return 0;
     }
 
-    if (!SetIB()) {
+    if (!SetIB())
+    {
         return 0;
     }
 
     // create other device objects as needed
-    if (!m_VD) {
-        if (!SetVD()) {
+    if (!m_VD)
+    {
+        if (!SetVD())
+        {
             return 0;
         }
     }
 
-    if (!m_pOcclusionQuery[0] || !m_pOcclusionQueryPix[0]) {
-        if (!SetQuery()) {
+    if (!m_pOcclusionQuery[0] || !m_pOcclusionQueryPix[0])
+    {
+        if (!SetQuery())
+        {
             return 0;
         }
     }
-
 
     return 1;
 }
 
-void
-D3DOverdrawWindow::
-SetViewpoint(const float* pViewpoint, UINT nViewpoints) {
-    m_pViewpoint = (const Vector3*) pViewpoint;
+void D3DOverdrawWindow::SetViewpoint(const float* pViewpoint, UINT nViewpoints)
+{
+    m_pViewpoint      = (const Vector3*)pViewpoint;
     m_nViewpointCount = nViewpoints;
 }
 
-void
-D3DOverdrawWindow::
-SetupWorld(void) {
+void D3DOverdrawWindow::SetupWorld(void)
+{
 #ifdef _DX11_1_
     using namespace DirectX;
     DirectX::XMMATRIX T, R, S;
@@ -83,10 +85,10 @@ SetupWorld(void) {
     // start with identity
     m_mWorld = XMMatrixIdentity();
     // translate object's center to origin
-    T = XMMatrixTranslation(-m_vCenter[0], -m_vCenter[1], -m_vCenter[2]);
+    T        = XMMatrixTranslation(-m_vCenter[0], -m_vCenter[1], -m_vCenter[2]);
     m_mWorld = XMMatrixMultiply(m_mWorld, T);
     // scale so that size is 1
-    S = XMMatrixScaling(1 / m_fSize, 1 / m_fSize, 1 / m_fSize);
+    S        = XMMatrixScaling(1 / m_fSize, 1 / m_fSize, 1 / m_fSize);
     m_mWorld = XMMatrixMultiply(m_mWorld, S);
 #else
     D3DXMATRIXA16 T, R, S;
@@ -102,32 +104,33 @@ SetupWorld(void) {
 #endif
 }
 
-void
-D3DOverdrawWindow::
-SetCulling(bool bCullCCW) {
+void D3DOverdrawWindow::SetCulling(bool bCullCCW)
+{
     m_bCullCCW = bCullCCW;
 }
 
-void
-D3DOverdrawWindow::
-SetupView(int iViewpoint) {
+void D3DOverdrawWindow::SetupView(int iViewpoint)
+{
     Vector3 e(0, 0, 1), u;
 
-    if (m_pViewpoint && iViewpoint >= 0 &&
-            iViewpoint < (int) m_nViewpointCount) {
+    if (m_pViewpoint && iViewpoint >= 0 && iViewpoint < (int)m_nViewpointCount)
+    {
         e = m_pViewpoint[iViewpoint];
     }
 
-    if (e[1]*e[1] < e[0]*e[0]) {
+    if (e[1] * e[1] < e[0] * e[0])
+    {
         u = Normalize(Vector3(-e[2], 0, e[0]));
-    } else {
+    }
+    else
+    {
         u = Normalize(Vector3(0, e[2], -e[1]));
     }
 
 #ifdef _DX11_1_
-    auto eye = DirectX::XMVectorSet(e[0], e[1], e[2], 0);
-    auto at = DirectX::XMVectorZero();
-    auto up = DirectX::XMVectorSet(u[0], u[1], u[2], 0);
+    auto eye   = DirectX::XMVectorSet(e[0], e[1], e[2], 0);
+    auto at    = DirectX::XMVectorZero();
+    auto up    = DirectX::XMVectorSet(u[0], u[1], u[2], 0);
     m_mViewing = DirectX::XMMatrixLookAtRH(eye, at, up);
 #else
     D3DXVECTOR3 eye(e[0], e[1], e[2]);
@@ -137,9 +140,8 @@ SetupView(int iViewpoint) {
 #endif
 }
 
-void
-D3DOverdrawWindow::
-SetupTransforms(void) {
+void D3DOverdrawWindow::SetupTransforms(void)
+{
 #ifdef _DX11_1_
 
     D3DMATRIX d3d_mat;
@@ -152,7 +154,6 @@ SetupTransforms(void) {
     std::memcpy(&d3d_mat, &_float_4x4, sizeof(_float_4x4));
     //Set view
     d3d->SetTransform(D3DTS_VIEW, &d3d_mat);
-
 
     //convert XMMatrix to XMFLOAT4X4
     DirectX::XMStoreFloat4x4(&_float_4x4, m_mWorld);
@@ -178,9 +179,8 @@ SetupTransforms(void) {
 #endif
 }
 
-void
-D3DOverdrawWindow::
-SetupViewport(void) {
+void D3DOverdrawWindow::SetupViewport(void)
+{
     LPDIRECT3DSURFACE9 back;
     d3d->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &back);
     D3DSURFACE_DESC desc;
@@ -188,23 +188,21 @@ SetupViewport(void) {
     back->Release();
     D3DVIEWPORT9 full;
     full.X = full.Y = 0;
-    full.Width = desc.Width;
-    full.Height = desc.Height;
-    full.MinZ = 0;
-    full.MaxZ = 1;
+    full.Width      = desc.Width;
+    full.Height     = desc.Height;
+    full.MinZ       = 0;
+    full.MaxZ       = 1;
     d3d->SetViewport(&full);
 }
 
-void
-D3DOverdrawWindow::
-SetCluster(const std::vector<int>* pCluster, const std::vector<int>* pClusterStart) {
-    m_pCluster = pCluster;
+void D3DOverdrawWindow::SetCluster(const std::vector<int>* pCluster, const std::vector<int>* pClusterStart)
+{
+    m_pCluster      = pCluster;
     m_pClusterStart = pClusterStart;
 }
 
-void
-D3DOverdrawWindow::
-SetupDraw(int iViewpoint) {
+void D3DOverdrawWindow::SetupDraw(int iViewpoint)
+{
     SetupViewport();
     SetupWorld();
     SetupView(iViewpoint);
@@ -214,9 +212,8 @@ SetupDraw(int iViewpoint) {
     Clear();
 }
 
-void
-D3DOverdrawWindow::
-SetupUniforms(void) {
+void D3DOverdrawWindow::SetupUniforms(void)
+{
     d3d->SetRenderState(D3DRS_ZENABLE, TRUE);
     d3d->SetRenderState(D3DRS_ZWRITEENABLE, TRUE);
     d3d->SetRenderState(D3DRS_LIGHTING, FALSE);
@@ -225,26 +222,30 @@ SetupUniforms(void) {
     d3d->SetRenderState(D3DRS_COLORWRITEENABLE, FALSE);
 }
 
-int
-D3DOverdrawWindow::
-Graph(std::vector<t_edge>& Edge) {
-    m_iTested = 0;
+int D3DOverdrawWindow::Graph(std::vector<t_edge>& Edge)
+{
+    m_iTested   = 0;
     m_iRendered = 0;
     d3d->BeginScene();
 
-    for (int i = 0; i < static_cast<int>(m_pClusterStart->size()) - 1; i++) {
-        for (int j = i + 1; j < static_cast<int>(m_pClusterStart->size()) - 1 ; j++) {
+    for (int i = 0; i < static_cast<int>(m_pClusterStart->size()) - 1; i++)
+    {
+        for (int j = i + 1; j < static_cast<int>(m_pClusterStart->size()) - 1; j++)
+        {
             int cij = Loop(i, j);
             //debugf("%d %d -> %d", i, j, cij);
 
             int cji = Loop(j, i);
 
             //debugf(("%d %d -> %d", j, i, cji));
-            if (cij > cji) {
+            if (cij > cji)
+            {
                 t_edge e = {j, i, cij - cji};
 
                 Edge.push_back(e);
-            } else if (cij < cji) {
+            }
+            else if (cij < cji)
+            {
                 t_edge e = {i, j, cji - cij};
 
                 Edge.push_back(e);
@@ -261,9 +262,8 @@ Graph(std::vector<t_edge>& Edge) {
     return 1;
 }
 
-int
-D3DOverdrawWindow::
-Object(float& fOverdraw, float& fOverdrawMax) {
+int D3DOverdrawWindow::Object(float& fOverdraw, float& fOverdrawMax)
+{
     d3d->BeginScene();
     bool ok = NormalizedLoop(fOverdraw, fOverdrawMax);
     d3d->EndScene();
@@ -271,15 +271,13 @@ Object(float& fOverdraw, float& fOverdrawMax) {
     return (ok) ? 1 : 0;
 }
 
-int
-D3DOverdrawWindow::
-Display(void) {
+int D3DOverdrawWindow::Display(void)
+{
     return 1;
 }
 
-void
-D3DOverdrawWindow::
-Clear(void) {
+void D3DOverdrawWindow::Clear(void)
+{
     D3DVIEWPORT9 old;
     d3d->GetViewport(&old);
     LPDIRECT3DSURFACE9 back;
@@ -289,21 +287,25 @@ Clear(void) {
     back->Release();
     D3DVIEWPORT9 full;
     full.X = full.Y = 0;
-    full.Width = desc.Width;
-    full.Height = desc.Height;
-    full.MinZ = 0;
-    full.MaxZ = 1;
+    full.Width      = desc.Width;
+    full.Height     = desc.Height;
+    full.MinZ       = 0;
+    full.MaxZ       = 1;
     d3d->SetViewport(&full);
-    d3d->Clear(0, NULL,  D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
+    d3d->Clear(0,
+               NULL,
+               D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER,
                //d3d->Clear(0, NULL,  D3DCLEAR_ZBUFFER,
-               D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+               D3DCOLOR_XRGB(0, 0, 0),
+               1.0f,
+               0);
     d3d->SetViewport(&old);
 }
 
-void
-D3DOverdrawWindow::
-DrawCluster(int iCluster) {
-    if (!m_VB || !m_VD | !m_IB) {
+void D3DOverdrawWindow::DrawCluster(int iCluster)
+{
+    if (!m_VB || !m_VD | !m_IB)
+    {
         return;
     }
 
@@ -313,18 +315,17 @@ DrawCluster(int iCluster) {
     d3d->SetIndices(m_IB);
     d3d->SetRenderState(D3DRS_CULLMODE, (m_bCullCCW) ? D3DCULL_CCW : D3DCULL_CW);
     // Draw selected cluster
-    d3d->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_nVerts,
-                              (*m_pClusterStart)[iCluster] * 3,
-                              (*m_pClusterStart)[iCluster + 1] - (*m_pClusterStart)[iCluster]);
+    d3d->DrawIndexedPrimitive(
+        D3DPT_TRIANGLELIST, 0, 0, m_nVerts, (*m_pClusterStart)[iCluster] * 3, (*m_pClusterStart)[iCluster + 1] - (*m_pClusterStart)[iCluster]);
 }
 
-void
-D3DOverdrawWindow::
-DrawComplement(int iClusterA, int iClusterB) {
+void D3DOverdrawWindow::DrawComplement(int iClusterA, int iClusterB)
+{
     int a = min(iClusterA, iClusterB);
     int b = max(iClusterA, iClusterB);
 
-    if (!m_VB || !m_VD | !m_IB) {
+    if (!m_VB || !m_VD | !m_IB)
+    {
         return;
     }
 
@@ -336,23 +337,27 @@ DrawComplement(int iClusterA, int iClusterB) {
     // Draw selected cluster
     int nTris;
 
-    if ((nTris = (*m_pClusterStart)[a] - (*m_pClusterStart)[0]) > 0) {
+    if ((nTris = (*m_pClusterStart)[a] - (*m_pClusterStart)[0]) > 0)
+    {
         d3d->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_nVerts, 0, nTris);
     }
 
-    if ((nTris = (*m_pClusterStart)[b] - (*m_pClusterStart)[a + 1]) > 0) {
+    if ((nTris = (*m_pClusterStart)[b] - (*m_pClusterStart)[a + 1]) > 0)
+    {
         d3d->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_nVerts, (*m_pClusterStart)[a + 1] * 3, nTris);
     }
 
-    if ((nTris = m_nTris - (*m_pClusterStart)[b + 1]) > 0) {
+    if ((nTris = m_nTris - (*m_pClusterStart)[b + 1]) > 0)
+    {
         d3d->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_nVerts, (*m_pClusterStart)[b + 1] * 3, nTris);
     }
 }
 
 HRESULT
-D3DOverdrawWindow::
-DrawModel(void) {
-    if (!m_VB || !m_VD | !m_IB) {
+D3DOverdrawWindow::DrawModel(void)
+{
+    if (!m_VB || !m_VD | !m_IB)
+    {
         return E_FAIL;
     }
 
@@ -362,30 +367,29 @@ DrawModel(void) {
     d3d->SetIndices(m_IB);
     d3d->SetRenderState(D3DRS_CULLMODE, (m_bCullCCW) ? D3DCULL_CCW : D3DCULL_CW);
     // Draw entire mesh
-    return d3d->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0,
-                                     m_nVerts, 0, m_nTris);
+    return d3d->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_nVerts, 0, m_nTris);
 }
 
-int
-D3DOverdrawWindow::
-Loop(int iClusterA, int iClusterB) {
-    int nOverdraw = 0;
+int D3DOverdrawWindow::Loop(int iClusterA, int iClusterB)
+{
+    int   nOverdraw = 0;
     DWORD numberOfPixelsDrawn;
-    int j = 0;
+    int   j = 0;
     SetupDraw(0);
 
-    for (unsigned int iViewpoint = 0; iViewpoint < m_nViewpointCount; iViewpoint++) {
+    for (unsigned int iViewpoint = 0; iViewpoint < m_nViewpointCount; iViewpoint++)
+    {
         SetupView(iViewpoint);
         m_iTested++;
 
-        if (!CheckIsect(iClusterA, iClusterB)) {
+        if (!CheckIsect(iClusterA, iClusterB))
+        {
             continue;
         }
 
         m_iRendered++;
         SetupTransforms();
-        d3d->Clear(0, NULL,  D3DCLEAR_ZBUFFER,
-                   D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+        d3d->Clear(0, NULL, D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
 
         //Add this to remove triple dependencies
         //DrawComplement(iClusterA, iClusterB);
@@ -401,10 +405,11 @@ Loop(int iClusterA, int iClusterB) {
         // Empty the command buffer and wait until the GPU is idle.
         j++;
 
-        if (j == NUM_QUERIES) {
-            for (j = 0; j < NUM_QUERIES; j++) {
-                while (S_FALSE == m_pOcclusionQuery[j]->GetData(&numberOfPixelsDrawn,
-                        sizeof(DWORD), D3DGETDATA_FLUSH))
+        if (j == NUM_QUERIES)
+        {
+            for (j = 0; j < NUM_QUERIES; j++)
+            {
+                while (S_FALSE == m_pOcclusionQuery[j]->GetData(&numberOfPixelsDrawn, sizeof(DWORD), D3DGETDATA_FLUSH))
                     ;
 
                 nOverdraw += numberOfPixelsDrawn;
@@ -416,9 +421,9 @@ Loop(int iClusterA, int iClusterB) {
 
     int jnum = j;
 
-    for (int j = 0; j < jnum; j++) {
-        while (S_FALSE == m_pOcclusionQuery[j]->GetData(&numberOfPixelsDrawn,
-                sizeof(DWORD), D3DGETDATA_FLUSH))
+    for (int j = 0; j < jnum; j++)
+    {
+        while (S_FALSE == m_pOcclusionQuery[j]->GetData(&numberOfPixelsDrawn, sizeof(DWORD), D3DGETDATA_FLUSH))
             ;
 
         nOverdraw += numberOfPixelsDrawn;
@@ -427,16 +432,15 @@ Loop(int iClusterA, int iClusterB) {
     return nOverdraw;
 }
 
-int
-D3DOverdrawWindow::
-Loop(void) {
-    int nOverdraw = 0;
+int D3DOverdrawWindow::Loop(void)
+{
+    int              nOverdraw = 0;
     IDirect3DQuery9* pOcclusionQuery;
-    DWORD numberOfPixelsDrawn;
+    DWORD            numberOfPixelsDrawn;
     d3d->CreateQuery(D3DQUERYTYPE_OCCLUSION, &pOcclusionQuery);
 
-    for (unsigned int iViewpoint = 0; iViewpoint < m_nViewpointCount;
-            iViewpoint++) {
+    for (unsigned int iViewpoint = 0; iViewpoint < m_nViewpointCount; iViewpoint++)
+    {
         // Add an end marker to the command buffer queue.
         pOcclusionQuery->Issue(D3DISSUE_BEGIN);
         // Draw scene
@@ -449,8 +453,7 @@ Loop(void) {
 
         // Force the driver to execute the commands from the command buffer.
         // Empty the command buffer and wait until the GPU is idle.
-        while (S_FALSE == pOcclusionQuery->GetData(&numberOfPixelsDrawn,
-                sizeof(DWORD), D3DGETDATA_FLUSH))
+        while (S_FALSE == pOcclusionQuery->GetData(&numberOfPixelsDrawn, sizeof(DWORD), D3DGETDATA_FLUSH))
             ;
 
         nOverdraw += numberOfPixelsDrawn;
@@ -460,27 +463,28 @@ Loop(void) {
     return nOverdraw;
 }
 
-bool
-D3DOverdrawWindow::
-NormalizedLoop(float& fOverdraw, float& fOverdrawMax) {
-    int nOverdraw = 0;
+bool D3DOverdrawWindow::NormalizedLoop(float& fOverdraw, float& fOverdrawMax)
+{
+    int nOverdraw    = 0;
     int nOverdrawPix = 0;
-    fOverdrawMax = 0;
+    fOverdrawMax     = 0;
     DWORD numberOfPixelsDrawn;
     DWORD numberOfPixelsDrawnPix;
     SetupDraw(0);
 
-    for (unsigned int iViewpoint = 0; iViewpoint < m_nViewpointCount; iViewpoint += NUM_QUERIES) {
-        for (unsigned int j = 0; j < NUM_QUERIES && iViewpoint + j < m_nViewpointCount; j++) {
+    for (unsigned int iViewpoint = 0; iViewpoint < m_nViewpointCount; iViewpoint += NUM_QUERIES)
+    {
+        for (unsigned int j = 0; j < NUM_QUERIES && iViewpoint + j < m_nViewpointCount; j++)
+        {
             SetupView(iViewpoint + j);
             SetupTransforms();
-            d3d->Clear(0, NULL,  D3DCLEAR_ZBUFFER,
-                       D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
+            d3d->Clear(0, NULL, D3DCLEAR_ZBUFFER, D3DCOLOR_XRGB(0, 0, 0), 1.0f, 0);
             // Add an end marker to the command buffer queue.
             m_pOcclusionQuery[j]->Issue(D3DISSUE_BEGIN);
 
             // Draw scene
-            if (FAILED(DrawModel())) {
+            if (FAILED(DrawModel()))
+            {
                 return false;
             }
 
@@ -492,7 +496,8 @@ NormalizedLoop(float& fOverdraw, float& fOverdrawMax) {
             m_pOcclusionQueryPix[j]->Issue(D3DISSUE_BEGIN);
 
             // Draw scene
-            if (FAILED(DrawModel())) {
+            if (FAILED(DrawModel()))
+            {
                 return false;
             }
 
@@ -501,48 +506,53 @@ NormalizedLoop(float& fOverdraw, float& fOverdrawMax) {
             d3d->SetRenderState(D3DRS_ZFUNC, D3DCMP_LESS);
         }
 
-        for (unsigned int j = 0; j < NUM_QUERIES && iViewpoint + j < m_nViewpointCount; j++) {
+        for (unsigned int j = 0; j < NUM_QUERIES && iViewpoint + j < m_nViewpointCount; j++)
+        {
             // Force the driver to execute the commands from the command buffer.
             // Empty the command buffer and wait until the GPU is idle.
-            while (S_FALSE == m_pOcclusionQuery[j]->GetData(&numberOfPixelsDrawn,
-                    sizeof(DWORD), D3DGETDATA_FLUSH))
+            while (S_FALSE == m_pOcclusionQuery[j]->GetData(&numberOfPixelsDrawn, sizeof(DWORD), D3DGETDATA_FLUSH))
                 ;
 
             nOverdraw += numberOfPixelsDrawn;
 
-            while (S_FALSE == m_pOcclusionQueryPix[j]->GetData(&numberOfPixelsDrawnPix,
-                    sizeof(DWORD), D3DGETDATA_FLUSH))
+            while (S_FALSE == m_pOcclusionQueryPix[j]->GetData(&numberOfPixelsDrawnPix, sizeof(DWORD), D3DGETDATA_FLUSH))
                 ;
 
             nOverdrawPix += numberOfPixelsDrawnPix;
 
-            if (numberOfPixelsDrawnPix > 0) {
+            if (numberOfPixelsDrawnPix > 0)
+            {
                 fOverdrawMax = max(fOverdrawMax, numberOfPixelsDrawn / (float)numberOfPixelsDrawnPix);
             }
         }
     }
 
-    if (nOverdrawPix > 0) {
+    if (nOverdrawPix > 0)
+    {
         fOverdraw = nOverdraw / (float)nOverdrawPix;
-    } else {
+    }
+    else
+    {
         fOverdraw = 0;
     }
 
     return true;
 }
 
-int
-D3DOverdrawWindow::
-LostDevice(void) {
-    if (m_VB) {
+int D3DOverdrawWindow::LostDevice(void)
+{
+    if (m_VB)
+    {
         m_VB->Release();
     }
 
-    if (m_IB) {
+    if (m_IB)
+    {
         m_IB->Release();
     }
 
-    if (m_VD) {
+    if (m_VD)
+    {
         m_VD->Release();
     }
 
@@ -550,13 +560,16 @@ LostDevice(void) {
     m_VB = NULL;
     m_IB = NULL;
 
-    for (int i = 0; i < NUM_QUERIES; i++) {
-        if (m_pOcclusionQuery[i]) {
+    for (int i = 0; i < NUM_QUERIES; i++)
+    {
+        if (m_pOcclusionQuery[i])
+        {
             m_pOcclusionQuery[i]->Release();
             m_pOcclusionQuery[i] = NULL;
         }
 
-        if (m_pOcclusionQueryPix[i]) {
+        if (m_pOcclusionQueryPix[i])
+        {
             m_pOcclusionQueryPix[i]->Release();
             m_pOcclusionQueryPix[i] = NULL;
         }
@@ -565,18 +578,17 @@ LostDevice(void) {
     return 1;
 }
 
-void
-D3DOverdrawWindow::
-Reshape(int w, int h) {
+void D3DOverdrawWindow::Reshape(int w, int h)
+{
     Superclass::Reshape(w, h);
     SetupViewport();
     PostRedisplay();
 }
 
-int
-D3DOverdrawWindow::
-SetIB(void) {
-    if (d3d == NULL) {
+int D3DOverdrawWindow::SetIB(void)
+{
+    if (d3d == NULL)
+    {
         return 1;
     }
 
@@ -584,106 +596,110 @@ SetIB(void) {
     void* p = NULL;
     m_nTris = static_cast<int>(m_pSoup->t().size());
 
-    if (m_IB) {
+    if (m_IB)
+    {
         m_IB->Release();
     }
 
-    if (FAILED(d3d->CreateIndexBuffer(3 * m_nTris * sizeof(int), D3DUSAGE_WRITEONLY, D3DFMT_INDEX32,
-                                      D3DPOOL_DEFAULT, &m_IB, NULL))) {
+    if (FAILED(d3d->CreateIndexBuffer(3 * m_nTris * sizeof(int), D3DUSAGE_WRITEONLY, D3DFMT_INDEX32, D3DPOOL_DEFAULT, &m_IB, NULL)))
+    {
         return 0;
     }
 
-    if (FAILED(m_IB->Lock(0, 0, (void**)&p, 0))) {
+    if (FAILED(m_IB->Lock(0, 0, (void**)&p, 0)))
+    {
         return 0;
     }
 
-    for (int i = 0; i < m_nTris; i++) {
-        int* ip = (int*) p;
-        ip[0] = m_pSoup->t(i)[0];
-        ip[1] = m_pSoup->t(i)[1];
-        ip[2] = m_pSoup->t(i)[2];
-        p = &ip[3];
+    for (int i = 0; i < m_nTris; i++)
+    {
+        int* ip = (int*)p;
+        ip[0]   = m_pSoup->t(i)[0];
+        ip[1]   = m_pSoup->t(i)[1];
+        ip[2]   = m_pSoup->t(i)[2];
+        p       = &ip[3];
     }
 
     m_IB->Unlock();
     return 1;
 }
 
-int
-D3DOverdrawWindow::
-SetVB(void) {
-    if (d3d == NULL) {
+int D3DOverdrawWindow::SetVB(void)
+{
+    if (d3d == NULL)
+    {
         return 1;
     }
 
     m_nVerts = static_cast<int>(m_pSoup->v().size());
 
-    if (m_VB) {
+    if (m_VB)
+    {
         m_VB->Release();
         m_VB = NULL;
     }
 
-    if (FAILED(d3d->CreateVertexBuffer(sizeof(VERTEX)*m_nVerts, D3DUSAGE_WRITEONLY, 0,
-                                       D3DPOOL_DEFAULT, &m_VB, NULL))) {
+    if (FAILED(d3d->CreateVertexBuffer(sizeof(VERTEX) * m_nVerts, D3DUSAGE_WRITEONLY, 0, D3DPOOL_DEFAULT, &m_VB, NULL)))
+    {
         return 0;
     }
 
     void* p = NULL;
 
-    if (FAILED(m_VB->Lock(0, 0, (void**)&p, 0))) {
+    if (FAILED(m_VB->Lock(0, 0, (void**)&p, 0)))
+    {
         return 0;
     }
 
-    for (int i = 0; i < m_nVerts; i++) {
-        VERTEX* v = (VERTEX*) p;
-        v->x = m_pSoup->v(i)[0];
-        v->y = m_pSoup->v(i)[1];
-        v->z = m_pSoup->v(i)[2];
-        p = &v[1];
+    for (int i = 0; i < m_nVerts; i++)
+    {
+        VERTEX* v = (VERTEX*)p;
+        v->x      = m_pSoup->v(i)[0];
+        v->y      = m_pSoup->v(i)[1];
+        v->z      = m_pSoup->v(i)[2];
+        p         = &v[1];
     }
 
     m_VB->Unlock();
     return 1;
 }
 
-int
-D3DOverdrawWindow::
-SetVD(void) {
-    if (d3d == NULL) {
+int D3DOverdrawWindow::SetVD(void)
+{
+    if (d3d == NULL)
+    {
         return 1;
     }
 
-    if (m_VD) {
+    if (m_VD)
+    {
         m_VD->Release();
         m_VD = NULL;
     }
 
     // create the vertex description
-    D3DVERTEXELEMENT9 d[] = {
-        {
-            0, 0,  D3DDECLTYPE_FLOAT3,  D3DDECLMETHOD_DEFAULT,
-            D3DDECLUSAGE_POSITION, 0
-        },
-        D3DDECL_END()
-    };
+    D3DVERTEXELEMENT9 d[] = {{0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0}, D3DDECL_END()};
     d3d->CreateVertexDeclaration(d, &m_VD);
     return 1;
 }
 
-int
-D3DOverdrawWindow::
-SetQuery(void) {
-    if (d3d == NULL) {
+int D3DOverdrawWindow::SetQuery(void)
+{
+    if (d3d == NULL)
+    {
         return 1;
     }
 
-    for (int i = 0; i < NUM_QUERIES; i++) {
-        if (m_pOcclusionQuery[i]) {
+    for (int i = 0; i < NUM_QUERIES; i++)
+    {
+        if (m_pOcclusionQuery[i])
+        {
             m_pOcclusionQuery[i]->Release();
             m_pOcclusionQuery[i] = NULL;
         }
 
-        if (m_pOcclusionQueryPix[i]) {
+        if (m_pOcclusionQueryPix[i])
+        {
             m_pOcclusionQueryPix[i]->Release();
             m_pOcclusionQueryPix[i] = NULL;
         }
@@ -695,80 +711,79 @@ SetQuery(void) {
     return 1;
 }
 
-int
-D3DOverdrawWindow::
-ResetDevice(void) {
+int D3DOverdrawWindow::ResetDevice(void)
+{
     Superclass::ResetDevice();
 
-    if (!SetQuery()) {
+    if (!SetQuery())
+    {
         return 0;
     }
 
-    if (!m_pSoup) {
+    if (!m_pSoup)
+    {
         return 1;
     }
 
-    m_pSoup->ComputeNormals(); //TODO: check if we need this
+    m_pSoup->ComputeNormals();  //TODO: check if we need this
 
     // create vertex buffer
-    if (!SetVB()) {
+    if (!SetVB())
+    {
         return 0;
     }
 
-    if (!SetIB()) {
+    if (!SetIB())
+    {
         return 0;
     }
 
-    if (!SetVD()) {
+    if (!SetVD())
+    {
         return 0;
     }
 
     return 1;
 }
 
-void
-D3DOverdrawWindow::
-Fit(void) {
-    if (!m_pSoup) {
-        m_fSize = 1;
+void D3DOverdrawWindow::Fit(void)
+{
+    if (!m_pSoup)
+    {
+        m_fSize   = 1;
         m_vCenter = Vector3();
-    } else {
+    }
+    else
+    {
         BBoxFit(m_pSoup->v(), &m_vCenter, &m_fSize);
     }
 }
 
-void
-D3DOverdrawWindow::
-SetupProjection(void) {
+void D3DOverdrawWindow::SetupProjection(void)
+{
     int w = GetWidth(), h = GetHeight();
 
 #ifdef _DX11_1_
     if (w < h)
-        m_mProjection = DirectX::XMMatrixOrthographicOffCenterRH(
-                            -0.5f, 0.5f, -0.5f * h / w, 0.5f * h / w, 0, 2);
+        m_mProjection = DirectX::XMMatrixOrthographicOffCenterRH(-0.5f, 0.5f, -0.5f * h / w, 0.5f * h / w, 0, 2);
     else
-        m_mProjection = DirectX::XMMatrixOrthographicOffCenterRH(
-                            -0.5f * w / h, 0.5f * w / h, -0.5f, 0.5f, 0, 2);
+        m_mProjection = DirectX::XMMatrixOrthographicOffCenterRH(-0.5f * w / h, 0.5f * w / h, -0.5f, 0.5f, 0, 2);
 #else
     if (w < h)
-        D3DXMatrixOrthoOffCenterRH(&m_mProjection,
-                                   -0.5f, 0.5f, -0.5f * h / w, 0.5f * h / w, 0, 2);
+        D3DXMatrixOrthoOffCenterRH(&m_mProjection, -0.5f, 0.5f, -0.5f * h / w, 0.5f * h / w, 0, 2);
     else
-        D3DXMatrixOrthoOffCenterRH(&m_mProjection,
-                                   -0.5f * w / h, 0.5f * w / h, -0.5f, 0.5f, 0, 2);
+        D3DXMatrixOrthoOffCenterRH(&m_mProjection, -0.5f * w / h, 0.5f * w / h, -0.5f, 0.5f, 0, 2);
 #endif
 }
 
-int
-D3DOverdrawWindow::
-ReleaseBuffers(void) {
+int D3DOverdrawWindow::ReleaseBuffers(void)
+{
     LostDevice();
     return 1;
 }
 
-int
-D3DOverdrawWindow::
-CheckIsect(int iClusterA, int iClusterB) {
+int D3DOverdrawWindow::CheckIsect(int iClusterA, int iClusterB)
+{
 #ifdef _DX11_1_
     DirectX::XMMATRIX mWorldView;
     mWorldView = DirectX::XMMatrixMultiply(m_mWorld, m_mViewing);
@@ -799,23 +814,23 @@ CheckIsect(int iClusterA, int iClusterB) {
     DirectX::XMVECTOR
 #else
     D3DXVECTOR4
-#endif //_DX11_1_
-    vTransA, vTransB;
+#endif  //_DX11_1_
+        vTransA,
+        vTransB;
     float xminA = 2e30f, yminA = 2e30f, xmaxA = -2e30f, ymaxA = -2e30f;
     float xminB = 2e30f, yminB = 2e30f, xmaxB = -2e30f, ymaxB = -2e30f;
 
     for (int i = -1; i < 2; i += 2)
         for (int j = -1; j < 2; j += 2)
-            for (int k = -1; k < 2; k += 2) {
-                Vector3 v = m_vClusterCenter[iClusterA]
-                            + Vector3(m_vClusterDiag[iClusterA][0] / 2.f * i,
-                                      m_vClusterDiag[iClusterA][1] / 2.f * j,
-                                      m_vClusterDiag[iClusterA][2] / 2.f * k);
+            for (int k = -1; k < 2; k += 2)
+            {
+                Vector3 v = m_vClusterCenter[iClusterA] +
+                            Vector3(m_vClusterDiag[iClusterA][0] / 2.f * i, m_vClusterDiag[iClusterA][1] / 2.f * j, m_vClusterDiag[iClusterA][2] / 2.f * k);
 
 #ifdef _DX11_1_
                 //vTransA
                 auto xmv = DirectX::XMVectorSet(v[0], v[1], v[2], 0);
-                vTransA = DirectX::XMVector3Transform(xmv, mWorldView);
+                vTransA  = DirectX::XMVector3Transform(xmv, mWorldView);
 
                 auto w = DirectX::XMVectorGetW(vTransA);
                 auto x = DirectX::XMVectorGetX(vTransA);
@@ -832,13 +847,11 @@ CheckIsect(int iClusterA, int iClusterB) {
                 xmaxA = max(xmaxA, x);
                 ymaxA = max(ymaxA, y);
 
-                v = m_vClusterCenter[iClusterB]
-                    + Vector3(m_vClusterDiag[iClusterB][0] / 2.f * i,
-                              m_vClusterDiag[iClusterB][1] / 2.f * j,
-                              m_vClusterDiag[iClusterB][2] / 2.f * k);
+                v = m_vClusterCenter[iClusterB] +
+                    Vector3(m_vClusterDiag[iClusterB][0] / 2.f * i, m_vClusterDiag[iClusterB][1] / 2.f * j, m_vClusterDiag[iClusterB][2] / 2.f * k);
 
                 //vTransB
-                xmv = DirectX::XMVectorSet(v[0], v[1], v[2], 0);
+                xmv     = DirectX::XMVectorSet(v[0], v[1], v[2], 0);
                 vTransB = DirectX::XMVector3Transform(xmv, mWorldView);
 
                 w = DirectX::XMVectorGetW(vTransB);
@@ -865,10 +878,8 @@ CheckIsect(int iClusterA, int iClusterB) {
                 xmaxA = max(xmaxA, vTransA.x);
                 ymaxA = max(ymaxA, vTransA.y);
 
-                v = m_vClusterCenter[iClusterB]
-                    + Vector3(m_vClusterDiag[iClusterB][0] / 2.f * i,
-                              m_vClusterDiag[iClusterB][1] / 2.f * j,
-                              m_vClusterDiag[iClusterB][2] / 2.f * k);
+                v = m_vClusterCenter[iClusterB] +
+                    Vector3(m_vClusterDiag[iClusterB][0] / 2.f * i, m_vClusterDiag[iClusterB][1] / 2.f * j, m_vClusterDiag[iClusterB][2] / 2.f * k);
 
                 D3DXVec3Transform(&vTransB, (D3DXVECTOR3*)&v[0], &mWorldView);
                 vTransB /= vTransB.w;
@@ -877,34 +888,32 @@ CheckIsect(int iClusterA, int iClusterB) {
                 xmaxB = max(xmaxB, vTransB.x);
                 ymaxB = max(ymaxB, vTransB.y);
 
-#endif //_DX11_1_
-
+#endif  //_DX11_1_
             }
 
-    if (xminA > xmaxB || xminB > xmaxA || yminA > ymaxB || yminB > ymaxA) {
+    if (xminA > xmaxB || xminB > xmaxA || yminA > ymaxB || yminB > ymaxA)
+    {
         return 0;
-    } else {
+    }
+    else
+    {
         return 1;
     }
 
 #endif
 }
 
-void
-D3DOverdrawWindow::
-FitClusters(void) {
-
-    for (int i = 0; i < static_cast<int>(m_pClusterStart->size()) - 1; i++) {
+void D3DOverdrawWindow::FitClusters(void)
+{
+    for (int i = 0; i < static_cast<int>(m_pClusterStart->size()) - 1; i++)
+    {
         Vector3 vCenter;
         Vector3 vDiag;
-        float fSize;
+        float   fSize;
 
         // this ugly casting is my fault.  I'm doing it so that we don't need to make a redundant copy of the index-data
         // because if we do that, we have to deal with the possibility of running out of memory. -- JDB
-        BBoxFit(m_pSoup->v(), (int*)&m_pSoup->t(0),
-                (*m_pClusterStart)[i] * 3,
-                (*m_pClusterStart)[i + 1] - (*m_pClusterStart)[i],
-                &vCenter, &vDiag, &fSize);
+        BBoxFit(m_pSoup->v(), (int*)&m_pSoup->t(0), (*m_pClusterStart)[i] * 3, (*m_pClusterStart)[i + 1] - (*m_pClusterStart)[i], &vCenter, &vDiag, &fSize);
         m_vClusterCenter.push_back(vCenter);
         m_vClusterDiag.push_back(vDiag);
         m_fClusterSize.push_back(fSize);

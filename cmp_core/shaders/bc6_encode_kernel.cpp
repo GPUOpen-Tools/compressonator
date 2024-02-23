@@ -1,9 +1,9 @@
 //=====================================================================
-// Copyright (c) 2021    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2021-2024    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
-// in the Software without restriction, including without limitation the rights to 
+// in the Software without restriction, including without limitation the rights to
 // use, copy, modify, merge, publish, distribute, sublicense, and / or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions :
@@ -68,19 +68,109 @@ void swap(CGU_INT A, CGU_INT B)
 
 __constant CGU_UINT8 BC6_PARTITIONS[MAX_BC6H_PARTITIONS][MAX_SUBSET_SIZE] = {
     {// 0
-     0,     0,     1,     1,     0,     0,     1,     1,     0,     0,     1,     1,     0,     0,     1,     1},
+     0,
+     0,
+     1,
+     1,
+     0,
+     0,
+     1,
+     1,
+     0,
+     0,
+     1,
+     1,
+     0,
+     0,
+     1,
+     1},
     {// 1
-     0,     0,     0,     1,     0,     0,     0,     1,     0,     0,     0,     1,     0,     0,     0,     1},
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1},
     {// 2
-     0,     1,     1,     1,     0,     1,     1,     1,     0,     1,     1,     1,     0,     1,     1,     1},
-    {// 3    
-    0,     0,     0,     1,     0,     0,     1,     1,     0,     0,     1,     1,     0,     1,     1,     1},
+     0,
+     1,
+     1,
+     1,
+     0,
+     1,
+     1,
+     1,
+     0,
+     1,
+     1,
+     1,
+     0,
+     1,
+     1,
+     1},
+    {// 3
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1,
+     1,
+     0,
+     0,
+     1,
+     1,
+     0,
+     1,
+     1,
+     1},
 
     {// 4
-     0,     0,     0,     0,     0,     0,     0,     1,     0,     0,     0,     1,     0,     0,     1,     1},
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     0,
+     1,
+     0,
+     0,
+     1,
+     1},
 
     {// 5
-     0,     0,     1,     1,     0,     1,     1,     1,     0,     1,     1,     1,     1,     1,     1,     1},
+     0,
+     0,
+     1,
+     1,
+     0,
+     1,
+     1,
+     1,
+     0,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1,
+     1},
 
     {// 6
      0,
@@ -1115,7 +1205,7 @@ CGU_FLOAT optQuantAnD_d(CGU_FLOAT  data[MAX_ENTRIES][MAX_DIMENSION_BIG],
                 done = 1;
                 for (j = 0; j < numEntries; j++)
                 {
-                    done      = (done && (index_[j] == index[j]));
+                    done     = (done && (index_[j] == index[j]));
                     index[j] = index_[j];
                 }
                 if (done)
@@ -2174,10 +2264,10 @@ CGU_FLOAT FindBestPattern(BC6H_Encode_local* BC6H_data, CGU_BOOL TwoRegionShapes
     // Index bit size for the patterns been used.
     // All two zone shapes have 3 bits per color, max index value < 8
     // All one zone shapes gave 4 bits per color, max index value < 16
-    CGU_INT8  Index_BitSize = TwoRegionShapes ? 8 : 16;
-    CGU_INT8  max_subsets   = TwoRegionShapes ? 2 : 1;
+    CGU_INT8  Index_BitSize        = TwoRegionShapes ? 8 : 16;
+    CGU_INT8  max_subsets          = TwoRegionShapes ? 2 : 1;
     CGU_FLOAT direction[NCHANNELS] = {};
-    CGU_FLOAT step = 0;
+    CGU_FLOAT step                 = 0;
 
     BC6H_data->region        = max_subsets;
     BC6H_data->index         = 0;
@@ -2198,7 +2288,7 @@ CGU_FLOAT FindBestPattern(BC6H_Encode_local* BC6H_data, CGU_BOOL TwoRegionShapes
     CGU_FLOAT BestError;         //the lowest error from vector direction quantization
     CGU_FLOAT BestError_endpts;  //the lowest error from endpoints extracted from the vector direction quantization
 
-    CGU_FLOAT outB[2][2][MAX_SUBSET_SIZE][MAX_DIMENSION_BIG] = {};
+    CGU_FLOAT outB[2][2][MAX_SUBSET_SIZE][MAX_DIMENSION_BIG]  = {};
     CGU_INT   shape_indicesB[2][MAX_SUBSETS][MAX_SUBSET_SIZE] = {};
 
     for (CGU_INT subset = 0; subset < max_subsets; subset++)
@@ -2212,8 +2302,8 @@ CGU_FLOAT FindBestPattern(BC6H_Encode_local* BC6H_data, CGU_BOOL TwoRegionShapes
                                   &step,                          // step size (check normalization)
                                   3,                              // number of channels (always 3 = RGB for BC6H)
                                   quality                         // Quality set number of retry to get good end points
-                                  // Max retries = MAX_TRY = 4000 when Quality is 1.0
-                                  // Min = 0 and default with quality 0.05 is 200 times
+                                                                  // Max retries = MAX_TRY = 4000 when Quality is 1.0
+                                                                  // Min = 0 and default with quality 0.05 is 200 times
         );
     }
 
@@ -2824,7 +2914,7 @@ void ReIndexShapef(BC6H_Encode_local* BC6H_data, CGU_INT shape_indices[MAX_SUBSE
     CGU_INT   sub0index = 0;
     CGU_INT   sub1index = 0;
     CGU_INT   MaxPallet = 0;
-    CGU_INT   region = (BC6H_data->region - 1);
+    CGU_INT   region    = (BC6H_data->region - 1);
 
     if (region == 0)
         MaxPallet = 16;
@@ -3203,7 +3293,6 @@ static CGU_BOOL endpts_fit(const CGU_INT orig[MAX_SUBSETS][MAX_END_POINTS][MAX_D
     return true;
 }
 
-
 //todo: checkoverflow
 void QuantizeEndPointToF16Prec(CGU_FLOAT EndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG],
                                CGU_INT   iEndPoints[MAX_SUBSETS][MAX_END_POINTS][MAX_DIMENSION_BIG],
@@ -3348,30 +3437,29 @@ CGU_FLOAT EncodePattern(BC6H_Encode_local* BC6H_data, CGU_FLOAT error)
     return error;
 }
 
-
-void CompressBlockBC6_Internal(CMP_GLOBAL unsigned char* outdata,
-                               CGU_UINT32                destIdx,
-                               BC6H_Encode_local*        BC6HEncode_local,
+void CompressBlockBC6_Internal(CMP_GLOBAL unsigned char*     outdata,
+                               CGU_UINT32                    destIdx,
+                               BC6H_Encode_local*            BC6HEncode_local,
                                CMP_GLOBAL const BC6H_Encode* BC6HEncode)
 {
-  //   printf("---SRC---\n");
-  //   CGU_UINT8    blkindex = 0;
-  //   CGU_UINT8    srcindex = 0;
-  //   CGU_FLOAT    f[3];
-  //   for ( CGU_INT32 j = 0; j < 16; j++) {
-  //       printf("%04x,"    , CGU_UINT32(BC6HEncode_local->din[j][0]));   // R
-  //       printf("%04x,"    , CGU_UINT32(BC6HEncode_local->din[j][1]));   // G
-  //       printf("%04x : "  , CGU_UINT32(BC6HEncode_local->din[j][2]));  // B
-  //       f[0] = HalfToFloat(BC6HEncode_local->din[j][0]);   // R
-  //       f[1] = HalfToFloat(BC6HEncode_local->din[j][1]);   // G
-  //       f[2] = HalfToFloat(BC6HEncode_local->din[j][2]);  // B
-  //       printf("%1.3f,", f[0]);    // R
-  //       printf("%1.3f,", f[1]);    // G
-  //       printf("%1.3f :",f[2]);   // B
-  //       printf("%04x, ", CGU_UINT32(FloatToHalf(f[0])));                 // R
-  //       printf("%04x," , CGU_UINT32(FloatToHalf(f[1])));             // G
-  //       printf("%04x\n", CGU_UINT32(FloatToHalf(f[2])));           // B
-  //   }
+    //   printf("---SRC---\n");
+    //   CGU_UINT8    blkindex = 0;
+    //   CGU_UINT8    srcindex = 0;
+    //   CGU_FLOAT    f[3];
+    //   for ( CGU_INT32 j = 0; j < 16; j++) {
+    //       printf("%04x,"    , CGU_UINT32(BC6HEncode_local->din[j][0]));   // R
+    //       printf("%04x,"    , CGU_UINT32(BC6HEncode_local->din[j][1]));   // G
+    //       printf("%04x : "  , CGU_UINT32(BC6HEncode_local->din[j][2]));  // B
+    //       f[0] = HalfToFloat(BC6HEncode_local->din[j][0]);   // R
+    //       f[1] = HalfToFloat(BC6HEncode_local->din[j][1]);   // G
+    //       f[2] = HalfToFloat(BC6HEncode_local->din[j][2]);  // B
+    //       printf("%1.3f,", f[0]);    // R
+    //       printf("%1.3f,", f[1]);    // G
+    //       printf("%1.3f :",f[2]);   // B
+    //       printf("%04x, ", CGU_UINT32(FloatToHalf(f[0])));                 // R
+    //       printf("%04x," , CGU_UINT32(FloatToHalf(f[1])));             // G
+    //       printf("%04x\n", CGU_UINT32(FloatToHalf(f[2])));           // B
+    //   }
 
 #ifdef USE_NEW_SINGLE_HEADER_INTERFACES
     CGU_Vec3f image_src[16];
@@ -3382,7 +3470,7 @@ void CompressBlockBC6_Internal(CMP_GLOBAL unsigned char* outdata,
         image_src[i].z = HalfToFloat((CGU_UINT32)BC6HEncode_local->din[i][2]);
     }
 
-    CGU_Vec4ui cmp        = CompressBlockBC6H_UNORM(image_src, 1.0f);
+    CGU_Vec4ui cmp = CompressBlockBC6H_UNORM(image_src, 1.0f);
 
     outdata[destIdx + 0]  = cmp.x & 0xFF;
     outdata[destIdx + 1]  = (cmp.x >> 8) & 0xFF;
@@ -3455,7 +3543,6 @@ void CompressBlockBC6_Internal(CMP_GLOBAL unsigned char* outdata,
 
     bestError = EncodePattern(BC6HEncode_local, bestError);
 
-
     // used for debugging modes, set the value you want to debug with
     if (BC6HEncode_local->m_mode != 0)
     {
@@ -3468,8 +3555,8 @@ void CompressBlockBC6_Internal(CMP_GLOBAL unsigned char* outdata,
             outdata[destIdx + i] = Cmp_Red_Block[i];
     }
 
-   // for (CGU_INT i = 0; i < 16; i++)
-   //     printf("data[%d] = %x\n", i,outdata[i]);
+    // for (CGU_INT i = 0; i < 16; i++)
+    //     printf("data[%d] = %x\n", i,outdata[i]);
 #endif
 }
 
@@ -4275,8 +4362,8 @@ int CMP_CDECL SetSignedBC6(void* options, CGU_BOOL sf16)
     return CGU_CORE_OK;
 }
 
-int CMP_CDECL CompressBlockBC6(const CGU_UINT16* srcBlock,
-                               unsigned int      srcStrideInShorts,
+int CMP_CDECL CompressBlockBC6(const CGU_UINT16*      srcBlock,
+                               unsigned int           srcStrideInShorts,
                                CMP_GLOBAL CGU_UINT8   cmpBlock[16],
                                const CMP_GLOBAL void* options = NULL)
 {
@@ -4343,8 +4430,8 @@ int CMP_CDECL DecompressBlockBC6(const unsigned char cmpBlock[16], CGU_UINT16 sr
 
 //============================================== OpenCL USER INTERFACE ====================================================
 #ifdef ASPM_OPENCL
-CMP_STATIC CMP_KERNEL void CMP_GPUEncoder(CMP_GLOBAL CGU_UINT8* p_source_pixels,
-                                          CMP_GLOBAL CGU_UINT8* p_encoded_blocks,
+CMP_STATIC CMP_KERNEL void CMP_GPUEncoder(CMP_GLOBAL CGU_UINT8*   p_source_pixels,
+                                          CMP_GLOBAL CGU_UINT8*   p_encoded_blocks,
                                           CMP_GLOBAL Source_Info* SourceInfo,
                                           CMP_GLOBAL BC6H_Encode* BC6HEncode)
 {

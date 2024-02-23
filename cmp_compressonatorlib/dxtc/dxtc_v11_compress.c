@@ -1,6 +1,7 @@
 /*
  * ===============================================================================
- *  Copyright (c) 2004-2006 ATI Technologies Inc.
+ * Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
+ * Copyright (c) 2004-2006 ATI Technologies Inc.
  * ===============================================================================
  * 
  * dxtc_v11_compress.c : A high-performance, reasonable quality DXTC compressor
@@ -123,36 +124,37 @@ static void DXTCDecompressBlock(DWORD block_32[16], DWORD block_dxtc[2])
 {
     DWORD c0, c1, c2, c3;
     DWORD r0, g0, b0, r1, g1, b1;
-    int i;
+    int   i;
 
     c0 = block_dxtc[0] & 0xffff;
-    c1 = block_dxtc[0]>>16;
+    c1 = block_dxtc[0] >> 16;
 
     if (c0 > c1)
     {
-        r0 = ((block_dxtc[0]&0xf800) >> 8);
-        g0 = ((block_dxtc[0]&0x07e0) >> 3);
-        b0 = ((block_dxtc[0]&0x001f) << 3);
+        r0 = ((block_dxtc[0] & 0xf800) >> 8);
+        g0 = ((block_dxtc[0] & 0x07e0) >> 3);
+        b0 = ((block_dxtc[0] & 0x001f) << 3);
 
-
-        r1 = ((block_dxtc[0]&0xf8000000) >> 24);
-        g1 = ((block_dxtc[0]&0x07e00000) >> 19);
-        b1 = ((block_dxtc[0]&0x001f0000) >> 13);
+        r1 = ((block_dxtc[0] & 0xf8000000) >> 24);
+        g1 = ((block_dxtc[0] & 0x07e00000) >> 19);
+        b1 = ((block_dxtc[0] & 0x001f0000) >> 13);
 
         // Apply the lower bit replication to give full dynamic range
-        r0 += (r0>>5); r1 += (r1>>5);
-        g0 += (g0>>6); g1 += (g1>>6);
-        b0 += (b0>>5); b1 += (b1>>5);
+        r0 += (r0 >> 5);
+        r1 += (r1 >> 5);
+        g0 += (g0 >> 6);
+        g1 += (g1 >> 6);
+        b0 += (b0 >> 5);
+        b1 += (b1 >> 5);
 
-        c0 = (r0<<16) | (g0<<8) | b0;
-        c1 = (r1<<16) | (g1<<8) | b1;
-        c2 = (((2*r0+r1)/3)<<16) | (((2*g0+g1)/3)<<8) | (((2*b0+b1)/3));
-        c3 = (((2*r1+r0)/3)<<16) | (((2*g1+g0)/3)<<8) | (((2*b1+b0)/3));
+        c0 = (r0 << 16) | (g0 << 8) | b0;
+        c1 = (r1 << 16) | (g1 << 8) | b1;
+        c2 = (((2 * r0 + r1) / 3) << 16) | (((2 * g0 + g1) / 3) << 8) | (((2 * b0 + b1) / 3));
+        c3 = (((2 * r1 + r0) / 3) << 16) | (((2 * g1 + g0) / 3) << 8) | (((2 * b1 + b0) / 3));
 
-
-        for(i=0; i<16; i++)
+        for (i = 0; i < 16; i++)
         {
-            switch((block_dxtc[1]>>(2*i)) & 3)
+            switch ((block_dxtc[1] >> (2 * i)) & 3)
             {
             case 0:
                 block_32[i] = c0;
@@ -173,28 +175,29 @@ static void DXTCDecompressBlock(DWORD block_32[16], DWORD block_dxtc[2])
     {
         // Dont support transparent decode, but have to handle the case when they're both the same
         {
-            r0 = ((block_dxtc[0]&0xf800) >> 8);
-            g0 = ((block_dxtc[0]&0x07e0) >> 3);
-            b0 = ((block_dxtc[0]&0x001f) << 3);
+            r0 = ((block_dxtc[0] & 0xf800) >> 8);
+            g0 = ((block_dxtc[0] & 0x07e0) >> 3);
+            b0 = ((block_dxtc[0] & 0x001f) << 3);
 
-
-            r1 = ((block_dxtc[0]&0xf8000000) >> 24);
-            g1 = ((block_dxtc[0]&0x07e00000) >> 19);
-            b1 = ((block_dxtc[0]&0x001f0000) >> 13);
+            r1 = ((block_dxtc[0] & 0xf8000000) >> 24);
+            g1 = ((block_dxtc[0] & 0x07e00000) >> 19);
+            b1 = ((block_dxtc[0] & 0x001f0000) >> 13);
 
             // Apply the lower bit replication to give full dynamic range
-            r0 += (r0>>5); r1 += (r1>>5);
-            g0 += (g0>>6); g1 += (g1>>6);
-            b0 += (b0>>5); b1 += (b1>>5);
+            r0 += (r0 >> 5);
+            r1 += (r1 >> 5);
+            g0 += (g0 >> 6);
+            g1 += (g1 >> 6);
+            b0 += (b0 >> 5);
+            b1 += (b1 >> 5);
 
-            c0 = (r0<<16) | (g0<<8) | b0;
-            c1 = (r1<<16) | (g1<<8) | b1;
-            c2 = (((r0+r1)/2)<<16) | (((g0+g1)/2)<<8) | (((b0+b1)/2));
+            c0 = (r0 << 16) | (g0 << 8) | b0;
+            c1 = (r1 << 16) | (g1 << 8) | b1;
+            c2 = (((r0 + r1) / 2) << 16) | (((g0 + g1) / 2) << 8) | (((b0 + b1) / 2));
 
-
-            for(i=0; i<16; i++)
+            for (i = 0; i < 16; i++)
             {
-                switch((block_dxtc[1]>>(2*i)) & 3)
+                switch ((block_dxtc[1] >> (2 * i)) & 3)
                 {
                 case 0:
                     block_32[i] = c0;
@@ -209,7 +212,6 @@ static void DXTCDecompressBlock(DWORD block_32[16], DWORD block_dxtc[2])
                     block_32[i] = 0xff00ff;
                     break;
                 }
-
             }
         }
     }
@@ -220,35 +222,35 @@ static void DXTCDecompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
     BYTE v[8];
 
     DWORD t;
-    int i;
+    int   i;
 
-    v[0] = (BYTE) (block_dxtc[0] & 0xff);
-    v[1] = (BYTE) ((block_dxtc[0]>>8) & 0xff);
+    v[0] = (BYTE)(block_dxtc[0] & 0xff);
+    v[1] = (BYTE)((block_dxtc[0] >> 8) & 0xff);
 
     if (v[0] > v[1])
     {
         // 8-colour block
-        for(i=1; i<7; i++)
+        for (i = 1; i < 7; i++)
         {
-            t = ((7-i)*v[0] + i*v[1] + 3) / 7;
-            v[i+1] = (BYTE) t;
+            t        = ((7 - i) * v[0] + i * v[1] + 3) / 7;
+            v[i + 1] = (BYTE)t;
         }
 
-        for(i=0; i<16; i++)
+        for (i = 0; i < 16; i++)
         {
             if (i > 5)
-                t = (block_dxtc[1]>>((3*(i-6))+2) & 7);
+                t = (block_dxtc[1] >> ((3 * (i - 6)) + 2) & 7);
             else if (i == 5)
-                t = ((block_dxtc[1] & 3)<<1) + ((block_dxtc[0] >> 31)&1);
+                t = ((block_dxtc[1] & 3) << 1) + ((block_dxtc[0] >> 31) & 1);
             else
-                t = (block_dxtc[0]>>((3*i)+16) & 7);
+                t = (block_dxtc[0] >> ((3 * i) + 16) & 7);
 
             block_8[i] = v[t];
         }
     }
     else if (v[0] == v[1])
     {
-        for(i=0; i<16; i++)
+        for (i = 0; i < 16; i++)
             block_8[i] = v[0];
     }
     else
@@ -259,24 +261,27 @@ static void DXTCDecompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
 
 //#define TRY_3_COLOR
 
-#define MARK_BLOCK    { /*v_r = v_b = v_g = 0.0f;*/ average_r = 255.0f;    /*average_g = 128.0f; average_b = 0.0f;*/ }
+#define MARK_BLOCK                                                    \
+    {                       /*v_r = v_b = v_g = 0.0f;*/               \
+        average_r = 255.0f; /*average_g = 128.0f; average_b = 0.0f;*/ \
+    }
 
 //#define AVERAGE_UNIQUE_PIXELS_ONLY        // Even with this the performance increase is minor
 
 //#define AXIS_RGB        1
 //#define AXIS_YCbCr    1        // Pretty poor in most cases, probably shouldn't be used
 //#define AXIS_Y_ONLY    1        // Use for testing; generates greyscale output
-#define AXIS_MUNGE        1        // Raises priority of G at expense of B - seems slightly better than no munging (needs exhaustive testing)
+#define AXIS_MUNGE 1  // Raises priority of G at expense of B - seems slightly better than no munging (needs exhaustive testing)
 //#define AXIS_MUNGE2    1        // Raises priority of G further at expense of R and B - maybe slightly better again...
 
 #if AXIS_RGB
 
-#define CS_RED(r, g, b)        (r)
-#define CS_GREEN(r, g, b)    (g)
-#define CS_BLUE(r, g, b)    (b)
-#define DCS_RED(r, g, b)    (r)
-#define DCS_GREEN(r, g, b)    (g)
-#define DCS_BLUE(r, g, b)    (b)
+#define CS_RED(r, g, b) (r)
+#define CS_GREEN(r, g, b) (g)
+#define CS_BLUE(r, g, b) (b)
+#define DCS_RED(r, g, b) (r)
+#define DCS_GREEN(r, g, b) (g)
+#define DCS_BLUE(r, g, b) (b)
 
 #elif AXIS_YCbCr
 /*
@@ -288,64 +293,67 @@ static void DXTCDecompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
  *    G = Y - 0.34414 * Cb - 0.71414 * Cr
  *    B = Y + 1.77200 * Cb
  */
-#define CS_GREEN(r, g, b)    (0.299f*(r) + 0.587f*(g) + 0.114f*(b))
-#define CS_RED(r, g, b)        (0.5f*(r) - 0.41869f*(g) - 0.08131f*(b) + 128.0f)
-#define CS_BLUE(r, g, b)    (-0.16874f*(r) - 0.33126f*(g) + 0.5f*(b) + 128.0f)
-#define DCS_RED(r, g, b)    ((g) + 1.402f*((r)-128.0f))
-#define DCS_GREEN(r, g, b)    ((g) - 0.34414f*((b) - 128.0f) - 0.71414f*((r)-128.0f))
-#define DCS_BLUE(r, g, b)    ((g) + 1.772f*((b) - 128.0f))
+#define CS_GREEN(r, g, b) (0.299f * (r) + 0.587f * (g) + 0.114f * (b))
+#define CS_RED(r, g, b) (0.5f * (r)-0.41869f * (g)-0.08131f * (b) + 128.0f)
+#define CS_BLUE(r, g, b) (-0.16874f * (r)-0.33126f * (g) + 0.5f * (b) + 128.0f)
+#define DCS_RED(r, g, b) ((g) + 1.402f * ((r)-128.0f))
+#define DCS_GREEN(r, g, b) ((g)-0.34414f * ((b)-128.0f) - 0.71414f * ((r)-128.0f))
+#define DCS_BLUE(r, g, b) ((g) + 1.772f * ((b)-128.0f))
 
 #elif AXIS_Y_ONLY
-#define CS_GREEN(r, g, b)    (0.299f*(r) + 0.587f*(g) + 0.114f*(b))
-#define CS_RED(r, g, b)        (128.0f)
-#define CS_BLUE(r, g, b)    (128.0f)
-#define DCS_RED(r, g, b)    ((g) + 1.402f*((r)-128.0f))
-#define DCS_GREEN(r, g, b)    ((g) - 0.34414f*((b) - 128.0f) - 0.71414f*((r)-128.0f))
-#define DCS_BLUE(r, g, b)    ((g) + 1.772f*((b) - 128.0f))
+#define CS_GREEN(r, g, b) (0.299f * (r) + 0.587f * (g) + 0.114f * (b))
+#define CS_RED(r, g, b) (128.0f)
+#define CS_BLUE(r, g, b) (128.0f)
+#define DCS_RED(r, g, b) ((g) + 1.402f * ((r)-128.0f))
+#define DCS_GREEN(r, g, b) ((g)-0.34414f * ((b)-128.0f) - 0.71414f * ((r)-128.0f))
+#define DCS_BLUE(r, g, b) ((g) + 1.772f * ((b)-128.0f))
 
 #elif AXIS_MUNGE
 
-#define CS_RED(r, g, b)        (r)
-#define CS_GREEN(r, g, b)    (g)
-#define CS_BLUE(r, g, b)    ((b+g)*0.5f)
-#define DCS_RED(r, g, b)    (r)
-#define DCS_GREEN(r, g, b)    (g)
-#define DCS_BLUE(r, g, b)    ((2.0f*b)-g)
+#define CS_RED(r, g, b) (r)
+#define CS_GREEN(r, g, b) (g)
+#define CS_BLUE(r, g, b) ((b + g) * 0.5f)
+#define DCS_RED(r, g, b) (r)
+#define DCS_GREEN(r, g, b) (g)
+#define DCS_BLUE(r, g, b) ((2.0f * b) - g)
 
 #elif AXIS_MUNGE2
 
-#define CS_RED(r, g, b)        ((r+g)*0.5f)
-#define CS_GREEN(r, g, b)    (g)
-#define CS_BLUE(r, g, b)    ((b+3.0f*g)*0.25f)
-#define DCS_RED(r, g, b)    ((2.0f*r)-g)
-#define DCS_GREEN(r, g, b)    (g)
-#define DCS_BLUE(r, g, b)    ((4.0f*b)-(3.0f*g))
+#define CS_RED(r, g, b) ((r + g) * 0.5f)
+#define CS_GREEN(r, g, b) (g)
+#define CS_BLUE(r, g, b) ((b + 3.0f * g) * 0.25f)
+#define DCS_RED(r, g, b) ((2.0f * r) - g)
+#define DCS_GREEN(r, g, b) (g)
+#define DCS_BLUE(r, g, b) ((4.0f * b) - (3.0f * g))
 
 #else
 #error No axis type defined
 #endif
 
-#define ROUND_AND_CLAMP(v, shift)    \
-{\
-    if (v < 0) v = 0;\
-    else if (v > 255) v = 255;\
-    else v += (0x80>>shift) - (v>>shift);\
-}
+#define ROUND_AND_CLAMP(v, shift)                \
+    {                                            \
+        if (v < 0)                               \
+            v = 0;                               \
+        else if (v > 255)                        \
+            v = 255;                             \
+        else                                     \
+            v += (0x80 >> shift) - (v >> shift); \
+    }
 
 void DXTCV11CompressExplicitAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
 {
     int i;
     block_dxtc[0] = block_dxtc[1] = 0;
-    for (i = 0; i<16; i++)
+    for (i = 0; i < 16; i++)
     {
         int v = block_8[i];
-        v = (v + 7 - (v >> 4));
+        v     = (v + 7 - (v >> 4));
         v >>= 4;
-        if (v<0)
+        if (v < 0)
             v = 0;
-        if (v>0xf)
+        if (v > 0xf)
             v = 0xf;
-        if (i<8)
+        if (i < 8)
             block_dxtc[0] |= v << (4 * i);
         else
             block_dxtc[1] |= v << (4 * (i - 8));
@@ -1776,24 +1784,32 @@ void DXTCV11CompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
 {
     int i;
 
-    float pos[16];                    // The list of colours
-    int blocktype;
+    float pos[16];  // The list of colours
+    int   blocktype;
     float b;
     DWORD n, bit;
     float step, rstep, offset;
-    int count_0, count_255;
+    int   count_0, count_255;
     float average_inc, average_ex;
     float max_ex, min_ex;
 
-    max_ex = 0;
-    min_ex = 255;
+    max_ex      = 0;
+    min_ex      = 255;
     average_inc = average_ex = 0;
     count_0 = count_255 = 0;
-    for(i=0; i<16; i++)
+    for (i = 0; i < 16; i++)
     {
         int ex = 0;
-        if (block_8[i] == 0) { count_0++; ex = 1; }
-        else if (block_8[i] == 255) { count_255++; ex = 1; }
+        if (block_8[i] == 0)
+        {
+            count_0++;
+            ex = 1;
+        }
+        else if (block_8[i] == 255)
+        {
+            count_255++;
+            ex = 1;
+        }
 
         pos[i] = (float)block_8[i];
 
@@ -1801,11 +1817,12 @@ void DXTCV11CompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
         if (!ex)
         {
             average_ex += pos[i];
-            if (pos[i] > max_ex) max_ex = pos[i];
-            if (pos[i] < min_ex) min_ex = pos[i];
+            if (pos[i] > max_ex)
+                max_ex = pos[i];
+            if (pos[i] < min_ex)
+                min_ex = pos[i];
         }
     }
-
 
     // Make assumptions
     if (!count_0 && !count_255)
@@ -1813,17 +1830,16 @@ void DXTCV11CompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
     else
     {
         // There are 0 or 255 blocks and we need to represent them
-        blocktype = 8;        // Actually should probably try both here
+        blocktype = 8;  // Actually should probably try both here
 
-
-        if (count_0) min_ex = 0;
-        if (count_255) max_ex = 255;
+        if (count_0)
+            min_ex = 0;
+        if (count_255)
+            max_ex = 255;
     }
-
 
     // Start out assuming our endpoints are the min and max values we've determined
     // If the minimum is 0, it must stay 0, otherwise we shall move inwards cf. the colour compressor
-
 
     // Progressive refinement makes very little difference averaged across a whole image, but in certain
     // tricky areas can be noticeably better.
@@ -1837,42 +1853,41 @@ void DXTCV11CompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
 
         float error, maxerror;
         float oldmin, oldmax;
-        int mode, bestmode;
-        int first;
+        int   mode, bestmode;
+        int   first;
         float r, v;
 
         maxerror = 10000000.0f;
-        oldmin = min_ex;
-        oldmax = max_ex;
-        first = 1;
+        oldmin   = min_ex;
+        oldmax   = max_ex;
+        first    = 1;
         do
         {
-
-            for(bestmode=-1,mode=0; mode<6; mode++)        // Other modes seem more important for alpha block compression, 4-6 seem broken atm
+            for (bestmode = -1, mode = 0; mode < 6; mode++)  // Other modes seem more important for alpha block compression, 4-6 seem broken atm
             {
                 if (!first)
                 {
-                    switch(mode)
+                    switch (mode)
                     {
                     case 0:
-                        min_ex = oldmin+1.0f;
-                        max_ex = oldmax-1.0f;
+                        min_ex = oldmin + 1.0f;
+                        max_ex = oldmax - 1.0f;
                         break;
                     case 1:
-                        max_ex = oldmax-1.0f;
+                        max_ex = oldmax - 1.0f;
                         break;
                     case 2:
-                        min_ex = oldmin+1.0f;
+                        min_ex = oldmin + 1.0f;
                         break;
                     case 3:
-                        min_ex = oldmin-1.0f;
-                        max_ex = oldmax+1.0f;
+                        min_ex = oldmin - 1.0f;
+                        max_ex = oldmax + 1.0f;
                         break;
                     case 4:
-                        max_ex = oldmax+1.0f;
+                        max_ex = oldmax + 1.0f;
                         break;
                     case 5:
-                        min_ex = oldmin-1.0f;
+                        min_ex = oldmin - 1.0f;
                         break;
                     }
                     if ((min_ex + 1.0f) > max_ex)
@@ -1881,12 +1896,12 @@ void DXTCV11CompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
                         continue;
                 }
 
-                error = 0;
-                step = (max_ex - min_ex) / (float) (blocktype-1);
-                rstep = 1.0f / step;
-                offset = min_ex - (step*0.5f);
+                error  = 0;
+                step   = (max_ex - min_ex) / (float)(blocktype - 1);
+                rstep  = 1.0f / step;
+                offset = min_ex - (step * 0.5f);
 
-                for(i=0; i<16; i++)
+                for (i = 0; i < 16; i++)
                 {
                     b = pos[i];
                     if ((blocktype == 6) && ((b == 0) || (b == 255)))
@@ -1895,15 +1910,17 @@ void DXTCV11CompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
                     // Work out which value in the block this selects
                     n = (int)((b - offset) * rstep);
 
-                    if (n < 0) n = 0;
-                    if (n > 7) n = 7;
+                    if (n < 0)
+                        n = 0;
+                    if (n > 7)
+                        n = 7;
 
                     // Compute the interpolated value
                     v = ((float)n * step) + offset;
 
                     // And accumulate the error
                     r = (b - v);
-                    error += r*r;
+                    error += r * r;
                 }
 
                 if (error < maxerror)
@@ -1916,7 +1933,7 @@ void DXTCV11CompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
                     break;
             }
             if (!first)
-                switch(bestmode)
+                switch (bestmode)
                 {
                 default:
                     bestmode = -1;
@@ -1946,7 +1963,7 @@ void DXTCV11CompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
                 }
             first = 0;
 
-        } while(bestmode != -1);
+        } while (bestmode != -1);
 
         min_ex = oldmin;
         max_ex = oldmax;
@@ -1956,41 +1973,43 @@ void DXTCV11CompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
             metrics->high_cluster_error_blocks++;
     }
 
-#endif    // ALPHA_PROGRESSIVE_REFINEMENT
-
+#endif  // ALPHA_PROGRESSIVE_REFINEMENT
 
     // Generating the rounded values is slightly arcane.
 
-
     if (blocktype == 6)
-        block_dxtc[0] = ((int)(min_ex + 0.5f)) | (((int)(max_ex + 0.5f))<<8);
+        block_dxtc[0] = ((int)(min_ex + 0.5f)) | (((int)(max_ex + 0.5f)) << 8);
     else
-        block_dxtc[0] = ((int)(max_ex + 0.5f)) | (((int)(min_ex + 0.5f))<<8);
+        block_dxtc[0] = ((int)(max_ex + 0.5f)) | (((int)(min_ex + 0.5f)) << 8);
 
-
-    step = (max_ex - min_ex) / (float) (blocktype-1);
-    rstep = 1.0f / step;
-    offset = min_ex - (step*0.5f);
+    step   = (max_ex - min_ex) / (float)(blocktype - 1);
+    rstep  = 1.0f / step;
+    offset = min_ex - (step * 0.5f);
 
     block_dxtc[1] = 0;
-    for(i=0; i<16; i++)
+    for (i = 0; i < 16; i++)
     {
         b = pos[i];
         if (blocktype == 6)
         {
             if ((b == 0.0f) || (b == 255.0f))
             {
-                if (b == 0) bit = 6;
-                else bit = 7;
+                if (b == 0)
+                    bit = 6;
+                else
+                    bit = 7;
             }
             else
             {
                 // Work out which value in the block this selects
                 n = (int)((b - offset) * rstep);
 
-                if (n <= 0) bit = 0;
-                else if (n >= 5) bit = 1;
-                else bit = n+1;
+                if (n <= 0)
+                    bit = 0;
+                else if (n >= 5)
+                    bit = 1;
+                else
+                    bit = n + 1;
             }
         }
         else
@@ -1999,24 +2018,26 @@ void DXTCV11CompressAlphaBlock(BYTE block_8[16], DWORD block_dxtc[2])
             // Work out which value in the block this selects
             n = (int)((b - offset) * rstep);
 
-            if (n <= 0) bit = 1;
-            else if (n >= 7) bit = 0;
-            else bit = 8 - n;
+            if (n <= 0)
+                bit = 1;
+            else if (n >= 7)
+                bit = 0;
+            else
+                bit = 8 - n;
         }
 
         if (i == 5)
         {
-            block_dxtc[1] |= (bit>>1);
-            block_dxtc[0] |= (bit&1)<<31;
+            block_dxtc[1] |= (bit >> 1);
+            block_dxtc[0] |= (bit & 1) << 31;
         }
         else if (i < 5)
-            block_dxtc[0] |= bit << (3*i+16);
+            block_dxtc[0] |= bit << (3 * i + 16);
         else
-            block_dxtc[1] |= bit << (3*(i-6)+2);
+            block_dxtc[1] |= bit << (3 * (i - 6) + 2);
     }
 
     // done
 }
 
-#endif // !_WIN64
-
+#endif  // !_WIN64

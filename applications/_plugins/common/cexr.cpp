@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,61 +27,70 @@
 #endif
 #include "cexr.h"
 
-float half_conv_float(unsigned short in) {
-    union fi32 {
+float half_conv_float(unsigned short in)
+{
+    union fi32
+    {
         float f;
-        uint i;
+        uint  i;
     } u;
 
-    uint magic_exp = 113;
-    static const unsigned int shift_exp = 0x7c00 << 13; // shift exponent full float mask
+    uint                      magic_exp = 113;
+    static const unsigned int shift_exp = 0x7c00 << 13;  // shift exponent full float mask
 
     uint half_flo = in;
 
-    u.i = (in & 0x7fff) << 13;  // exponent & mantissa bits
-    uint exp = shift_exp & u.i; // exponent from half float
-    u.i += (127 - 15) << 23;    // exponent adjust
+    u.i      = (in & 0x7fff) << 13;  // exponent & mantissa bits
+    uint exp = shift_exp & u.i;      // exponent from half float
+    u.i += (127 - 15) << 23;         // exponent adjust
 
     //exponent special cases
-    if (exp == shift_exp)        //Inf case
-        u.i += (128 - 16) << 23; // extra exp adjust
-    else if (exp == 0) {         // Zero/Denormal case
-        u.i += 1 << 23;           // extra exp adjust
-        u.f -= (magic_exp << 23); // renormalize
+    if (exp == shift_exp)         //Inf case
+        u.i += (128 - 16) << 23;  // extra exp adjust
+    else if (exp == 0)
+    {                              // Zero/Denormal case
+        u.i += 1 << 23;            // extra exp adjust
+        u.f -= (magic_exp << 23);  // renormalize
     }
 
-    u.i |= (in & 0x8000) << 16; // sign bit
+    u.i |= (in & 0x8000) << 16;  // sign bit
     return u.f;
 }
 
-void Exr::fileinfo(const string inf, int &width, int &height) {
+void Exr::fileinfo(const string inf, int& width, int& height)
+{
     RgbaInputFile file(inf.c_str());
-    Box2i dw = file.dataWindow();
+    Box2i         dw = file.dataWindow();
 
-    width = dw.max.x - dw.min.x + 1;
+    width  = dw.max.x - dw.min.x + 1;
     height = dw.max.y - dw.min.y + 1;
 }
 
-void Exr::readRgba(const string inf, Array2D<Rgba> &pix, int &w, int &h) {
+void Exr::readRgba(const string inf, Array2D<Rgba>& pix, int& w, int& h)
+{
     RgbaInputFile file(inf.c_str());
-    Box2i dw = file.dataWindow();
-    w = dw.max.x - dw.min.x + 1;
-    h = dw.max.y - dw.min.y + 1;
+    Box2i         dw = file.dataWindow();
+    w                = dw.max.x - dw.min.x + 1;
+    h                = dw.max.y - dw.min.y + 1;
     pix.resizeErase(h, w);
     file.setFrameBuffer(&pix[0][0] - dw.min.x - dw.min.y * w, 1, w);
     file.readPixels(dw.min.y, dw.max.y);
 }
 
-void Exr::writeRgba(const string outf, const Array2D<Rgba> &pix, int w, int h) {
+void Exr::writeRgba(const string outf, const Array2D<Rgba>& pix, int w, int h)
+{
     RgbaOutputFile file(outf.c_str(), w, h, WRITE_RGBA);
     file.setFrameBuffer(&pix[0][0], 1, w);
     file.writePixels(h);
 }
 
-void Rgba2Texture(Array2D<Rgba> &pixels, CMP_HALFSHORT *data, int w, int h) {
+void Rgba2Texture(Array2D<Rgba>& pixels, CMP_HALFSHORT* data, int w, int h)
+{
     // Save the Half Data format value into CMP_HALFSHORT bit format for processing later
-    for (int y = 0; y < h; ++y) {
-        for (int x = 0; x < w; ++x) {
+    for (int y = 0; y < h; ++y)
+    {
+        for (int x = 0; x < w; ++x)
+        {
             *data = pixels[y][x].r.bits();
             data++;
             *data = pixels[y][x].g.bits();
@@ -94,12 +103,15 @@ void Rgba2Texture(Array2D<Rgba> &pixels, CMP_HALFSHORT *data, int w, int h) {
     }
 }
 
-void Texture2Rgba(CMP_HALFSHORT *data, Array2D<Rgba> &pixels, int w, int h, CMP_FORMAT isDeCompressed) {
-
-    if (isDeCompressed != CMP_FORMAT_Unknown) {
+void Texture2Rgba(CMP_HALFSHORT* data, Array2D<Rgba>& pixels, int w, int h, CMP_FORMAT isDeCompressed)
+{
+    if (isDeCompressed != CMP_FORMAT_Unknown)
+    {
         // Save the Half Data format value into a Float for processing later
-        for (int y = 0; y < h; ++y) {
-            for (int x = 0; x < w; ++x) {
+        for (int y = 0; y < h; ++y)
+        {
+            for (int x = 0; x < w; ++x)
+            {
                 pixels[y][x].r.setBits(*data);
                 data++;
                 pixels[y][x].g.setBits(*data);
@@ -110,10 +122,14 @@ void Texture2Rgba(CMP_HALFSHORT *data, Array2D<Rgba> &pixels, int w, int h, CMP_
                 data++;
             }
         }
-    } else {
+    }
+    else
+    {
         // Save the Half Data format value into a Float for processing later
-        for (int y = 0; y < h; ++y) {
-            for (int x = 0; x < w; ++x) {
+        for (int y = 0; y < h; ++y)
+        {
+            for (int x = 0; x < w; ++x)
+            {
                 pixels[y][x].r = *data;
                 data++;
                 pixels[y][x].g = *data;

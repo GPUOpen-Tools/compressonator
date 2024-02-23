@@ -26,7 +26,7 @@ target_include_directories(ModelLoader_drc PUBLIC
 target_compile_definitions(ModelLoader_drc PRIVATE BUILD_AS_PLUGIN_DLL=1)
 
 set_target_properties(ModelLoader_drc PROPERTIES 
-    FOLDER "Plugin_Dynamic/3DModel_Loaders"
+    FOLDER ${PROJECT_FOLDER_SDK_PLUGIN_DYNAMIC}
     RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${CMAKE_BINARY_DIR}/bin/debug/plugins"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_BINARY_DIR}/bin/release/plugins"
 )

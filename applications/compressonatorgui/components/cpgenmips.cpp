@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -30,7 +30,8 @@
 CGenMips::CGenMips(const QString title, QWidget* parent)
     : QWidget(parent)
     , m_title(title)
-    , m_parent(parent) {
+    , m_parent(parent)
+{
     setWindowTitle(title);
     setWindowFlags(Qt::Dialog);
 
@@ -41,10 +42,10 @@ CGenMips::CGenMips(const QString title, QWidget* parent)
 
     resize(300, 220);
 
-    m_CFilterParams.nFilterType         = 0; // CMP CPU version
-    m_CFilterParams.dwMipFilterOptions  = 0;
-    m_CFilterParams.nMinSize            = 0;
-    m_CFilterParams.fGammaCorrection    = 1.0;
+    m_CFilterParams.nFilterType        = 0;  // CMP CPU version
+    m_CFilterParams.dwMipFilterOptions = 0;
+    m_CFilterParams.nMinSize           = 0;
+    m_CFilterParams.fGammaCorrection   = 1.0;
 
     m_variantPropertyManager = new QtVariantPropertyManager(this);
     connect(m_variantPropertyManager, SIGNAL(valueChanged(QtProperty*, const QVariant&)), this, SLOT(valueChanged(QtProperty*, const QVariant&)));
@@ -56,12 +57,13 @@ CGenMips::CGenMips(const QString title, QWidget* parent)
     SetGUIItems();
 
     m_selectedMipLevel = 0;
-    m_levelWidths[0] = 0;
+    m_levelWidths[0]   = 0;
 
     // evalProperties(); use this to debug set properties of a class definition , in this case its CData
 }
 
-void CGenMips::setMipLevelDisplay(int Width, int Height, bool UsingGPU = false) {
+void CGenMips::setMipLevelDisplay(int Width, int Height, bool UsingGPU = false)
+{
     m_mipLevelSizes.clear();
     m_selectedMipLevel = 0;
 
@@ -74,12 +76,14 @@ void CGenMips::setMipLevelDisplay(int Width, int Height, bool UsingGPU = false) 
 
     m_levelWidths[0] = Width;
 
-    do {
+    do
+    {
         Width  = (Width > 1) ? (Width >> 1) : 1;
         Height = (Height > 1) ? (Height >> 1) : 1;
 
-        if (UsingGPU) {
-            int non4DivW = (Width  % 4);
+        if (UsingGPU)
+        {
+            int non4DivW = (Width % 4);
             int non4DivH = (Height % 4);
             if (non4DivW || non4DivH)
                 break;
@@ -104,7 +108,8 @@ void CGenMips::setMipLevelDisplay(int Width, int Height, bool UsingGPU = false) 
     QStringList reversedList = m_mipLevelSizes;
     const int   levelSize    = m_mipLevelSizes.size();
     const int   maxSwap      = m_mipLevelSizes.size() / 2;
-    for (int i = 0; i < maxSwap; ++i) {
+    for (int i = 0; i < maxSwap; ++i)
+    {
         qSwap(reversedList[i], reversedList[levelSize - 1 - i]);
     }
     m_mipLevelSizes = reversedList;
@@ -113,49 +118,56 @@ void CGenMips::setMipLevelDisplay(int Width, int Height, bool UsingGPU = false) 
     m_propertyMipLevels->setValue(0);
 }
 
-void CGenMips::onGenerate() {
+void CGenMips::onGenerate()
+{
     int numLevelsToGenerate = (m_mipLevelSizes.size() - 1) - m_selectedMipLevel;
     if (numLevelsToGenerate < 0 || numLevelsToGenerate >= MAX_MIPLEVEL_SUPPORTED)
         numLevelsToGenerate = 0;
-    
+
     m_CFilterParams.nMinSize = m_levelWidths[numLevelsToGenerate];
     emit signalGenerateMipmaps(m_CFilterParams, this->m_imageItems);
     hide();
 }
 
-CGenMips::~CGenMips() {
+CGenMips::~CGenMips()
+{
 }
 
-void CGenMips::closeEvent(QCloseEvent* event) {
+void CGenMips::closeEvent(QCloseEvent* event)
+{
     hide();
     event->ignore();
 }
 
-void CGenMips::onCancel() {
+void CGenMips::onCancel()
+{
     hide();
 }
 
-void CGenMips::updateExpandState() {
+void CGenMips::updateExpandState()
+{
     QList<QtBrowserItem*>         list = m_propertyEditor->topLevelItems();
     QListIterator<QtBrowserItem*> it(list);
-    while (it.hasNext()) {
+    while (it.hasNext())
+    {
         QtBrowserItem* item              = it.next();
         QtProperty*    prop              = item->property();
         idToExpanded[propertyToId[prop]] = false;  //  propertyEditor->isExpanded(item);
     }
 }
 
-void CGenMips::addProperty(QtVariantProperty* property, const QString& id) {
+void CGenMips::addProperty(QtVariantProperty* property, const QString& id)
+{
     propertyToId[property] = id;
     idToProperty[id]       = property;
     m_propertyEditor->addProperty(property);
 }
 
-void CGenMips::addD3DXProperty(QtVariantProperty* property, const QString& id) {
+void CGenMips::addD3DXProperty(QtVariantProperty* property, const QString& id)
+{
     propertyToId[property] = id;
     idToProperty[id]       = property;
 }
-
 
 // Info how to evaluate class meta object props
 //     QObject* wid; <= set this to equal a class var pointer!
@@ -168,59 +180,69 @@ void CGenMips::addD3DXProperty(QtVariantProperty* property, const QString& id) {
 //         QVariant      value        = wid->property(name);
 //     }
 
-
-void CGenMips::valueChanged(QtProperty* property, const QVariant& value) {
+void CGenMips::valueChanged(QtProperty* property, const QVariant& value)
+{
     if (!propertyToId.contains(property))
         return;
     QString id = propertyToId[property];
 
-    if (id == QLatin1String(MIP_LEVELS_TEXT)) {
+    if (id == QLatin1String(MIP_LEVELS_TEXT))
+    {
         m_selectedMipLevel = value.toInt();
-    } else if (id == QLatin1String("FilterType")) {
+    }
+    else if (id == QLatin1String("FilterType"))
+    {
         int filtertype = value.value<int>();
-        switch (filtertype) {
+        switch (filtertype)
+        {
         case 0:
-            m_CFilterParams.nFilterType         = 0;
-            m_CFilterParams.dwMipFilterOptions  = 0;
+            m_CFilterParams.nFilterType        = 0;
+            m_CFilterParams.dwMipFilterOptions = 0;
             m_GroupProperty->setEnabled(false);
             m_propertyGamma->setEnabled(true);
             break;
         default:
             m_GroupProperty->setEnabled(true);
-            m_propertyGamma->setEnabled(false); // Not implemented in D3DX options
-            m_CFilterParams.nFilterType = 1;    // Using D3DX options 
+            m_propertyGamma->setEnabled(false);                   // Not implemented in D3DX options
+            m_CFilterParams.nFilterType = 1;                      // Using D3DX options
             int dxFilter                = CMP_D3DX_FILTER_POINT;  // Default
 
             // CMP_D3DX_FILTER_NONE is skipped as it cause the mip map image to be enlarged and offset!
 
-            switch (filtertype) {
-                case 1:
-                    dxFilter = CMP_D3DX_FILTER_POINT;
-                    m_propertyMirrorPixels->setEnabled(false);
-                    break;
-                case 2:
-                    dxFilter = CMP_D3DX_FILTER_LINEAR;
-                    m_propertyMirrorPixels->setEnabled(true);
-                    break;
-                case 3:
-                    dxFilter = CMP_D3DX_FILTER_TRIANGLE;
-                    m_propertyMirrorPixels->setEnabled(true);
-                    break;
-                case 4:
-                    dxFilter = CMP_D3DX_FILTER_BOX;
-                    m_propertyMirrorPixels->setEnabled(false);
-                    break;
+            switch (filtertype)
+            {
+            case 1:
+                dxFilter = CMP_D3DX_FILTER_POINT;
+                m_propertyMirrorPixels->setEnabled(false);
+                break;
+            case 2:
+                dxFilter = CMP_D3DX_FILTER_LINEAR;
+                m_propertyMirrorPixels->setEnabled(true);
+                break;
+            case 3:
+                dxFilter = CMP_D3DX_FILTER_TRIANGLE;
+                m_propertyMirrorPixels->setEnabled(true);
+                break;
+            case 4:
+                dxFilter = CMP_D3DX_FILTER_BOX;
+                m_propertyMirrorPixels->setEnabled(false);
+                break;
             }
 
-            m_CFilterParams.dwMipFilterOptions =
-                m_CFilterParams.dwMipFilterOptions & 0xFFFFFFE0 | dxFilter;
+            m_CFilterParams.dwMipFilterOptions = m_CFilterParams.dwMipFilterOptions & 0xFFFFFFE0 | dxFilter;
             break;
         }
-    } else if (id == QLatin1String("Gamma")) {
+    }
+    else if (id == QLatin1String("Gamma"))
+    {
         m_CFilterParams.fGammaCorrection = value.toDouble();
-    } else if (id == QLatin1String("Dither")) {
+    }
+    else if (id == QLatin1String("Dither"))
+    {
         m_CFilterParams.dwMipFilterOptions ^= CMP_D3DX_FILTER_DITHER;
-    } else if (id == QLatin1String("MirrorPixels")) {
+    }
+    else if (id == QLatin1String("MirrorPixels"))
+    {
         m_CFilterParams.dwMipFilterOptions ^= CMP_D3DX_FILTER_MIRROR;
     }
     // Enable when support for sRGB mipmaps is enabled
@@ -229,12 +251,14 @@ void CGenMips::valueChanged(QtProperty* property, const QVariant& value) {
     // }
 }
 
-void CGenMips::SetGUIItems() {
+void CGenMips::SetGUIItems()
+{
     // Init
     updateExpandState();
 
     QMap<QtProperty*, QString>::ConstIterator itProp = propertyToId.constBegin();
-    while (itProp != propertyToId.constEnd()) {
+    while (itProp != propertyToId.constEnd())
+    {
         delete itProp.key();
         itProp++;
     }
@@ -255,7 +279,6 @@ void CGenMips::SetGUIItems() {
     m_propertyGamma->setAttribute("singleStep", 0.001);
     m_propertyGamma->setAttribute("decimals", 3);
     addProperty(m_propertyGamma, QLatin1String("Gamma"));
-
 
     m_propertyFilterType = m_variantPropertyManager->addProperty(QtVariantPropertyManager::enumTypeId(), "Filter Type");
 
@@ -290,7 +313,6 @@ void CGenMips::SetGUIItems() {
     // m_GroupProperty->addSubProperty(m_propertyPerformFiltering);
 
     addProperty(m_GroupProperty, QLatin1String("Options"));
-
 
     QScrollArea* GenMipsOptions = new QScrollArea();
     GenMipsOptions->setWidgetResizable(true);

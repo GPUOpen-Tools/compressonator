@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2016    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2016-2024    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -32,50 +32,52 @@
 //uncomment to show image on console window for debug
 //#define SHOW_WINDOW
 
-namespace GPU_Decode {
+namespace GPU_Decode
+{
 
-#define str_WindowsClassName    "GPU_DecodeClass"
-#define str_WindowName          "GPU_DecodeWindow"
+#define str_WindowsClassName "GPU_DecodeClass"
+#define str_WindowName "GPU_DecodeWindow"
 
-
-class RenderWindow {
-  public:
-    RenderWindow(char *windowType) {
-        m_hInstance = 0; // GetModuleHandle(NULL);
+class RenderWindow
+{
+public:
+    RenderWindow(char* windowType)
+    {
+        m_hInstance = 0;  // GetModuleHandle(NULL);
         // sprintf(m_strWindowName, "%s_%x_%s", str_WindowName, m_hInstance,windowType);
         // sprintf(m_strWindowClassName, "%s_%x_%s", str_WindowsClassName, m_hInstance, windowType);
-        m_hDC = 0;
-        m_hRC = 0;
+        m_hDC  = 0;
+        m_hRC  = 0;
         m_hWnd = nullptr;
     };
-    virtual ~RenderWindow() {};
+    virtual ~RenderWindow(){};
 
-    HDC         m_hDC;
-    HGLRC       m_hRC;
-    HWND        m_hWnd;
-    HINSTANCE   m_hInstance;
-    char        m_windowType[128];
-    char        m_strWindowName[128];
-    char        m_strWindowClassName[128];
-    HRESULT     InitWindow(int width, int height, WNDPROC callback =NULL);
-    void        EnableWindowContext(HWND hWnd, HDC * hDC, HGLRC * hRC);
-    void        DisableWindowContext(HWND hWnd, HDC hDC, HGLRC hRC);
-
+    HDC       m_hDC;
+    HGLRC     m_hRC;
+    HWND      m_hWnd;
+    HINSTANCE m_hInstance;
+    char      m_windowType[128];
+    char      m_strWindowName[128];
+    char      m_strWindowClassName[128];
+    HRESULT   InitWindow(int width, int height, WNDPROC callback = NULL);
+    void      EnableWindowContext(HWND hWnd, HDC* hDC, HGLRC* hRC);
+    void      DisableWindowContext(HWND hWnd, HDC hDC, HGLRC hRC);
 };
 
-class TextureControl: public RenderWindow {
-  public:
-    TextureControl(char *windowType):RenderWindow(windowType) {};
-    virtual ~TextureControl() {};
+class TextureControl : public RenderWindow
+{
+public:
+    TextureControl(char* windowType)
+        : RenderWindow(windowType){};
+    virtual ~TextureControl(){};
 
     virtual CMP_ERROR WINAPI Decompress(const CMP_Texture* pSourceTexture, CMP_Texture* pDestTexture) const = 0;
 
-  private:
+private:
 };
-}
+}  // namespace GPU_Decode
 
 extern LRESULT CALLBACK WndProc2(HWND, UINT, WPARAM, LPARAM);
-
 
 #endif
 #endif

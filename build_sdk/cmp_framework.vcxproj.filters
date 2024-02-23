@@ -153,6 +153,12 @@
     <ClCompile Include="..\cmp_core\source\core_simd_sse.cpp">
       <Filter>CMP_Core</Filter>
     </ClCompile>
+    <ClCompile Include="..\applications\_plugins\common\codec_common.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\applications\_plugins\common\texture_utils.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Applications\_Plugins\Common\PluginInterface.h">
@@ -168,9 +174,6 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\Applications\_Plugins\Common\cpu_timing.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Applications\_Plugins\Common\stb_image.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\Applications\_Plugins\Common\TC_PluginAPI.h">
@@ -320,14 +323,17 @@
     <ClInclude Include="..\applications\_plugins\ccmp_sdk\bcn.h">
       <Filter>StaticPlugins\Encoders</Filter>
     </ClInclude>
-    <ClInclude Include="..\applications\_plugins\common\gltf\stb_image_write.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="..\cmp_core\source\cmp_core.h">
       <Filter>CMP_Core</Filter>
     </ClInclude>
     <ClInclude Include="..\cmp_core\source\core_simd.h">
       <Filter>CMP_Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\common\codec_common.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\applications\_plugins\common\texture_utils.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

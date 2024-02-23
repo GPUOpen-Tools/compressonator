@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2014-2018  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2014-2024  Advanced Micro Devices, Inc. All rights reserved.
 //===============================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,11 +29,10 @@
 
 BRLG_Encode g_BRLGEncode;
 
-void (*BRLG_CompressBlock)(void *srcblock, void *outblock, void *blockoptions) = NULL;
+void (*BRLG_CompressBlock)(void* srcblock, void* outblock, void* blockoptions) = NULL;
 
-double BRLGBlockEncoder::CompressBlock(
-    CMP_BYTE      *srcblock,
-    CMP_BYTE      outblock[COMPRESSED_BLOCK_SIZE]) {
+double BRLGBlockEncoder::CompressBlock(CMP_BYTE* srcblock, CMP_BYTE outblock[COMPRESSED_BLOCK_SIZE])
+{
     if (BRLG_CompressBlock)
     {
         g_BRLGEncode.m_quality = m_quality;
@@ -41,5 +40,3 @@ double BRLGBlockEncoder::CompressBlock(
     }
     return (0);
 }
-
-

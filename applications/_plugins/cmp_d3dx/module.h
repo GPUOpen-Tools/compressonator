@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2020-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,8 +26,9 @@
 
 #define LOAD_FAILED 0xffff
 
-class CModule {
-  public:
+class CModule
+{
+public:
     CModule(void);
     CModule(LPCTSTR lpModuleName);
     virtual ~CModule(void);
@@ -36,11 +37,12 @@ class CModule {
 
     FARPROC GetProcAddress(LPCSTR lpProcName);
 
-    bool IsLoaded() const {
+    bool IsLoaded() const
+    {
         return m_hModule != NULL;
     };
 
-  protected:
+protected:
     virtual void UnloadModule();
 
     HMODULE m_hModule;

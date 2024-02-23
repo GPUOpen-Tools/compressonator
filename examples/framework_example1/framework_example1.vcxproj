@@ -67,7 +67,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SDK_Example1.cpp" />
+    <ClCompile Include="framework_example1.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{B06F1D70-67F1-4491-B479-1B98175768E6}</ProjectGuid>
@@ -331,7 +331,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2019/$(PlatformShortName);../../lib/VS2019/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/bin/$(PlatformShortName);../../lib/bin/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
       <AdditionalDependencies>CMP_Framework_MTd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
@@ -352,7 +352,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2019/$(PlatformShortName);../../lib/VS2019/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/bin/$(PlatformShortName);../../lib/bin/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
       <AdditionalDependencies>CMP_Framework_MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
@@ -371,7 +371,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2019/$(PlatformShortName);../../lib/VS2019/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/bin/$(PlatformShortName);../../lib/bin/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
       <AdditionalDependencies>CMP_Framework_MTd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
@@ -392,7 +392,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2019/$(PlatformShortName);../../lib/VS2019/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/bin/$(PlatformShortName);../../lib/bin/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
       <AdditionalDependencies>CMP_Framework_MDd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
@@ -417,7 +417,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2019/$(PlatformShortName);../../lib/VS2019/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/bin/$(PlatformShortName);../../lib/bin/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
       <AdditionalDependencies>CMP_Framework_MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -438,7 +438,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2019/$(PlatformShortName);../../lib/VS2019/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/bin/$(PlatformShortName);../../lib/bin/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
       <AdditionalDependencies>CMP_Framework_MT_DLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -459,7 +459,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2019/$(PlatformShortName);../../lib/VS2019/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/bin/$(PlatformShortName);../../lib/bin/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
       <AdditionalDependencies>CMP_Framework_MTd_DLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -480,7 +480,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2019/$(PlatformShortName);../../lib/VS2019/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/bin/$(PlatformShortName);../../lib/bin/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
       <AdditionalDependencies>CMP_Framework_MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -501,7 +501,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2019/$(PlatformShortName);../../lib/VS2019/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/bin/$(PlatformShortName);../../lib/bin/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
       <AdditionalDependencies>CMP_Framework_MD_DLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -522,7 +522,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2019/$(PlatformShortName);../../lib/VS2019/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/bin/$(PlatformShortName);../../lib/bin/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
       <AdditionalDependencies>CMP_Framework_MDd_DLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -543,7 +543,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2019/$(PlatformShortName);../../lib/VS2019/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/bin/$(PlatformShortName);../../lib/bin/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
       <AdditionalDependencies>CMP_Framework_MT.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
@@ -568,7 +568,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2019/$(PlatformShortName);../../lib/VS2019/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/bin/$(PlatformShortName);../../lib/bin/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
       <AdditionalDependencies>CMP_Framework_MT_DLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
@@ -593,7 +593,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2019/$(PlatformShortName);../../lib/VS2019/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/bin/$(PlatformShortName);../../lib/bin/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
       <AdditionalDependencies>CMP_Framework_MTd_DLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
@@ -618,7 +618,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2019/$(PlatformShortName);../../lib/VS2019/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/bin/$(PlatformShortName);../../lib/bin/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
       <AdditionalDependencies>CMP_Framework_MD.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
@@ -643,7 +643,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2019/$(PlatformShortName);../../lib/VS2019/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/bin/$(PlatformShortName);../../lib/bin/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
       <AdditionalDependencies>CMP_Framework_MD_DLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>
@@ -668,7 +668,7 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/VS2019/$(PlatformShortName);../../lib/VS2019/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(COMPRESSONATOR_ROOT)/lib/bin/$(PlatformShortName);../../lib/bin/$(PlatformShortName);../../build/$(Configuration)/$(Platform);</AdditionalLibraryDirectories>
       <AdditionalDependencies>CMP_Framework_MDd_DLL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
       <ProfileGuidedDatabase>$(IntDir)$(TargetName).pgd</ProfileGuidedDatabase>

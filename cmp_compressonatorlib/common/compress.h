@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2007-2014    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024    Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006    ATI Technologies Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -27,49 +27,42 @@
 #ifndef COMPRESS_H
 #define COMPRESS_H
 
-#include "codec.h"
-#include "float.h"
+#include <float.h>
 
-#define FP_EXCEPTION_MASK _MCW_EM // Disable fp exceptions
+#include "codec_common.h"
+#include "compressonator.h"
+
+#define FP_EXCEPTION_MASK _MCW_EM  // Disable fp exceptions
 
 #ifdef _MSC_VER
 #if _MSC_VER < 1400
-#define DISABLE_FP_EXCEPTIONS \
-        UINT nCurrentFP = _controlfp(0, 0); \
-        _controlfp(FP_EXCEPTION_MASK, _MCW_EM);
-#define RESTORE_FP_EXCEPTIONS \
-        _controlfp(nCurrentFP, _MCW_EM);
-#else // >= 1400
-#define DISABLE_FP_EXCEPTIONS \
-        unsigned int nCurrentFP = 0; \
-        _controlfp_s(&nCurrentFP, FP_EXCEPTION_MASK, _MCW_EM);
-#define RESTORE_FP_EXCEPTIONS \
-        _controlfp_s(NULL, nCurrentFP, _MCW_EM);
-#endif // >= 1400
+#define DISABLE_FP_EXCEPTIONS           \
+    UINT nCurrentFP = _controlfp(0, 0); \
+    _controlfp(FP_EXCEPTION_MASK, _MCW_EM);
+#define RESTORE_FP_EXCEPTIONS _controlfp(nCurrentFP, _MCW_EM);
+#else  // >= 1400
+#define DISABLE_FP_EXCEPTIONS    \
+    unsigned int nCurrentFP = 0; \
+    _controlfp_s(&nCurrentFP, FP_EXCEPTION_MASK, _MCW_EM);
+#define RESTORE_FP_EXCEPTIONS _controlfp_s(NULL, nCurrentFP, _MCW_EM);
+#endif  // >= 1400
 #else
 #define DISABLE_FP_EXCEPTIONS
 #define RESTORE_FP_EXCEPTIONS
 #endif
 
-/*******************************
-For prototyping Multithreaded Compression is been disabled
-Navin May 2014
-was #define THREADED_COMPRESS
-*******************************/
 #define THREADED_COMPRESS
 
-#ifdef THREADED_COMPRESS
-#include <thread>
+// TODO: This probably shouldn't be defined in compress.cpp
+CMP_INT CMP_GetNumberOfProcessors();
 
-#define MAX_THREADS 64u
-static CMP_DWORD GetProcessorCount() {
-    return std::thread::hardware_concurrency();
-}
+CMP_ERROR CodecCompressTexture(const CMP_Texture* srcTexture, CMP_Texture* destTexture, const CMP_CompressOptions* options, CMP_Feedback_Proc feedbackProc);
 
-const CMP_DWORD f_dwProcessorCount = GetProcessorCount();
-#endif
+CMP_ERROR CodecCompressTextureThreaded(const CMP_Texture*         srcTexture,
+                                       CMP_Texture*               destTexture,
+                                       const CMP_CompressOptions* options,
+                                       CMP_Feedback_Proc          feedbackProc);
 
+CMP_ERROR CodecDecompressTexture(const CMP_Texture* srcTexture, CMP_Texture* destTexture, const CMP_CompressOptions* options, CMP_Feedback_Proc feedbackProc);
 
-
-
-#endif // !COMPRESS_H
+#endif  // !COMPRESS_H

@@ -24,7 +24,6 @@
 // http://go.microsoft.com/fwlink/?LinkId=248929
 
 #include "cmp_texturevk.h"
-#include "cmp_gltffeatures.h"
 #include "misc.h"
 #include "utilfuncs.h"
 #include "dxgi.h"
@@ -355,6 +354,9 @@ VkFormat MIP2VK_Format(MipSet* pMipsTexture) {
         break;
     case CMP_FORMAT_BC7:
         m_VKnum = VK_FORMAT_BC7_UNORM_BLOCK;
+        break;
+    case CMP_FORMAT_BC7_SRGB:
+        m_VKnum = VK_FORMAT_BC7_SRGB_BLOCK;
         break;
     case CMP_FORMAT_ETC_RGB:
     case CMP_FORMAT_ETC2_RGB:

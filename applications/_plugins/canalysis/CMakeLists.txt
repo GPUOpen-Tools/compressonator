@@ -102,5 +102,5 @@ else()
     endif()
 endif()
 
-set_target_properties(Image_Analysis PROPERTIES FOLDER "Plugin_Static/Analysis")
+set_target_properties(Image_Analysis PROPERTIES FOLDER ${PROJECT_FOLDER_SDK_PLUGIN_STATIC})
 

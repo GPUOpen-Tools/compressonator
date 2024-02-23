@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -171,7 +171,6 @@ int Plugin_DDS::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
     //     // fill in cubemap mipset props
     // }
 
-
     // Prep for next revision
     DDS_FILE_HEADER* DDSHeader = reinterpret_cast<DDS_FILE_HEADER*>(&ddsd);
     DDS_PIXELFORMAT  DDSPF_L16 = {sizeof(DDS_PIXELFORMAT), DDS_LUMINANCE, 0, 16, 0xffff, 0, 0, 0};
@@ -181,13 +180,11 @@ int Plugin_DDS::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
         return LoadDDS_R16(pFile, &ddsd, pMipSet);
     }
 
-    if ((DDSHeader->ddspf.flags & DDS_BUMPDUDV) && 
-        (DDSHeader->ddspf.RGBBitCount == 32))
+    if ((DDSHeader->ddspf.flags & DDS_BUMPDUDV) && (DDSHeader->ddspf.RGBBitCount == 32))
     {
         pMipSet->m_format = CMP_FORMAT_RGBA_8888_S;
         return LoadDDS_RGB8888_S(pFile, &ddsd, pMipSet, (ddsd.ddpfPixelFormat.dwFlags & DDPF_ALPHAPIXELS) ? true : false);
     }
-
 
     // Try known FourCC first for legcay support
     if (ddsd.ddpfPixelFormat.dwFourCC == D3DFMT_A32B32G32R32F)
@@ -215,8 +212,7 @@ int Plugin_DDS::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
 
     if (ddsd.ddpfPixelFormat.dwLuminanceBitCount == 8 && (ddsd.ddpfPixelFormat.dwFlags & DDPF_LUMINANCE))
         return LoadDDS_G8(pFile, &ddsd, pMipSet);
-    if (ddsd.ddpfPixelFormat.dwLuminanceBitCount == 16 && (ddsd.ddpfPixelFormat.dwFlags & DDPF_LUMINANCE) &&
-             (ddsd.ddpfPixelFormat.dwFlags & DDPF_ALPHAPIXELS))
+    if (ddsd.ddpfPixelFormat.dwLuminanceBitCount == 16 && (ddsd.ddpfPixelFormat.dwFlags & DDPF_LUMINANCE) && (ddsd.ddpfPixelFormat.dwFlags & DDPF_ALPHAPIXELS))
         return LoadDDS_AG8(pFile, &ddsd, pMipSet);
     if (ddsd.ddpfPixelFormat.dwLuminanceBitCount == 16 && (ddsd.ddpfPixelFormat.dwFlags & DDPF_LUMINANCE) && (ddsd.ddpfPixelFormat.dwGBitMask == 0xffff))
         return LoadDDS_G16(pFile, &ddsd, pMipSet);
@@ -307,7 +303,7 @@ int Plugin_DDS::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSe
     {
         return SaveDDS_RGB888(pFile, pMipSet);
     }
-    
+
     if (pMipSet->m_format == CMP_FORMAT_RGBA_8888_S)
         return SaveDDS_RGBA8888_S(pFile, pMipSet);
 

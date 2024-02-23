@@ -1,5 +1,5 @@
 //=========================================================================
-// Copyright (c) 2021    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2021-2024    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -85,7 +85,7 @@ static CGU_Vec4ui CompressBlockBC7_UNORM(CMP_IN CGU_Vec4f image_src[16], CMP_IN 
 #endif
 
 #ifndef USE_NEW_SINGLE_HEADER_INTERFACES
-    CGU_Vec4ui cmp = {0,0,0,0};
+    CGU_Vec4ui cmp = {0, 0, 0, 0};
     CMP_UNUSED(fquality);
     CMP_UNUSED(image_src);
     return cmp;

@@ -1,3 +1,4 @@
+
 # Include local GUI required libs
 add_subdirectory(common)
 add_subdirectory(components)
@@ -67,17 +68,17 @@ else()
 endif()
 
 set (CMP_LIBS "")
-list(APPEND CMP_LIBS    
+list(APPEND CMP_LIBS
     CMP_Common
     CMP_Compressonator
     CMP_Framework
     CMP_GpuDecode
-    CMP_MeshOptimizer
+    extern_meshoptimizer
 
     CMP_GUI_Gltf
     CMP_GUI_Components
-    CMP_GUI_Common
-    CMP_GUI_QPropertyPages
+    extern_qt_extra
+    extern_qtpropertybrowser
 
     Image_Analysis
     Image_EXR
@@ -126,16 +127,18 @@ else()
     # allow const char* -> char*
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
         target_compile_options(CompressonatorGUI-bin 
-        PRIVATE
-        "-Wno-c++11-compat-deprecated-writable-strings")
+            PRIVATE
+            "-Wno-c++11-compat-deprecated-writable-strings"
+        )
     elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
         target_compile_options(CompressonatorGUI-bin 
-        PRIVATE
-        "-Wno-write-strings")
+            PRIVATE
+            "-Wno-write-strings"
+        )
     endif()
 endif()
 
-target_link_libraries(CompressonatorGUI-bin  ${CMP_LIBS})
+target_link_libraries(CompressonatorGUI-bin ${CMP_LIBS})
 
 target_include_directories(CompressonatorGUI-bin PRIVATE
     components
@@ -145,6 +148,7 @@ target_include_directories(CompressonatorGUI-bin PRIVATE
     ${PROJECT_SOURCE_DIR}/cmp_framework/
     ${PROJECT_SOURCE_DIR}/cmp_framework/common/half
     ${PROJECT_SOURCE_DIR}/applications/_plugins/common
+    ${PROJECT_SOURCE_DIR}/applications/_plugins/cimage
     ${PROJECT_SOURCE_DIR}/applications/_plugins/canalysis/analysis
     ${PROJECT_SOURCE_DIR}/applications/_plugins/common/gltf/
     ${PROJECT_SOURCE_DIR}/applications/_plugins/common/json/
@@ -159,12 +163,12 @@ target_include_directories(CompressonatorGUI-bin PRIVATE
     ${PROJECT_SOURCE_DIR}/../common/lib/ext/glm
     ${PROJECT_EXTERNAL_LIBDIR}/rapidxml
     ${OpenCV_INCLUDE_DIRS}
-)
+)               
 
 if(CMP_HOST_WINDOWS)
     include(copyfiles.cmake)
-    set_target_properties(CompressonatorGUI-bin PROPERTIES 
-        FOLDER "Applications"
+    set_target_properties(CompressonatorGUI-bin PROPERTIES
+        FOLDER ${PROJECT_FOLDER_APPS}
         # LINK_FLAGS "/SUBSYSTEM:CONSOLE"
         VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_BINARY_DIR}/bin/$(Configuration)"
         AUTOMOC ON
@@ -173,8 +177,8 @@ if(CMP_HOST_WINDOWS)
         OUTPUT_NAME "compressonator"
     )
 else()
-    set_target_properties(CompressonatorGUI-bin PROPERTIES 
-        FOLDER "Applications"
+    set_target_properties(CompressonatorGUI-bin PROPERTIES
+        FOLDER ${PROJECT_FOLDER_APPS}
         AUTOMOC ON
         AUTORCC ON
         AUTOMOC_COMPILER_PREDEFINES ON

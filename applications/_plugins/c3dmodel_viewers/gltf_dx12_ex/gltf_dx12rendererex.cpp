@@ -1,6 +1,6 @@
 // AMD SampleDX12 sample code
 //
-// Copyright(c) 2017 Advanced Micro Devices, Inc.All rights reserved.
+// Copyright(c) 2017-2024 Advanced Micro Devices, Inc.All rights reserved.
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -365,13 +365,13 @@ void glTF_DX12RendererEx::OnRender(State*                       pState,
     {
         //set per frame constant buffer values
         CMP_GltfPbr::per_batch* cbPerBatch = m_gltfPBR->SetPerBatchConstants();
-        cbPerBatch->mCameraViewProj    = pState->camera.GetView() * pState->camera.GetProjection();
-        cbPerBatch->cameraPos          = pState->camera.GetPosition();
-        cbPerBatch->mLightViewProj     = pState->light.GetView() * pState->light.GetProjection();
-        cbPerBatch->lightDirection     = pState->light.GetDirection();
-        cbPerBatch->lightColor         = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f) * pState->spotLightIntensity;
-        cbPerBatch->depthBias          = pState->depthBias;
-        cbPerBatch->iblFactor          = pState->iblFactor;
+        cbPerBatch->mCameraViewProj        = pState->camera.GetView() * pState->camera.GetProjection();
+        cbPerBatch->cameraPos              = pState->camera.GetPosition();
+        cbPerBatch->mLightViewProj         = pState->light.GetView() * pState->light.GetProjection();
+        cbPerBatch->lightDirection         = pState->light.GetDirection();
+        cbPerBatch->lightColor             = XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f) * pState->spotLightIntensity;
+        cbPerBatch->depthBias              = pState->depthBias;
+        cbPerBatch->iblFactor              = pState->iblFactor;
         m_gltfPBR->Draw(pCmdLst);
         UI->m_TotalNumIndices = m_gltfPBR->m_TotalNumIndices;
     }

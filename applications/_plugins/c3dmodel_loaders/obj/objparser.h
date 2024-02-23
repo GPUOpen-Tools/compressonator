@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2018 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2018-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -25,13 +25,14 @@
 
 #include <vector>
 
-struct ObjFile {
-    std::vector<float> v; // positions; stride 3 (xyz)
-    std::vector<float> vt; // texture coordinates; stride 3 (uvw)
-    std::vector<float> vn; // vertex normals; stride 3 (xyz)
+struct ObjFile
+{
+    std::vector<float> v;   // positions; stride 3 (xyz)
+    std::vector<float> vt;  // texture coordinates; stride 3 (uvw)
+    std::vector<float> vn;  // vertex normals; stride 3 (xyz)
 
-    std::vector<char> fv; // face vertex count
-    std::vector<int> f; // face elements; stride defined by fv (*3)
+    std::vector<char> fv;  // face vertex count
+    std::vector<int>  f;   // face elements; stride defined by fv (*3)
 };
 
 void objParseLine(ObjFile& result, const char* line);

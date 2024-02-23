@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -29,8 +29,8 @@
 #pragma warning(push)
 #pragma warning(disable : 4100)
 #pragma warning(disable : 4800)
-#pragma warning(disable : 5040) // dynamic exception specifications are valid only in C++14 and earlier; 
- 
+#pragma warning(disable : 5040)  // dynamic exception specifications are valid only in C++14 and earlier;
+
 #include "ImfArray.h"
 #include "ImfRgba.h"
 #include <ImathBox.h>
@@ -51,18 +51,19 @@ using namespace IMATH;
 #pragma warning(disable : 4201)
 typedef unsigned int uint;
 
-class Exr {
-  public:
-    Exr() {};
-    ~Exr() {};
+class Exr
+{
+public:
+    Exr(){};
+    ~Exr(){};
 
-    static void fileinfo(const string inf, int &width, int &height);
-    static void readRgba(const string inf, Array2D<Rgba> &pix, int &w, int &h);
-    static void writeRgba(const string outf, const Array2D<Rgba> &pix, int w, int h);
+    static void fileinfo(const string inf, int& width, int& height);
+    static void readRgba(const string inf, Array2D<Rgba>& pix, int& w, int& h);
+    static void writeRgba(const string outf, const Array2D<Rgba>& pix, int w, int h);
 };
 
-extern void Rgba2Texture(Array2D<Rgba> &pixels, CMP_HALFSHORT *data, int w, int h);
-extern void Texture2Rgba(CMP_HALFSHORT *data, Array2D<Rgba> &pixels, int w, int h, CMP_FORMAT isDeCompressed);
+extern void  Rgba2Texture(Array2D<Rgba>& pixels, CMP_HALFSHORT* data, int w, int h);
+extern void  Texture2Rgba(CMP_HALFSHORT* data, Array2D<Rgba>& pixels, int w, int h, CMP_FORMAT isDeCompressed);
 extern float half_conv_float(unsigned short in);
 
 #endif

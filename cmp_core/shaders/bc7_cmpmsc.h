@@ -1,5 +1,5 @@
 //===================================================================================
-// Copyright (c) 2021    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2021-2024    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -62,18 +62,18 @@
 
 #define ENABLE_CMP_API
 #define USE_NEW_SP_ERR_IDX
-#define ENABLE_CMP_REFINE_MODE6_API   // API to improve mode 6 quality
-#define MAX_TRY_SHAKER  1  // used in cmp_ep_shaker
+#define ENABLE_CMP_REFINE_MODE6_API  // API to improve mode 6 quality
+#define MAX_TRY_SHAKER 1             // used in cmp_ep_shaker
 
 //====================================================================================
-//                          HLSL Host Simulation 
+//                          HLSL Host Simulation
 //====================================================================================
-// Simulate HLSL compute code on a CPU host must run single treaded 
+// Simulate HLSL compute code on a CPU host must run single treaded
 // On cpu the code simulates a single compute unit as used by CMP DXC host
 
 // Enable SIMULATE_GPU to run simulation in CPU using HPC in CMP GUI or CMP CLI
-// Note: some bcn_encode_kernel.cpp files have specific code you simulate with, enable 
-// the define USE_NEW_SINGLE_HEADER_INTERFACES and pick the external or local codec 
+// Note: some bcn_encode_kernel.cpp files have specific code you simulate with, enable
+// the define USE_NEW_SINGLE_HEADER_INTERFACES and pick the external or local codec
 // to run with.
 
 //===========================================================================
@@ -84,185 +84,184 @@
 
 #if !defined(ASPM_GPU)
 
-    #define THREAD_GROUP_SIZE 64
-    #define BLOCK_SIZE_X 4
-    #define BLOCK_SIZE_Y 4
-    #define MAX_UINT 0xFFFFFFFF
-    #define MIN_UINT 0x00000000
-    
-    // Source Texture to process
-    // Texture2D g_Input;
-    // Normalized 0..1
-    struct Texture2D
+#define THREAD_GROUP_SIZE 64
+#define BLOCK_SIZE_X 4
+#define BLOCK_SIZE_Y 4
+#define MAX_UINT 0xFFFFFFFF
+#define MIN_UINT 0x00000000
+
+// Source Texture to process
+// Texture2D g_Input;
+// Normalized 0..1
+struct Texture2D
+{
+    CGU_Vec4f Texture[16];
+
+    CGU_Vec4f Load(CGU_Vec3ui index)
     {
-        CGU_Vec4f Texture[16];
-
-        CGU_Vec4f Load(CGU_Vec3ui index)
-        {
-            CGU_INT offset;
-            offset = (index.x + (index.y * 4)) & 0x0F;
-            return Texture[offset];
-        };
-
-        CGU_Vec4f Load(CGU_Vec3ui index, CGU_UINT32 z)
-        {
-            CMP_UNUSED(z);
-            CGU_INT offset;
-            offset = (index.x + (index.y * 4)) & 0x0F;
-            return Texture[offset];
-        };
-
-        // Ignoring z in Texture2D load
-        CGU_Vec4ui Load(CGU_Vec4ui index)
-        {
-            CGU_INT offset;
-            offset = (index.x + (index.y * 4)) & 0x0F;
-            // implicit conversion of float to uint
-            CGU_Vec4ui res;
-            res.x = Texture[offset].x;
-            res.y = Texture[offset].y;
-            res.z = Texture[offset].z;
-            res.w = Texture[offset].w;
-            return res;
-        };
+        CGU_INT offset;
+        offset = (index.x + (index.y * 4)) & 0x0F;
+        return Texture[offset];
     };
 
-    // matches GPU struct in HLSL
-    struct BufferShared
+    CGU_Vec4f Load(CGU_Vec3ui index, CGU_UINT32 z)
     {
-        CGU_Vec4ui pixel;
-        CGU_UINT32 error;
-        CGU_UINT32 mode;
-        CGU_UINT32 partition;
-        CGU_UINT32 index_selector;
-        CGU_UINT32 rotation;
-        CGU_UINT32 pbit;
-        CGU_Vec4ui endPoint_low;
-        CGU_Vec4ui endPoint_high;
-        CGU_Vec4ui endPoint_low_quantized;
-        CGU_Vec4ui endPoint_high_quantized;
-        CGU_UINT32 colorindex;
-        CGU_UINT32 alphaindex;
+        CMP_UNUSED(z);
+        CGU_INT offset;
+        offset = (index.x + (index.y * 4)) & 0x0F;
+        return Texture[offset];
     };
 
-    struct SharedIOData
+    // Ignoring z in Texture2D load
+    CGU_Vec4ui Load(CGU_Vec4ui index)
     {
-        CGU_UINT32 error;
-        CGU_UINT32 mode;
-        CGU_UINT32 index_selector;
-        CGU_UINT32 rotation;
-        CGU_UINT32 partition;
-        CGU_Vec4ui data2;
+        CGU_INT offset;
+        offset = (index.x + (index.y * 4)) & 0x0F;
+        // implicit conversion of float to uint
+        CGU_Vec4ui res;
+        res.x = Texture[offset].x;
+        res.y = Texture[offset].y;
+        res.z = Texture[offset].z;
+        res.w = Texture[offset].w;
+        return res;
     };
+};
 
-    CMP_STATIC BufferShared shared_temp[THREAD_GROUP_SIZE];
-    CMP_STATIC Texture2D    g_Input;
+// matches GPU struct in HLSL
+struct BufferShared
+{
+    CGU_Vec4ui pixel;
+    CGU_UINT32 error;
+    CGU_UINT32 mode;
+    CGU_UINT32 partition;
+    CGU_UINT32 index_selector;
+    CGU_UINT32 rotation;
+    CGU_UINT32 pbit;
+    CGU_Vec4ui endPoint_low;
+    CGU_Vec4ui endPoint_high;
+    CGU_Vec4ui endPoint_low_quantized;
+    CGU_Vec4ui endPoint_high_quantized;
+    CGU_UINT32 colorindex;
+    CGU_UINT32 alphaindex;
+};
 
-    // cbuffer input: On cpu will use 1 block
-    CMP_STATIC CGU_UINT32 g_tex_width;         // Not used in HLSLHost simulation code
-    CMP_STATIC CGU_UINT32 g_num_block_x = 1;
-    CMP_STATIC CGU_UINT32 g_format;            // Not used in HLSLHost simulation code
-    CMP_STATIC CGU_UINT32 g_mode_id        = 1;
-    CMP_STATIC CGU_UINT32 g_start_block_id = 0;
-    CMP_STATIC CGU_UINT32 g_num_total_blocks;
-    CMP_STATIC CGU_FLOAT  g_alpha_weight = 1.0f;
-    CMP_STATIC CGU_FLOAT  g_quality      = 1.0f;
+struct SharedIOData
+{
+    CGU_UINT32 error;
+    CGU_UINT32 mode;
+    CGU_UINT32 index_selector;
+    CGU_UINT32 rotation;
+    CGU_UINT32 partition;
+    CGU_Vec4ui data2;
+};
 
-    CMP_STATIC SharedIOData g_InBuff[THREAD_GROUP_SIZE];
-    CMP_STATIC CGU_Vec4ui   g_OutBuff[THREAD_GROUP_SIZE];   // Used by EncodeBlocks & TryMode...
-    CMP_STATIC SharedIOData g_OutBuff1[THREAD_GROUP_SIZE];  // Used by TryMode...
+CMP_STATIC BufferShared shared_temp[THREAD_GROUP_SIZE];
+CMP_STATIC Texture2D    g_Input;
 
-    // Forward definitions 
-    void TryMode456CS(CGU_UINT32 GI CMP_SVGROUPINDEX, CGU_Vec3ui groupID CMP_SVGROUPID);
-    void TryMode137CS(CGU_UINT32 GI CMP_SVGROUPINDEX, CGU_Vec3ui groupID CMP_SVGROUPID);
-    void TryMode02CS( CGU_UINT32 GI CMP_SVGROUPINDEX, CGU_Vec3ui groupID CMP_SVGROUPID);
-    void EncodeBlocks(CGU_UINT32 GI CMP_SVGROUPINDEX, CGU_Vec3ui groupID CMP_SVGROUPID);
+// cbuffer input: On cpu will use 1 block
+CMP_STATIC CGU_UINT32 g_tex_width;  // Not used in HLSLHost simulation code
+CMP_STATIC CGU_UINT32 g_num_block_x = 1;
+CMP_STATIC CGU_UINT32 g_format;  // Not used in HLSLHost simulation code
+CMP_STATIC CGU_UINT32 g_mode_id        = 1;
+CMP_STATIC CGU_UINT32 g_start_block_id = 0;
+CMP_STATIC CGU_UINT32 g_num_total_blocks;
+CMP_STATIC CGU_FLOAT  g_alpha_weight = 1.0f;
+CMP_STATIC CGU_FLOAT  g_quality      = 1.0f;
 
-    CMP_STATIC void HLSLHost(CGU_Vec4f image_src[16])
+CMP_STATIC SharedIOData g_InBuff[THREAD_GROUP_SIZE];
+CMP_STATIC CGU_Vec4ui   g_OutBuff[THREAD_GROUP_SIZE];   // Used by EncodeBlocks & TryMode...
+CMP_STATIC SharedIOData g_OutBuff1[THREAD_GROUP_SIZE];  // Used by TryMode...
+
+// Forward definitions
+void TryMode456CS(CGU_UINT32 GI CMP_SVGROUPINDEX, CGU_Vec3ui groupID CMP_SVGROUPID);
+void TryMode137CS(CGU_UINT32 GI CMP_SVGROUPINDEX, CGU_Vec3ui groupID CMP_SVGROUPID);
+void TryMode02CS(CGU_UINT32 GI CMP_SVGROUPINDEX, CGU_Vec3ui groupID CMP_SVGROUPID);
+void EncodeBlocks(CGU_UINT32 GI CMP_SVGROUPINDEX, CGU_Vec3ui groupID CMP_SVGROUPID);
+
+CMP_STATIC void HLSLHost(CGU_Vec4f image_src[16])
+{
+    //====================================
+    // Simulate a single block CS
+    //====================================
+    // Load image_src
+    CGU_Vec4ui imageBlock[16];
+    for (CGU_INT i = 0; i < 16; i++)
     {
-        //====================================
-        // Simulate a single block CS
-        //====================================
-        // Load image_src
-        CGU_Vec4ui imageBlock[16];
-        for (CGU_INT i = 0; i < 16; i++)
-        {
-            g_Input.Texture[i].x = image_src[i].x / 255.0f;
-            g_Input.Texture[i].y = image_src[i].y / 255.0f;
-            g_Input.Texture[i].z = image_src[i].z / 255.0f;
-            g_Input.Texture[i].w = image_src[i].w / 255.0f;
-        }
-    
-        // Init global Buffers for first time use
-        for (CGU_INT i = 0; i < THREAD_GROUP_SIZE; i++)
-        {
-            memset(&shared_temp[i], 0, sizeof(BufferShared));
-            memset(&g_InBuff[i], 0, sizeof(SharedIOData));
-            memset(&g_OutBuff1[i], 0, sizeof(SharedIOData));
-        }
-    
-        // First Shader call
-        CGU_Vec3ui SV_GroupID       = {0, 0, 0};  // = Dispatch (1..(n-1),1,1) where n = number of (4x4) blocks in the image;
-        CGU_Vec3ui SV_GrounThreadID = {0, 0, 0};
-        g_start_block_id            = 0;
-    
-        //  // Global Group Memory Sync for Pixel
-        //  for (CGU_INT i = 0; i < 16; i++)
-        //  {
-        //      CGU_Vec4f px           = g_Input.Load(CGU_Vec3ui(i % 4, i / 4, 0));
-        //      px                     = cmp_clampVec4f(px * 255.0f, 0.0f, 255.0f);
-        //      //printf("in  px[%2d] %3.0f %3.0f %3.0f\n",i, px.x, px.y, px.z);
-        //      shared_temp[i].pixel.r = (CGU_UINT32)px.r;
-        //      shared_temp[i].pixel.g = (CGU_UINT32)px.g;
-        //      shared_temp[i].pixel.b = (CGU_UINT32)px.b;
-        //      shared_temp[i].pixel.a = (CGU_UINT32)px.a;
-        //  }
-    
-        g_mode_id = 6;
-        for (CGU_INT SV_GroupIndex = 15; SV_GroupIndex >= 0; SV_GroupIndex--)
-        {
-            TryMode456CS(SV_GroupIndex, SV_GroupID);
-        }
-    
-        // Return Outbuff back to inbuff for next CS use
-        for (CGU_INT i = 0; i < THREAD_GROUP_SIZE; i++)
-        {
-            memcpy(&g_InBuff[i], &g_OutBuff1[i], sizeof(SharedIOData));
-        }
-    
-        // Global Group Memory Sync for Pixel
-        //for (CGU_INT i = 0; i < 16; i++)
-        //{
-        //    CGU_Vec4f px           = g_Input.Load(CGU_Vec3ui(i % 4, i / 4, 0));
-        //    px                     = cmp_clampVec4f(px * 255.0f, 0.0f, 255.0f);
-        //    shared_temp[i].pixel.r = (CGU_UINT32)px.r;
-        //    shared_temp[i].pixel.g = (CGU_UINT32)px.g;
-        //    shared_temp[i].pixel.b = (CGU_UINT32)px.b;
-        //    shared_temp[i].pixel.a = (CGU_UINT32)px.a;
-        //}
-    
-        // Next Shader call
-        g_mode_id = 1;
-        for (CGU_INT SV_GroupIndex = 63; SV_GroupIndex >= 0; SV_GroupIndex--)
-        {
-            TryMode137CS(SV_GroupIndex, SV_GroupID);
-        }
-    
-        // Return Outbuff back to inbuff for next shader call
-        for (CGU_INT i = 0; i < THREAD_GROUP_SIZE; i++)
-        {
-            memcpy(&g_InBuff[i], &g_OutBuff1[i], sizeof(SharedIOData));
-        }
-    
-        // Final Shader call
-        for (CGU_INT SV_GroupIndex = 15; SV_GroupIndex >= 0; SV_GroupIndex--)
-        {
-            EncodeBlocks(SV_GroupIndex, SV_GroupID);
-        }
+        g_Input.Texture[i].x = image_src[i].x / 255.0f;
+        g_Input.Texture[i].y = image_src[i].y / 255.0f;
+        g_Input.Texture[i].z = image_src[i].z / 255.0f;
+        g_Input.Texture[i].w = image_src[i].w / 255.0f;
     }
 
-#endif
+    // Init global Buffers for first time use
+    for (CGU_INT i = 0; i < THREAD_GROUP_SIZE; i++)
+    {
+        memset(&shared_temp[i], 0, sizeof(BufferShared));
+        memset(&g_InBuff[i], 0, sizeof(SharedIOData));
+        memset(&g_OutBuff1[i], 0, sizeof(SharedIOData));
+    }
 
+    // First Shader call
+    CGU_Vec3ui SV_GroupID       = {0, 0, 0};  // = Dispatch (1..(n-1),1,1) where n = number of (4x4) blocks in the image;
+    CGU_Vec3ui SV_GrounThreadID = {0, 0, 0};
+    g_start_block_id            = 0;
+
+    //  // Global Group Memory Sync for Pixel
+    //  for (CGU_INT i = 0; i < 16; i++)
+    //  {
+    //      CGU_Vec4f px           = g_Input.Load(CGU_Vec3ui(i % 4, i / 4, 0));
+    //      px                     = cmp_clampVec4f(px * 255.0f, 0.0f, 255.0f);
+    //      //printf("in  px[%2d] %3.0f %3.0f %3.0f\n",i, px.x, px.y, px.z);
+    //      shared_temp[i].pixel.r = (CGU_UINT32)px.r;
+    //      shared_temp[i].pixel.g = (CGU_UINT32)px.g;
+    //      shared_temp[i].pixel.b = (CGU_UINT32)px.b;
+    //      shared_temp[i].pixel.a = (CGU_UINT32)px.a;
+    //  }
+
+    g_mode_id = 6;
+    for (CGU_INT SV_GroupIndex = 15; SV_GroupIndex >= 0; SV_GroupIndex--)
+    {
+        TryMode456CS(SV_GroupIndex, SV_GroupID);
+    }
+
+    // Return Outbuff back to inbuff for next CS use
+    for (CGU_INT i = 0; i < THREAD_GROUP_SIZE; i++)
+    {
+        memcpy(&g_InBuff[i], &g_OutBuff1[i], sizeof(SharedIOData));
+    }
+
+    // Global Group Memory Sync for Pixel
+    //for (CGU_INT i = 0; i < 16; i++)
+    //{
+    //    CGU_Vec4f px           = g_Input.Load(CGU_Vec3ui(i % 4, i / 4, 0));
+    //    px                     = cmp_clampVec4f(px * 255.0f, 0.0f, 255.0f);
+    //    shared_temp[i].pixel.r = (CGU_UINT32)px.r;
+    //    shared_temp[i].pixel.g = (CGU_UINT32)px.g;
+    //    shared_temp[i].pixel.b = (CGU_UINT32)px.b;
+    //    shared_temp[i].pixel.a = (CGU_UINT32)px.a;
+    //}
+
+    // Next Shader call
+    g_mode_id = 1;
+    for (CGU_INT SV_GroupIndex = 63; SV_GroupIndex >= 0; SV_GroupIndex--)
+    {
+        TryMode137CS(SV_GroupIndex, SV_GroupID);
+    }
+
+    // Return Outbuff back to inbuff for next shader call
+    for (CGU_INT i = 0; i < THREAD_GROUP_SIZE; i++)
+    {
+        memcpy(&g_InBuff[i], &g_OutBuff1[i], sizeof(SharedIOData));
+    }
+
+    // Final Shader call
+    for (CGU_INT SV_GroupIndex = 15; SV_GroupIndex >= 0; SV_GroupIndex--)
+    {
+        EncodeBlocks(SV_GroupIndex, SV_GroupID);
+    }
+}
+
+#endif
 
 #ifdef ENABLE_CMP_API
 
@@ -275,10 +274,10 @@ CMP_STATIC CMP_CONSTANT CGU_UINT32 par_vectors42_nd[4][2][4] = {
     {{1, 1, 1, 1}, {1, 1, 1, 1}}   // 3  {1,1}
 };
 
-#define COMP_RED        0
-#define COMP_GREEN      1
-#define COMP_BLUE       2
-#define COMP_ALPHA      3
+#define COMP_RED 0
+#define COMP_GREEN 1
+#define COMP_BLUE 2
+#define COMP_ALPHA 3
 
 typedef struct
 {
@@ -292,21 +291,19 @@ typedef struct
     CGU_UINT32 indexBits;
 } MODESETTINGS;
 
-
 CMP_STATIC CMP_CONSTANT MODESETTINGS g_modesettings[8] = {
-//   numPartitionModes,maxSubSets   channels3or4,   bits,   clusters,   componentBits,  partitionBits,  indexBits
-    {16,                3,          3,              26,     8,          4,              4,              3},  // Mode 0
-    {64,                2,          3,              37,     8,          6,              6,              3},  // Mode 1
-    {64,                3,          3,              30,     4,          5,              6,              2},  // Mode 2
-    {64,                2,          3,              44,     4,          7,              6,              2},  // Mode 3
-    { 0,                0,          0,              0,      0,          0,              0,              2},  // Mode 4
-    { 0,                0,          0,              0,      0,          0,              0,              2},  // Mode 5
-    { 0,                0,          4,              58,     16,         7,              0,              4},  // Mode 6
-    {64,                2,          4,              42,     4,          5,              6,              2}   // Mode 7
+    //   numPartitionModes,maxSubSets   channels3or4,   bits,   clusters,   componentBits,  partitionBits,  indexBits
+    {16, 3, 3, 26, 8, 4, 4, 3},  // Mode 0
+    {64, 2, 3, 37, 8, 6, 6, 3},  // Mode 1
+    {64, 3, 3, 30, 4, 5, 6, 2},  // Mode 2
+    {64, 2, 3, 44, 4, 7, 6, 2},  // Mode 3
+    {0, 0, 0, 0, 0, 0, 0, 2},    // Mode 4
+    {0, 0, 0, 0, 0, 0, 0, 2},    // Mode 5
+    {0, 0, 4, 58, 16, 7, 0, 4},  // Mode 6
+    {64, 2, 4, 42, 4, 5, 6, 2}   // Mode 7
 };
 
-#ifndef ASPM_HLSL //=======================================================
-
+#ifndef ASPM_HLSL  //=======================================================
 
 CMP_STATIC CMP_CONSTANT CGU_UINT32 subset_mask_table2[128] = {
     // 2 subset region patterns
@@ -673,34 +670,144 @@ CMP_STATIC CMP_CONSTANT CGU_UINT8 cmp_rampI[3][16] = {
 // The data is saved as a packed INT = (BC7_FIXUPINDEX1 << 4 + BC7_FIXUPINDEX2)
 CMP_STATIC CMP_CONSTANT CGU_UINT32 CMPFIXUPINDEX[128] = {
     // 2 subset partitions 0..63
-    0xf0u,0xf0u,0xf0u,0xf0u,0xf0u,0xf0u,0xf0u,0xf0u,
-    0xf0u,0xf0u,0xf0u,0xf0u,0xf0u,0xf0u,0xf0u,0xf0u,
-    0xf0u,0x20u,0x80u,0x20u,0x20u,0x80u,0x80u,0xf0u,
-    0x20u,0x80u,0x20u,0x20u,0x80u,0x80u,0x20u,0x20u,
-    0xf0u,0xf0u,0x60u,0x80u,0x20u,0x80u,0xf0u,0xf0u,
-    0x20u,0x80u,0x20u,0x20u,0x20u,0xf0u,0xf0u,0x60u,
-    0x60u,0x20u,0x60u,0x80u,0xf0u,0xf0u,0x20u,0x20u,
-    0xf0u,0xf0u,0xf0u,0xf0u,0xf0u,0x20u,0x20u,0xf0u,
+    0xf0u,
+    0xf0u,
+    0xf0u,
+    0xf0u,
+    0xf0u,
+    0xf0u,
+    0xf0u,
+    0xf0u,
+    0xf0u,
+    0xf0u,
+    0xf0u,
+    0xf0u,
+    0xf0u,
+    0xf0u,
+    0xf0u,
+    0xf0u,
+    0xf0u,
+    0x20u,
+    0x80u,
+    0x20u,
+    0x20u,
+    0x80u,
+    0x80u,
+    0xf0u,
+    0x20u,
+    0x80u,
+    0x20u,
+    0x20u,
+    0x80u,
+    0x80u,
+    0x20u,
+    0x20u,
+    0xf0u,
+    0xf0u,
+    0x60u,
+    0x80u,
+    0x20u,
+    0x80u,
+    0xf0u,
+    0xf0u,
+    0x20u,
+    0x80u,
+    0x20u,
+    0x20u,
+    0x20u,
+    0xf0u,
+    0xf0u,
+    0x60u,
+    0x60u,
+    0x20u,
+    0x60u,
+    0x80u,
+    0xf0u,
+    0xf0u,
+    0x20u,
+    0x20u,
+    0xf0u,
+    0xf0u,
+    0xf0u,
+    0xf0u,
+    0xf0u,
+    0x20u,
+    0x20u,
+    0xf0u,
 
     // 3 subset partitions 64..128
-    0x3fu,0x38u,0xf8u,0xf3u,0x8fu,0x3fu,0xf3u,0xf8u,
-    0x8fu,0x8fu,0x6fu,0x6fu,0x6fu,0x5fu,0x3fu,0x38u,
-    0x3fu,0x38u,0x8fu,0xf3u,0x3fu,0x38u,0x6fu,0xa8u,
-    0x53u,0x8fu,0x86u,0x6au,0x8fu,0x5fu,0xfau,0xf8u,
-    0x8fu,0xf3u,0x3fu,0x5au,0x6au,0xa8u,0x89u,0xfau,
-    0xf6u,0x3fu,0xf8u,0x5fu,0xf3u,0xf6u,0xf6u,0xf8u,
-    0x3fu,0xf3u,0x5fu,0x5fu,0x5fu,0x8fu,0x5fu,0xafu,
-    0x5fu,0xafu,0x8fu,0xdfu,0xf3u,0xcfu,0x3fu,0x38u };
-
+    0x3fu,
+    0x38u,
+    0xf8u,
+    0xf3u,
+    0x8fu,
+    0x3fu,
+    0xf3u,
+    0xf8u,
+    0x8fu,
+    0x8fu,
+    0x6fu,
+    0x6fu,
+    0x6fu,
+    0x5fu,
+    0x3fu,
+    0x38u,
+    0x3fu,
+    0x38u,
+    0x8fu,
+    0xf3u,
+    0x3fu,
+    0x38u,
+    0x6fu,
+    0xa8u,
+    0x53u,
+    0x8fu,
+    0x86u,
+    0x6au,
+    0x8fu,
+    0x5fu,
+    0xfau,
+    0xf8u,
+    0x8fu,
+    0xf3u,
+    0x3fu,
+    0x5au,
+    0x6au,
+    0xa8u,
+    0x89u,
+    0xfau,
+    0xf6u,
+    0x3fu,
+    0xf8u,
+    0x5fu,
+    0xf3u,
+    0xf6u,
+    0xf6u,
+    0xf8u,
+    0x3fu,
+    0xf3u,
+    0x5fu,
+    0x5fu,
+    0x5fu,
+    0x8fu,
+    0x5fu,
+    0xafu,
+    0x5fu,
+    0xafu,
+    0x8fu,
+    0xdfu,
+    0xf3u,
+    0xcfu,
+    0x3fu,
+    0x38u};
 
 INLINE void cmp_get_fixuptable(CMP_INOUT CGU_UINT32 fixup[3], CGU_INT part_id)
 {
     CGU_UINT32 skip_packed = CMPFIXUPINDEX[part_id];  // gather_int2(FIXUPINDEX, part_id);
-    fixup[0]            = 0;
-    fixup[1]            = skip_packed >> 4;
-    fixup[2]            = skip_packed & 15;
+    fixup[0]               = 0;
+    fixup[1]               = skip_packed >> 4;
+    fixup[2]               = skip_packed & 15;
 }
-
 
 INLINE CGU_UINT8 shift_right_epocode2(CMP_IN CGU_UINT8 v, CMP_IN CGU_INT bits)
 {
@@ -713,10 +820,10 @@ INLINE CGU_UINT8 expand_epocode2(CMP_IN CGU_UINT8 v, CMP_IN CGU_INT bits)
     return vv + shift_right_epocode2(vv, bits);
 }
 
-INLINE CGV_FLOAT cmp_GetRamp(CMP_IN CGU_INT index_bits,  // ramp bits Valid range 2..4
-                             CMP_IN CGU_INT bits,        // Component Valid range 5..8
-                             CMP_IN CGU_INT p1,          // 0..255
-                             CMP_IN CGU_INT p2,          // 0..255
+INLINE CGV_FLOAT cmp_GetRamp(CMP_IN CGU_INT   index_bits,  // ramp bits Valid range 2..4
+                             CMP_IN CGU_INT   bits,        // Component Valid range 5..8
+                             CMP_IN CGU_INT   p1,          // 0..255
+                             CMP_IN CGU_INT   p2,          // 0..255
                              CMP_IN CGU_UINT8 index)
 {
     CGU_INT   e1    = expand_epocode2(p1, bits);
@@ -726,33 +833,108 @@ INLINE CGV_FLOAT cmp_GetRamp(CMP_IN CGU_INT index_bits,  // ramp bits Valid rang
     return rampf;
 }
 
-#if defined(USE_NEW_SP_ERR_IDX) 
+#if defined(USE_NEW_SP_ERR_IDX)
 
 #ifndef ASPM_GPU
 struct BC7_EncodeRamps2
 {
-    CGU_INT      ep_d[4][256];
-    CGU_UINT8    sp_err[3*4*256*2*2*16];
-    CGU_INT      sp_idx[3*4*256*2*2*16*2];
-    CGU_BOOL     ramp_init;
+    CGU_INT   ep_d[4][256];
+    CGU_UINT8 sp_err[3 * 4 * 256 * 2 * 2 * 16];
+    CGU_INT   sp_idx[3 * 4 * 256 * 2 * 2 * 16 * 2];
+    CGU_BOOL  ramp_init;
 };
 
 BC7_EncodeRamps2 BC7EncodeRamps2;
 
-#define LOG_CL_RANGE2                    5
-#define LOG_CL_BASE2                     2
-#define BIT_BASE2                        5
-#define BIT_RANGE2                       9
-#define BTT2(bits)                       (bits-BIT_BASE2)
-#define CLT2(cl)                         (cl-LOG_CL_BASE2)
-#define SOURCE_BLOCK_SIZE                16
+#define LOG_CL_RANGE2 5
+#define LOG_CL_BASE2 2
+#define BIT_BASE2 5
+#define BIT_RANGE2 9
+#define BTT2(bits) (bits - BIT_BASE2)
+#define CLT2(cl) (cl - LOG_CL_BASE2)
+#define SOURCE_BLOCK_SIZE 16
 
-CMP_CONSTANT CGU_FLOAT  rampWeights2[5][SOURCE_BLOCK_SIZE] = {
-    { 0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f}, // 0 bit index
-    { 0.000000f,1.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f}, // 1 bit index
-    { 0.000000f,0.328125f,0.671875f,1.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f}, // 2 bit index
-    { 0.000000f,0.140625f,0.281250f,0.421875f,0.578125f,0.718750f,0.859375f,1.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f,0.000000f}, // 3 bit index
-    { 0.000000f,0.062500f,0.140625f,0.203125f,0.265625f,0.328125f,0.406250f,0.468750f,0.531250f,0.593750f,0.671875f,0.734375f,0.796875f,0.859375f,0.937500f,1.000000f}  // 4 bit index
+CMP_CONSTANT CGU_FLOAT rampWeights2[5][SOURCE_BLOCK_SIZE] = {
+    {0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f},  // 0 bit index
+    {0.000000f,
+     1.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f},  // 1 bit index
+    {0.000000f,
+     0.328125f,
+     0.671875f,
+     1.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f},  // 2 bit index
+    {0.000000f,
+     0.140625f,
+     0.281250f,
+     0.421875f,
+     0.578125f,
+     0.718750f,
+     0.859375f,
+     1.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f,
+     0.000000f},  // 3 bit index
+    {0.000000f,
+     0.062500f,
+     0.140625f,
+     0.203125f,
+     0.265625f,
+     0.328125f,
+     0.406250f,
+     0.468750f,
+     0.531250f,
+     0.593750f,
+     0.671875f,
+     0.734375f,
+     0.796875f,
+     0.859375f,
+     0.937500f,
+     1.000000f}  // 4 bit index
 };
 
 CGU_INT old_expandbits(CGU_INT bits, CGU_INT v)
@@ -762,11 +944,10 @@ CGU_INT old_expandbits(CGU_INT bits, CGU_INT v)
 
 void old_init_BC7ramps()
 {
-
     CMP_STATIC CGU_BOOL g_rampsInitialized = FALSE;
     if (g_rampsInitialized == TRUE)
         return;
-    g_rampsInitialized       = TRUE;
+    g_rampsInitialized        = TRUE;
     BC7EncodeRamps2.ramp_init = TRUE;
 
     //bc7_isa(); ASPM_PRINT((" INIT Ramps\n"));
@@ -792,7 +973,6 @@ void old_init_BC7ramps()
     {
         for (bits = BIT_BASE2; bits < BIT_RANGE2; bits++)
         {
-
             // SP_ERR_IDX : Init
             for (j = 0; j < 256; j++)
             {
@@ -803,11 +983,11 @@ void old_init_BC7ramps()
                         for (index = 0; index < 16; index++)
                         {
                             BC7EncodeRamps2.sp_idx[(CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16 * 2) + (BTT2(bits) * 256 * 2 * 2 * 16 * 2) + (j * 2 * 2 * 16 * 2) +
-                                                  (o1 * 2 * 16 * 2) + (o2 * 16 * 2) + (index * 2) + 0] = 0;
+                                                   (o1 * 2 * 16 * 2) + (o2 * 16 * 2) + (index * 2) + 0] = 0;
                             BC7EncodeRamps2.sp_idx[(CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16 * 2) + (BTT2(bits) * 256 * 2 * 2 * 16 * 2) + (j * 2 * 2 * 16 * 2) +
-                                                  (o1 * 2 * 16 * 2) + (o2 * 16 * 2) + (index * 2) + 1] = 255;
+                                                   (o1 * 2 * 16 * 2) + (o2 * 16 * 2) + (index * 2) + 1] = 255;
                             BC7EncodeRamps2.sp_err[(CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16) + (BTT2(bits) * 256 * 2 * 2 * 16) + (j * 2 * 2 * 16) + (o1 * 2 * 16) +
-                                                  (o2 * 16) + index]                                   = 255;
+                                                   (o2 * 16) + index]                                   = 255;
                         }  // i<16
                     }      //o2<2;
                 }          //o1<2
@@ -820,15 +1000,15 @@ void old_init_BC7ramps()
                 {
                     for (index = 0; index < (1 << clogBC7); index++)
                     {
-                        CGV_INT floatf =
-                            cmp_floor((CGV_FLOAT)BC7EncodeRamps2.ep_d[BTT2(bits)][p1] +
-                                  rampWeights2[clogBC7][index] * (CGV_FLOAT)((BC7EncodeRamps2.ep_d[BTT2(bits)][p2] - BC7EncodeRamps2.ep_d[BTT2(bits)][p1])) + 0.5F);
+                        CGV_INT floatf = cmp_floor(
+                            (CGV_FLOAT)BC7EncodeRamps2.ep_d[BTT2(bits)][p1] +
+                            rampWeights2[clogBC7][index] * (CGV_FLOAT)((BC7EncodeRamps2.ep_d[BTT2(bits)][p2] - BC7EncodeRamps2.ep_d[BTT2(bits)][p1])) + 0.5F);
                         BC7EncodeRamps2.sp_idx[(CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16 * 2) + (BTT2(bits) * 256 * 2 * 2 * 16 * 2) + (floatf * 2 * 2 * 16 * 2) +
-                                              ((p1 & 0x1) * 2 * 16 * 2) + ((p2 & 0x1) * 16 * 2) + (index * 2) + 0] = p1;
+                                               ((p1 & 0x1) * 2 * 16 * 2) + ((p2 & 0x1) * 16 * 2) + (index * 2) + 0] = p1;
                         BC7EncodeRamps2.sp_idx[(CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16 * 2) + (BTT2(bits) * 256 * 2 * 2 * 16 * 2) + (floatf * 2 * 2 * 16 * 2) +
-                                              ((p1 & 0x1) * 2 * 16 * 2) + ((p2 & 0x1) * 16 * 2) + (index * 2) + 1] = p2;
+                                               ((p1 & 0x1) * 2 * 16 * 2) + ((p2 & 0x1) * 16 * 2) + (index * 2) + 1] = p2;
                         BC7EncodeRamps2.sp_err[(CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16) + (BTT2(bits) * 256 * 2 * 2 * 16) + (floatf * 2 * 2 * 16) +
-                                              ((p1 & 0x1) * 2 * 16) + (p2 & 0x1 * 16) + index]                     = 0;
+                                               ((p1 & 0x1) * 2 * 16) + (p2 & 0x1 * 16) + index]                     = 0;
                     }  //i<(1 << clogBC7)
                 }      //p2
             }          //p1<(1 << bits)
@@ -842,10 +1022,10 @@ void old_init_BC7ramps()
                         for (index = 0; index < (1 << clogBC7); index++)
                         {
                             if (  // check for unitialized sp_idx
-                                (BC7EncodeRamps2.sp_idx[(CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16 * 2) + (BTT2(bits) * 256 * 2 * 2 * 16 * 2) + (j * 2 * 2 * 16 * 2) +
-                                                       (o1 * 2 * 16 * 2) + (o2 * 16 * 2) + (index * 2) + 0] == 0) &&
-                                (BC7EncodeRamps2.sp_idx[(CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16 * 2) + (BTT2(bits) * 256 * 2 * 2 * 16 * 2) + (j * 2 * 2 * 16 * 2) +
-                                                       (o1 * 2 * 16 * 2) + (o2 * 16 * 2) + (index * 2) + 1] == 255))
+                                (BC7EncodeRamps2.sp_idx[(CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16 * 2) + (BTT2(bits) * 256 * 2 * 2 * 16 * 2) +
+                                                        (j * 2 * 2 * 16 * 2) + (o1 * 2 * 16 * 2) + (o2 * 16 * 2) + (index * 2) + 0] == 0) &&
+                                (BC7EncodeRamps2.sp_idx[(CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16 * 2) + (BTT2(bits) * 256 * 2 * 2 * 16 * 2) +
+                                                        (j * 2 * 2 * 16 * 2) + (o1 * 2 * 16 * 2) + (o2 * 16 * 2) + (index * 2) + 1] == 255))
 
                             {
                                 CGU_INT k;
@@ -857,31 +1037,31 @@ void old_init_BC7ramps()
                                     tf = j - k;
                                     tc = j + k;
                                     if ((tf >= 0 && BC7EncodeRamps2.sp_err[(CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16) + (BTT2(bits) * 256 * 2 * 2 * 16) +
-                                                                          (tf * 2 * 2 * 16) + (o1 * 2 * 16) + (o2 * 16) + index] == 0))
+                                                                           (tf * 2 * 2 * 16) + (o1 * 2 * 16) + (o2 * 16) + index] == 0))
                                     {
                                         BC7EncodeRamps2.sp_idx[(CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16 * 2) + (BTT2(bits) * 256 * 2 * 2 * 16 * 2) +
-                                                              (j * 2 * 2 * 16 * 2) + (o1 * 2 * 16 * 2) + (o2 * 16 * 2) + (index * 2) + 0] =
+                                                               (j * 2 * 2 * 16 * 2) + (o1 * 2 * 16 * 2) + (o2 * 16 * 2) + (index * 2) + 0] =
                                             BC7EncodeRamps2.sp_idx[(CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16 * 2) + (BTT2(bits) * 256 * 2 * 2 * 16 * 2) +
-                                                                  (tf * 2 * 2 * 16 * 2) + (o1 * 2 * 16 * 2) + (o2 * 16 * 2) + (index * 2) + 0];
+                                                                   (tf * 2 * 2 * 16 * 2) + (o1 * 2 * 16 * 2) + (o2 * 16 * 2) + (index * 2) + 0];
                                         BC7EncodeRamps2.sp_idx[(CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16 * 2) + (BTT2(bits) * 256 * 2 * 2 * 16 * 2) +
-                                                              (j * 2 * 2 * 16 * 2) + (o1 * 2 * 16 * 2) + (o2 * 16 * 2) + (index * 2) + 1] =
+                                                               (j * 2 * 2 * 16 * 2) + (o1 * 2 * 16 * 2) + (o2 * 16 * 2) + (index * 2) + 1] =
                                             BC7EncodeRamps2.sp_idx[(CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16 * 2) + (BTT2(bits) * 256 * 2 * 2 * 16 * 2) +
-                                                                  (tf * 2 * 2 * 16 * 2) + (o1 * 2 * 16 * 2) + (o2 * 16 * 2) + (index * 2) + 1];
+                                                                   (tf * 2 * 2 * 16 * 2) + (o1 * 2 * 16 * 2) + (o2 * 16 * 2) + (index * 2) + 1];
                                         break;
                                     }
                                     else if ((tc < 256 && BC7EncodeRamps2.sp_err[(CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16) + (BTT2(bits) * 256 * 2 * 2 * 16) +
-                                                                                (tc * 2 * 2 * 16) + (o1 * 2 * 16) + (o2 * 16) + index] == 0))
+                                                                                 (tc * 2 * 2 * 16) + (o1 * 2 * 16) + (o2 * 16) + index] == 0))
                                     {
                                         BC7EncodeRamps2.sp_idx[(CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16 * 2) + (BTT2(bits) * 256 * 2 * 2 * 16 * 2) +
-                                                              (j * 2 * 2 * 16 * 2) + (o1 * 2 * 16 * 2) + (o2 * 16 * 2) + (index * 2) + 0] =
+                                                               (j * 2 * 2 * 16 * 2) + (o1 * 2 * 16 * 2) + (o2 * 16 * 2) + (index * 2) + 0] =
                                             BC7EncodeRamps2.sp_idx[(CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16 * 2) + (BTT2(bits) * 256 * 2 * 2 * 16 * 2) +
-                                                                  (tc * 2 * 2 * 16 * 2) + (o1 * 2 * 16 * 2) + (o2 * 16 * 2) + (index * 2) + 0];
+                                                                   (tc * 2 * 2 * 16 * 2) + (o1 * 2 * 16 * 2) + (o2 * 16 * 2) + (index * 2) + 0];
                                         break;
                                     }
                                 }
 
                                 BC7EncodeRamps2.sp_err[(CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16) + (BTT2(bits) * 256 * 2 * 2 * 16) + (j * 2 * 2 * 16) +
-                                                      (o1 * 2 * 16) + (o2 * 16) + index] = (CGU_UINT8)k;
+                                                       (o1 * 2 * 16) + (o2 * 16) + index] = (CGU_UINT8)k;
 
                             }  //sp_idx < 0
                         }      //i<(1 << clogBC7)
@@ -899,24 +1079,25 @@ CGV_FLOAT old_img_absf(CGV_FLOAT a)
 }
 
 INLINE CGV_FLOAT old_get_sperr(CGU_INT   clogBC7,  // ramp bits Valid range 2..4
-                           CGU_INT   bits,     // Component Valid range 5..8
-                           CGV_INT   p1,       // 0..255
-                           CGU_INT   t1,
-                           CGU_INT   t2,
-                           CGV_UINT8 index)
+                               CGU_INT   bits,     // Component Valid range 5..8
+                               CGV_INT   p1,       // 0..255
+                               CGU_INT   t1,
+                               CGU_INT   t2,
+                               CGV_UINT8 index)
 {
-  if (BC7EncodeRamps2.ramp_init)
-        return BC7EncodeRamps2.sp_err[(CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16) + (BTT2(bits) * 256 * 2 * 2 * 16) + (p1 * 2 * 2 * 16) + (t1 * 2 * 16) + (t2 * 16) + index];
-  else
-      return 0.0f;
+    if (BC7EncodeRamps2.ramp_init)
+        return BC7EncodeRamps2
+            .sp_err[(CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16) + (BTT2(bits) * 256 * 2 * 2 * 16) + (p1 * 2 * 2 * 16) + (t1 * 2 * 16) + (t2 * 16) + index];
+    else
+        return 0.0f;
 }
 #endif
 
 #endif
 
-#endif // Not ASPM_HLSL
+#endif  // Not ASPM_HLSL
 
-#endif // ENABLE_CMP_API
+#endif  // ENABLE_CMP_API
 
 #define get_end_point_l(subset) shared_temp[threadBase + subset].endPoint_low_quantized
 #define get_end_point_h(subset) shared_temp[threadBase + subset].endPoint_high_quantized
@@ -938,7 +1119,7 @@ CMP_STATIC CMP_CONSTANT CGU_UINT32 aWeight[3][16] = {{0, 4, 9, 13, 17, 21, 26, 3
                                                      {0, 9, 18, 27, 37, 46, 55, 64, 0, 0, 0, 0, 0, 0, 0, 0},
                                                      {0, 21, 43, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}};
 
- //Associated to partition 0-63
+//Associated to partition 0-63
 CMP_STATIC CMP_CONSTANT CGU_UINT32 blockPartitions[64] = {
     0xCCCC, 0x8888, 0xEEEE, 0xECC8, 0xC880, 0xFEEC, 0xFEC8, 0xEC80, 0xC800, 0xFFEC, 0xFE80, 0xE800, 0xFFE8, 0xFF00, 0xFFF0, 0xF000,
     0xF710, 0x008E, 0x7100, 0x08CE, 0x008C, 0x7310, 0x3100, 0x8CCE, 0x088C, 0x3110, 0x6666, 0x366C, 0x17E8, 0x0FF0, 0x718E, 0x399C,
@@ -946,93 +1127,283 @@ CMP_STATIC CMP_CONSTANT CGU_UINT32 blockPartitions[64] = {
     0x272,  0x4e4,  0x4e40, 0x2720, 0xc936, 0x936c, 0x39c6, 0x639c, 0x9336, 0x9cc6, 0x817e, 0xe718, 0xccf0, 0xfcc,  0x7744, 0xee22,
 };
 
- //Associated to partition 64-127
+//Associated to partition 64-127
 CMP_STATIC CMP_CONSTANT CGU_UINT32 blockPartitions2[64] = {
-    0xaa685050, 0x6a5a5040, 0x5a5a4200, 0x5450a0a8, 0xa5a50000, 0xa0a05050, 0x5555a0a0, 0x5a5a5050, 0xaa550000, 0xaa555500, 0xaaaa5500,
-    0x90909090, 0x94949494, 0xa4a4a4a4, 0xa9a59450, 0x2a0a4250, 0xa5945040, 0x0a425054, 0xa5a5a500, 0x55a0a0a0, 0xa8a85454, 0x6a6a4040,
-    0xa4a45000, 0x1a1a0500, 0x0050a4a4, 0xaaa59090, 0x14696914, 0x69691400, 0xa08585a0, 0xaa821414, 0x50a4a450, 0x6a5a0200, 0xa9a58000,
-    0x5090a0a8, 0xa8a09050, 0x24242424, 0x00aa5500, 0x24924924, 0x24499224, 0x50a50a50, 0x500aa550, 0xaaaa4444, 0x66660000, 0xa5a0a5a0,
-    0x50a050a0, 0x69286928, 0x44aaaa44, 0x66666600, 0xaa444444, 0x54a854a8, 0x95809580, 0x96969600, 0xa85454a8, 0x80959580, 0xaa141414,
-    0x96960000, 0xaaaa1414, 0xa05050a0, 0xa0a5a5a0, 0x96000000, 0x40804080, 0xa9a8a9a8, 0xaaaaaa44, 0x2a4a5254,
+    0xaa685050, 0x6a5a5040, 0x5a5a4200, 0x5450a0a8, 0xa5a50000, 0xa0a05050, 0x5555a0a0, 0x5a5a5050, 0xaa550000, 0xaa555500, 0xaaaa5500, 0x90909090, 0x94949494,
+    0xa4a4a4a4, 0xa9a59450, 0x2a0a4250, 0xa5945040, 0x0a425054, 0xa5a5a500, 0x55a0a0a0, 0xa8a85454, 0x6a6a4040, 0xa4a45000, 0x1a1a0500, 0x0050a4a4, 0xaaa59090,
+    0x14696914, 0x69691400, 0xa08585a0, 0xaa821414, 0x50a4a450, 0x6a5a0200, 0xa9a58000, 0x5090a0a8, 0xa8a09050, 0x24242424, 0x00aa5500, 0x24924924, 0x24499224,
+    0x50a50a50, 0x500aa550, 0xaaaa4444, 0x66660000, 0xa5a0a5a0, 0x50a050a0, 0x69286928, 0x44aaaa44, 0x66666600, 0xaa444444, 0x54a854a8, 0x95809580, 0x96969600,
+    0xa85454a8, 0x80959580, 0xaa141414, 0x96960000, 0xaaaa1414, 0xa05050a0, 0xa0a5a5a0, 0x96000000, 0x40804080, 0xa9a8a9a8, 0xaaaaaa44, 0x2a4a5254,
 };
 
 CMP_STATIC CMP_CONSTANT CGU_Vec2ui candidateFixUpIndex1D[128] = {
-    {15, 0},{15, 0},{15, 0},{15, 0},
-    {15, 0},{15, 0},{15, 0},{15, 0},
-    {15, 0},{15, 0},{15, 0},{15, 0},
-    {15, 0},{15, 0},{15, 0},{15, 0},
-    {15, 0},{ 2, 0},{ 8, 0},{ 2, 0},
-    { 2, 0},{ 8, 0},{ 8, 0},{15, 0},
-    { 2, 0},{ 8, 0},{ 2, 0},{ 2, 0},
-    { 8, 0},{ 8, 0},{ 2, 0},{ 2, 0},
-    
-    {15, 0},{15, 0},{ 6, 0},{ 8, 0},
-    { 2, 0},{ 8, 0},{15, 0},{15, 0},
-    { 2, 0},{ 8, 0},{ 2, 0},{ 2, 0},
-    { 2, 0},{15, 0},{15, 0},{ 6, 0},
-    { 6, 0},{ 2, 0},{ 6, 0},{ 8, 0},
-    {15, 0},{15, 0},{ 2, 0},{ 2, 0},
-    {15, 0},{15, 0},{15, 0},{15, 0},
-    {15, 0},{ 2, 0},{ 2, 0},{15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {2, 0},
+    {8, 0},
+    {2, 0},
+    {2, 0},
+    {8, 0},
+    {8, 0},
+    {15, 0},
+    {2, 0},
+    {8, 0},
+    {2, 0},
+    {2, 0},
+    {8, 0},
+    {8, 0},
+    {2, 0},
+    {2, 0},
+
+    {15, 0},
+    {15, 0},
+    {6, 0},
+    {8, 0},
+    {2, 0},
+    {8, 0},
+    {15, 0},
+    {15, 0},
+    {2, 0},
+    {8, 0},
+    {2, 0},
+    {2, 0},
+    {2, 0},
+    {15, 0},
+    {15, 0},
+    {6, 0},
+    {6, 0},
+    {2, 0},
+    {6, 0},
+    {8, 0},
+    {15, 0},
+    {15, 0},
+    {2, 0},
+    {2, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {2, 0},
+    {2, 0},
+    {15, 0},
     //candidateFixUpIndex1D[i][1], i < 64 should not be used
-    
-    { 3,15},{ 3, 8},{15, 8},{15, 3},
-    { 8,15},{ 3,15},{15, 3},{15, 8},
-    { 8,15},{ 8,15},{ 6,15},{ 6,15},
-    { 6,15},{ 5,15},{ 3,15},{ 3, 8},
-    { 3,15},{ 3, 8},{ 8,15},{15, 3},
-    { 3,15},{ 3, 8},{ 6,15},{10, 8},
-    { 5, 3},{ 8,15},{ 8, 6},{ 6,10},
-    { 8,15},{ 5,15},{15,10},{15, 8},
-    
-    { 8,15},{15, 3},{ 3,15},{ 5,10},
-    { 6,10},{10, 8},{ 8, 9},{15,10},
-    {15, 6},{ 3,15},{15, 8},{ 5,15},
-    {15, 3},{15, 6},{15, 6},{15, 8}, //The Spec doesn't mark the first fixed up index in this row, so I apply 15 for them, and seems correct
-    { 3,15},{15, 3},{ 5,15},{ 5,15},
-    { 5,15},{ 8,15},{ 5,15},{10,15},
-    { 5,15},{10,15},{ 8,15},{13,15},
-    {15, 3},{12,15},{ 3,15},{ 3, 8},
+
+    {3, 15},
+    {3, 8},
+    {15, 8},
+    {15, 3},
+    {8, 15},
+    {3, 15},
+    {15, 3},
+    {15, 8},
+    {8, 15},
+    {8, 15},
+    {6, 15},
+    {6, 15},
+    {6, 15},
+    {5, 15},
+    {3, 15},
+    {3, 8},
+    {3, 15},
+    {3, 8},
+    {8, 15},
+    {15, 3},
+    {3, 15},
+    {3, 8},
+    {6, 15},
+    {10, 8},
+    {5, 3},
+    {8, 15},
+    {8, 6},
+    {6, 10},
+    {8, 15},
+    {5, 15},
+    {15, 10},
+    {15, 8},
+
+    {8, 15},
+    {15, 3},
+    {3, 15},
+    {5, 10},
+    {6, 10},
+    {10, 8},
+    {8, 9},
+    {15, 10},
+    {15, 6},
+    {3, 15},
+    {15, 8},
+    {5, 15},
+    {15, 3},
+    {15, 6},
+    {15, 6},
+    {15, 8},  //The Spec doesn't mark the first fixed up index in this row, so I apply 15 for them, and seems correct
+    {3, 15},
+    {15, 3},
+    {5, 15},
+    {5, 15},
+    {5, 15},
+    {8, 15},
+    {5, 15},
+    {10, 15},
+    {5, 15},
+    {10, 15},
+    {8, 15},
+    {13, 15},
+    {15, 3},
+    {12, 15},
+    {3, 15},
+    {3, 8},
 };
 
 CMP_STATIC CMP_CONSTANT CGU_Vec2ui candidateFixUpIndex1DOrdered[128] = {
-    {15, 0},{15, 0},{15, 0},{15, 0},
-    {15, 0},{15, 0},{15, 0},{15, 0},
-    {15, 0},{15, 0},{15, 0},{15, 0},
-    {15, 0},{15, 0},{15, 0},{15, 0},
-    {15, 0},{ 2, 0},{ 8, 0},{ 2, 0},
-    { 2, 0},{ 8, 0},{ 8, 0},{15, 0},
-    { 2, 0},{ 8, 0},{ 2, 0},{ 2, 0},
-    { 8, 0},{ 8, 0},{ 2, 0},{ 2, 0},
-    
-    {15, 0},{15, 0},{ 6, 0},{ 8, 0},
-    { 2, 0},{ 8, 0},{15, 0},{15, 0},
-    { 2, 0},{ 8, 0},{ 2, 0},{ 2, 0},
-    { 2, 0},{15, 0},{15, 0},{ 6, 0},
-    { 6, 0},{ 2, 0},{ 6, 0},{ 8, 0},
-    {15, 0},{15, 0},{ 2, 0},{ 2, 0},
-    {15, 0},{15, 0},{15, 0},{15, 0},
-    {15, 0},{ 2, 0},{ 2, 0},{15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {2, 0},
+    {8, 0},
+    {2, 0},
+    {2, 0},
+    {8, 0},
+    {8, 0},
+    {15, 0},
+    {2, 0},
+    {8, 0},
+    {2, 0},
+    {2, 0},
+    {8, 0},
+    {8, 0},
+    {2, 0},
+    {2, 0},
+
+    {15, 0},
+    {15, 0},
+    {6, 0},
+    {8, 0},
+    {2, 0},
+    {8, 0},
+    {15, 0},
+    {15, 0},
+    {2, 0},
+    {8, 0},
+    {2, 0},
+    {2, 0},
+    {2, 0},
+    {15, 0},
+    {15, 0},
+    {6, 0},
+    {6, 0},
+    {2, 0},
+    {6, 0},
+    {8, 0},
+    {15, 0},
+    {15, 0},
+    {2, 0},
+    {2, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {15, 0},
+    {2, 0},
+    {2, 0},
+    {15, 0},
     //candidateFixUpIndex1DOrdered[i][1], i < 64 should not be used
-    
-    { 3,15},{ 3, 8},{ 8,15},{ 3,15},
-    { 8,15},{ 3,15},{ 3,15},{ 8,15},
-    { 8,15},{ 8,15},{ 6,15},{ 6,15},
-    { 6,15},{ 5,15},{ 3,15},{ 3, 8},
-    { 3,15},{ 3, 8},{ 8,15},{ 3,15},
-    { 3,15},{ 3, 8},{ 6,15},{ 8,10},
-    { 3, 5},{ 8,15},{ 6, 8},{ 6,10},
-    { 8,15},{ 5,15},{10,15},{ 8,15},
-    
-    { 8,15},{ 3,15},{ 3,15},{ 5,10},
-    { 6,10},{ 8,10},{ 8, 9},{10,15},
-    { 6,15},{ 3,15},{ 8,15},{ 5,15},
-    { 3,15},{ 6,15},{ 6,15},{ 8,15}, //The Spec doesn't mark the first fixed up index in this row, so I apply 15 for them, and seems correct
-    { 3,15},{ 3,15},{ 5,15},{ 5,15},
-    { 5,15},{ 8,15},{ 5,15},{10,15},
-    { 5,15},{10,15},{ 8,15},{13,15},
-    { 3,15},{12,15},{ 3,15},{ 3, 8}
-};
+
+    {3, 15},
+    {3, 8},
+    {8, 15},
+    {3, 15},
+    {8, 15},
+    {3, 15},
+    {3, 15},
+    {8, 15},
+    {8, 15},
+    {8, 15},
+    {6, 15},
+    {6, 15},
+    {6, 15},
+    {5, 15},
+    {3, 15},
+    {3, 8},
+    {3, 15},
+    {3, 8},
+    {8, 15},
+    {3, 15},
+    {3, 15},
+    {3, 8},
+    {6, 15},
+    {8, 10},
+    {3, 5},
+    {8, 15},
+    {6, 8},
+    {6, 10},
+    {8, 15},
+    {5, 15},
+    {10, 15},
+    {8, 15},
+
+    {8, 15},
+    {3, 15},
+    {3, 15},
+    {5, 10},
+    {6, 10},
+    {8, 10},
+    {8, 9},
+    {10, 15},
+    {6, 15},
+    {3, 15},
+    {8, 15},
+    {5, 15},
+    {3, 15},
+    {6, 15},
+    {6, 15},
+    {8, 15},  //The Spec doesn't mark the first fixed up index in this row, so I apply 15 for them, and seems correct
+    {3, 15},
+    {3, 15},
+    {5, 15},
+    {5, 15},
+    {5, 15},
+    {8, 15},
+    {5, 15},
+    {10, 15},
+    {5, 15},
+    {10, 15},
+    {8, 15},
+    {13, 15},
+    {3, 15},
+    {12, 15},
+    {3, 15},
+    {3, 8}};
 
 CGU_Vec4ui quantize(CGU_Vec4ui color, CGU_UINT32 uPrec)
 {
@@ -1253,17 +1624,17 @@ void compress_endpoints3(CMP_INOUT CGU_Vec4ui endPoint[2], CMP_INOUT CGU_Vec4ui 
 void compress_endpoints4(CMP_INOUT CGU_Vec4ui endPoint[2], CMP_INOUT CGU_Vec4ui quantized[2])
 {
 #ifdef ASPM_HLSL
-    [unroll] for ( uint j = 0; j < 2; j ++ )
+    [unroll] for (uint j = 0; j < 2; j++)
     {
         quantized[j].rgb = quantize(endPoint[j].rgbb, 5).rgb;
-        quantized[j].a = quantize(endPoint[j].a, 6).r;
-        
-        endPoint[j].rgb = unquantize(quantized[j].rgbb, 5).rgb;        
-        endPoint[j].a = unquantize(quantized[j].a, 6).r;
+        quantized[j].a   = quantize(endPoint[j].a, 6).r;
+
+        endPoint[j].rgb = unquantize(quantized[j].rgbb, 5).rgb;
+        endPoint[j].a   = unquantize(quantized[j].a, 6).r;
 
         quantized[j].rgb <<= 3;
         quantized[j].a <<= 2;
-    }    
+    }
 #else
     CGU_Vec4ui rgbb;
     CMP_UNROLL for (CGU_UINT32 j = 0; j < 2; j++)
@@ -1293,16 +1664,16 @@ void compress_endpoints4(CMP_INOUT CGU_Vec4ui endPoint[2], CMP_INOUT CGU_Vec4ui 
 void compress_endpoints5(CMP_INOUT CGU_Vec4ui endPoint[2], CMP_INOUT CGU_Vec4ui quantized[2])
 {
 #ifdef ASPM_HLSL
-    CMP_UNROLL for ( uint j = 0; j < 2; j ++ )
+    CMP_UNROLL for (uint j = 0; j < 2; j++)
     {
         quantized[j].rgb = quantize(endPoint[j].rgbb, 7).rgb;
-        quantized[j].a = endPoint[j].a;
+        quantized[j].a   = endPoint[j].a;
 
         endPoint[j].rgb = unquantize(quantized[j].rgbb, 7).rgb;
         // endPoint[j].a   Alpha is full precision
 
         quantized[j].rgb <<= 1;
-    }   
+    }
 #else
     CGU_Vec4ui rgbb;
     CMP_UNROLL for (CGU_UINT32 j = 0; j < 2; j++)
@@ -1573,40 +1944,40 @@ void GroupSync()
 void set_pixel_rotation(CMP_INOUT CGU_Vec4ui CMP_REFINOUT pixel, CGU_UINT32 rotation)
 {
 #ifdef ASPM_GPU
-   if (1 == rotation)
-   {
-       pixel.ra = pixel.ar;
-   }
-   else if (2 == rotation)
-   {
-       pixel.ga = pixel.ag;
-   }
-   else if (3 == rotation)
-   {
-       pixel.ba = pixel.ab;
-   }
+    if (1 == rotation)
+    {
+        pixel.ra = pixel.ar;
+    }
+    else if (2 == rotation)
+    {
+        pixel.ga = pixel.ag;
+    }
+    else if (3 == rotation)
+    {
+        pixel.ba = pixel.ab;
+    }
 #else
-        CGU_UINT32 r, g, b, a;
-        r = pixel.r;
-        g = pixel.g;
-        b = pixel.b;
-        a = pixel.a;
+    CGU_UINT32 r, g, b, a;
+    r = pixel.r;
+    g = pixel.g;
+    b = pixel.b;
+    a = pixel.a;
 
-        if (1 == rotation)
-        {
-            pixel.r = a;
-            pixel.a = r;
-        }
-        else if (2 == rotation)
-        {
-            pixel.g = a;
-            pixel.a = g;
-        }
-        else if (3 == rotation)
-        {
-            pixel.b = a;
-            pixel.a = b;
-        }
+    if (1 == rotation)
+    {
+        pixel.r = a;
+        pixel.a = r;
+    }
+    else if (2 == rotation)
+    {
+        pixel.g = a;
+        pixel.a = g;
+    }
+    else if (3 == rotation)
+    {
+        pixel.b = a;
+        pixel.a = b;
+    }
 #endif
 }
 
@@ -1689,8 +2060,8 @@ void cmp_encode_index2(CMP_INOUT CGU_UINT32 data[4], CMP_IN CGU_INT pPos, CMP_IN
 
 void cmp_eigen_vector(CMP_INOUT CGV_Vec4f CMP_REFINOUT eigen_vector,
                       CMP_INOUT CGU_Vec4f CMP_REFINOUT image_mean,
-                      CMP_IN CGV_Vec4ui image_src[16],
-                      CMP_IN CGU_INT numEntries)
+                      CMP_IN CGV_Vec4ui                image_src[16],
+                      CMP_IN CGU_INT                   numEntries)
 {
     CGU_INT k;
     image_mean   = 0.0f;
@@ -1814,11 +2185,11 @@ void cmp_endpoints2(CMP_INOUT CGU_Vec4ui end_points_out[2], CMP_IN CGV_Vec4f ext
 }
 
 void cmp_block_endpoints(CMP_INOUT CGU_Vec4ui end_points_out[2],
-                         CMP_IN CGV_Vec4f eigen_vector,
-                         CMP_IN CGV_Vec4f image_mean,
-                         CMP_IN CGU_Vec4ui image_src[16],
-                         CMP_IN CGU_INT numEntries,     //IN: range 0..15 (MAX_SUBSET_SIZE)
-                         CMP_IN CGU_INT partition_mask  // 0xFFFF:FFFF
+                         CMP_IN CGV_Vec4f     eigen_vector,
+                         CMP_IN CGV_Vec4f     image_mean,
+                         CMP_IN CGU_Vec4ui    image_src[16],
+                         CMP_IN CGU_INT       numEntries,     //IN: range 0..15 (MAX_SUBSET_SIZE)
+                         CMP_IN CGU_INT       partition_mask  // 0xFFFF:FFFF
 )
 {
     CGV_Vec4f ext[2] = {{255.0f, 255.0f, 255.0f, 255.0f}, {0.0f, 0.0f, 0.0f, 0.0f}};
@@ -1871,10 +2242,10 @@ CGV_UINT8 clampIndex2(CGV_UINT8 v, CGV_UINT8 a, CGV_UINT8 b)
 }
 
 void cmp_block_index(CMP_INOUT CGU_UINT32 index_out[16],
-                     CMP_IN CGV_Vec4f eigen_vector,
-                     CMP_IN CGV_Vec4f image_mean,
-                     CMP_IN CGU_Vec4ui image_src[16],
-                     CMP_IN CGU_UINT32 numEntries      // Range 0..15 (MAX_SUBSET_SIZE)
+                     CMP_IN CGV_Vec4f     eigen_vector,
+                     CMP_IN CGV_Vec4f     image_mean,
+                     CMP_IN CGU_Vec4ui    image_src[16],
+                     CMP_IN CGU_UINT32    numEntries  // Range 0..15 (MAX_SUBSET_SIZE)
 )
 {
     //=====================
@@ -1994,8 +2365,8 @@ CGU_UINT32 cmp_calcblockerr(CGU_Vec4ui endPoint_in[2], CGU_Vec4ui image_src[16])
 
         dotProduct.x = cmp_dotVec4i(span, pixelDiff);
         color_index  = (span_norm_sqr.x <= 0 || dotProduct.x <= 0)
-                          ? 0
-                          : ((dotProduct.x < span_norm_sqr.x) ? aStep[0][CGU_UINT32(dotProduct.x * 63.49999 / span_norm_sqr.x)] : aStep[0][63]);
+                           ? 0
+                           : ((dotProduct.x < span_norm_sqr.x) ? aStep[0][CGU_UINT32(dotProduct.x * 63.49999 / span_norm_sqr.x)] : aStep[0][63]);
 
         pixel_r = (endPoint[0] * (64 - aWeight[0][color_index]) + endPoint[1] * aWeight[0][color_index] + 32u) >> 6;
 
@@ -2009,9 +2380,9 @@ CGU_UINT32 cmp_calcblockerr(CGU_Vec4ui endPoint_in[2], CGU_Vec4ui image_src[16])
 
 CGU_FLOAT cmp_GetIndexedEndPoints(CMP_INOUT CGU_Vec4ui epo_code_out[2],
                                   CMP_INOUT CGU_UINT32 index_out[16],
-                                  CMP_IN CGU_Vec4ui image_src[16],
-                                  CMP_IN CGU_INT numEntries,
-                                  CMP_IN CGU_INT partition_mask)
+                                  CMP_IN CGU_Vec4ui    image_src[16],
+                                  CMP_IN CGU_INT       numEntries,
+                                  CMP_IN CGU_INT       partition_mask)
 {
     CGV_Vec4f image_mean = {0.0f, 0.0f, 0.0f, 0.0f};
     CGV_Vec4f eigen_vector;
@@ -2110,10 +2481,10 @@ CGU_UINT32 index_collapse2(CMP_INOUT CGU_UINT32 index[16], CGU_UINT32 numEntries
 }
 
 INLINE void GetClusterMean2(CMP_INOUT CGV_Vec4f image_cluster_mean[16],
-                            CMP_IN CGU_Vec4ui image_src[16],
-                            CMP_IN CGU_UINT32 index_cluster[16],
-                            CMP_IN CGU_UINT32 numEntries,  // < 16
-                            CMP_IN CGU_UINT32 channels3or4)
+                            CMP_IN CGU_Vec4ui   image_src[16],
+                            CMP_IN CGU_UINT32   index_cluster[16],
+                            CMP_IN CGU_UINT32   numEntries,  // < 16
+                            CMP_IN CGU_UINT32   channels3or4)
 {  // IN: 3 = RGB or 4 = RGBA (4 = MAX_CHANNELS)
     // unused index values are underfined
     CGU_UINT32 i_cnt[16];
@@ -2157,7 +2528,7 @@ INLINE void GetClusterMean2(CMP_INOUT CGV_Vec4f image_cluster_mean[16],
     }
 }
 
-#ifndef ASPM_HLSL // CPU Version
+#ifndef ASPM_HLSL  // CPU Version
 
 #define USE_OLDCODE
 
@@ -2179,11 +2550,11 @@ INLINE CGU_UINT8 cmp_get_partition_subset2(CMP_IN CGU_INT part_id, CMP_IN CGU_IN
 }
 
 void cmp_GetPartitionSubSet2_mode01237(CMP_INOUT CGV_Vec4ui image_subsets[3][16],  // OUT: Subset pattern mapped with image src colors
-                                       CMP_INOUT CGU_INT entryCount_out[3],        // OUT: Number of entries per subset
-                                       CMP_IN CGU_UINT8 partition,                 // Partition Shape 0..63
-                                       CMP_IN CGV_Vec4ui image_src[16],            // Image colors
-                                       CMP_IN CGU_INT blockMode,                   // [0,1,2,3 or 7]
-                                       CMP_IN CGU_UINT8 channels3or4)
+                                       CMP_INOUT CGU_INT    entryCount_out[3],     // OUT: Number of entries per subset
+                                       CMP_IN CGU_UINT8     partition,             // Partition Shape 0..63
+                                       CMP_IN CGV_Vec4ui    image_src[16],         // Image colors
+                                       CMP_IN CGU_INT       blockMode,             // [0,1,2,3 or 7]
+                                       CMP_IN CGU_UINT8     channels3or4)
 {  // 3 = RGB or 4 = RGBA (4 = MAX_CHANNELS)
     CGU_UINT8 maxSubsets = 2;
     if (blockMode == 0 || blockMode == 2)
@@ -2210,11 +2581,11 @@ void cmp_GetPartitionSubSet2_mode01237(CMP_INOUT CGV_Vec4ui image_subsets[3][16]
     }
 }
 
-void cmp_GetImageCentered(CMP_INOUT CGV_Vec4f image_centered[16],
+void cmp_GetImageCentered(CMP_INOUT CGV_Vec4f              image_centered[16],
                           CMP_INOUT CGV_Vec4f CMP_REFINOUT mean_out,
-                          CMP_IN CGV_Vec4ui image_src[16],
-                          CMP_IN CGU_INT numEntries,
-                          CMP_IN CGU_UINT8 channels3or4)
+                          CMP_IN CGV_Vec4ui                image_src[16],
+                          CMP_IN CGU_INT                   numEntries,
+                          CMP_IN CGU_UINT8                 channels3or4)
 {
     (channels3or4);
 
@@ -2243,9 +2614,9 @@ void cmp_GetImageCentered(CMP_INOUT CGV_Vec4f image_centered[16],
 }
 
 void cmp_GetCovarianceVector(CMP_INOUT CGV_FLOAT covariance_out[16],
-                             CMP_IN CGV_Vec4f image_centered[16],
-                             CMP_IN CGU_INT numEntries,
-                             CMP_IN CGU_UINT8 channels3or4)
+                             CMP_IN CGV_Vec4f    image_centered[16],
+                             CMP_IN CGU_INT      numEntries,
+                             CMP_IN CGU_UINT8    channels3or4)
 {
     CGU_UINT8 ch1;
     CGU_UINT8 ch2;
@@ -2264,9 +2635,9 @@ void cmp_GetCovarianceVector(CMP_INOUT CGV_FLOAT covariance_out[16],
             covariance_out[ch1 + ch2 * 4] = covariance_out[ch2 + ch1 * 4];
 }
 
-void cmp_GetEigenVector(CMP_INOUT CGV_Vec4f CMP_REFINOUT EigenVector_out,  // Normalized Eigen Vector output
-                        CMP_IN CGV_FLOAT CovarianceVector[16],             // Covariance Vector
-                        CMP_IN CGU_UINT8 channels3or4)
+void cmp_GetEigenVector(CMP_INOUT CGV_Vec4f CMP_REFINOUT EigenVector_out,       // Normalized Eigen Vector output
+                        CMP_IN CGV_FLOAT                 CovarianceVector[16],  // Covariance Vector
+                        CMP_IN CGU_UINT8                 channels3or4)
 {
     CGV_FLOAT vector_covIn[16];
     CGV_FLOAT vector_covOut[16];
@@ -2341,10 +2712,10 @@ void cmp_GetEigenVector(CMP_INOUT CGV_Vec4f CMP_REFINOUT EigenVector_out,  // No
 }
 
 void cmp_GetProjecedImage(CMP_INOUT CGV_FLOAT projection_out[16],
-                          CMP_IN CGV_Vec4f image_centered[16],
-                          CMP_IN CGU_INT numEntries,
-                          CMP_IN CGV_Vec4f EigenVector,
-                          CMP_IN CGU_UINT8 channels3or4)
+                          CMP_IN CGV_Vec4f    image_centered[16],
+                          CMP_IN CGU_INT      numEntries,
+                          CMP_IN CGV_Vec4f    EigenVector,
+                          CMP_IN CGU_UINT8    channels3or4)
 {
     // EigenVector must be normalized
     for (CGU_INT k = 0; k < numEntries; k++)
@@ -2365,9 +2736,9 @@ typedef struct
 } CMP_di2;
 
 void cmp_GetProjectedIndex(CMP_INOUT CGU_UINT8 projected_index_out[16],  //output: index, uncentered, in the range 0..clusters-1
-                           CMP_IN CGV_FLOAT image_projected[16],         // image_block points, might be uncentered
-                           CMP_IN CGU_INT clusters,                      // clusters: number of points in the ramp   (max 16)
-                           CMP_IN CGU_INT numEntries)
+                           CMP_IN CGV_FLOAT    image_projected[16],      // image_block points, might be uncentered
+                           CMP_IN CGU_INT      clusters,                 // clusters: number of points in the ramp   (max 16)
+                           CMP_IN CGU_INT      numEntries)
 {
     CMP_di2   what[16];
     CGV_FLOAT image_v[16];
@@ -2508,12 +2879,11 @@ CGV_FLOAT cmp_err_Total(CMP_IN CGV_Vec4ui image_src1[16], CMP_IN CGV_Vec4f image
     return err_t;
 };
 
-
 CGV_FLOAT cmp_GetQuantizeIndex_old(CMP_INOUT CGU_UINT8 index_out[16],
-                                   CMP_IN CGV_Vec4ui image_src[16],
-                                   CMP_IN CGU_INT numEntries,
-                                   CMP_IN CGU_INT numClusters,
-                                   CMP_IN CGU_UINT8 channels3or4)
+                                   CMP_IN CGV_Vec4ui   image_src[16],
+                                   CMP_IN CGU_INT      numEntries,
+                                   CMP_IN CGU_INT      numClusters,
+                                   CMP_IN CGU_UINT8    channels3or4)
 {
     CGV_FLOAT covariance_vector[16];
     CGV_Vec4f image_centered[16];
@@ -2676,15 +3046,12 @@ void cmp_sortPartitionProjection(CMP_IN CGV_FLOAT projection[64], CMP_INOUT CGU_
         order[Parti] = what[Parti].index;
 };
 
-
-
-
 CGU_BOOL cmp_get_ideal_cluster(CMP_INOUT CGV_Vec4f image_cluster[2],
-                               CMP_IN CGU_UINT32 index_cluster[16],
-                               CMP_IN CGU_INT Mi_,
-                               CMP_IN CGV_Vec4ui image_src[16],
-                               CMP_IN CGU_INT numEntries,
-                               CMP_IN CGU_UINT8 channels3or4)
+                               CMP_IN CGU_UINT32   index_cluster[16],
+                               CMP_IN CGU_INT      Mi_,
+                               CMP_IN CGV_Vec4ui   image_src[16],
+                               CMP_IN CGU_INT      numEntries,
+                               CMP_IN CGU_UINT8    channels3or4)
 {
     // get ideal cluster centers
     CGV_Vec4f image_cluster_mean[16];
@@ -2743,22 +3110,22 @@ CGU_BOOL cmp_get_ideal_cluster(CMP_INOUT CGV_Vec4f image_cluster[2],
 
 CGV_FLOAT cmp_quant_solid_color(CMP_INOUT CGU_UINT32 index_out[16],
                                 CMP_INOUT CGV_Vec4ui epo_code_out[2],
-                                CMP_IN CGV_Vec4ui image_src[16],
-                                CMP_IN CGU_INT numEntries,
-                                CMP_IN CGU_UINT8 Mi_,
-                                CMP_IN CGU_UINT8 bits[4],
-                                CMP_IN CGU_INT type,
-                                CMP_IN CGU_UINT8 channels3or4,
-                                CMP_IN CGU_INT blockMode)
+                                CMP_IN CGV_Vec4ui    image_src[16],
+                                CMP_IN CGU_INT       numEntries,
+                                CMP_IN CGU_UINT8     Mi_,
+                                CMP_IN CGU_UINT8     bits[4],
+                                CMP_IN CGU_INT       type,
+                                CMP_IN CGU_UINT8     channels3or4,
+                                CMP_IN CGU_INT       blockMode)
 {
 #ifndef ASPM_GPU
-#if defined(USE_NEW_SP_ERR_IDX) 
+#if defined(USE_NEW_SP_ERR_IDX)
     CGU_INT clogBC7 = 0;
     CGU_INT iv      = Mi_ + 1;
     while (iv >>= 1)
         clogBC7++;
 
-    old_init_BC7ramps(); // first time call inits global
+    old_init_BC7ramps();  // first time call inits global
 #endif
 #endif
 
@@ -2777,7 +3144,7 @@ CGV_FLOAT cmp_quant_solid_color(CMP_INOUT CGU_UINT32 index_out[16],
     //CGU_UINT8 ch;
     CGU_UINT8 ch1;
     //CGU_INT   k;
-    CGU_INT   i;
+    CGU_INT i;
 
     for (CGU_INT pn = 0; pn < cmp_npv_nd[channels3or4 - 3][type] && (error_1 != 0.0F); pn++)
     {
@@ -2857,14 +3224,13 @@ CGV_FLOAT cmp_quant_solid_color(CMP_INOUT CGU_UINT32 index_out[16],
                             image_tcr[ch1] = image_tf;
                         else
                             image_tcr[ch1] = (CGV_INT)cmp_floor(image_src[ch1][COMP_RED] + 0.5F);
-                        
+
                         //===============================
                         // Refine this for better quality!
                         //===============================
                         CGV_FLOAT error_tr;
                         error_tr = old_get_sperr(clogBC7, bits[ch1], image_tcr[ch1], t1, t2, iclogBC7);
-                        error_tr = (error_tr * error_tr) + 
-                                   2 * error_tr * old_img_absf(image_tcr[ch1] - image_src[ch1][COMP_RED]) +
+                        error_tr = (error_tr * error_tr) + 2 * error_tr * old_img_absf(image_tcr[ch1] - image_src[ch1][COMP_RED]) +
                                    (image_tcr[ch1] - image_src[ch1][COMP_RED]) * (image_tcr[ch1] - image_src[ch1][COMP_RED]);
 
                         if (error_tr < error_ta)
@@ -2882,7 +3248,7 @@ CGV_FLOAT cmp_quant_solid_color(CMP_INOUT CGU_UINT32 index_out[16],
                         t2o[ch1]       = t2;
                         epo_dr_0[ch1]  = cmp_clampi(image_tcr[ch1], 0, 255);
 #endif
-                      
+
                     }  // B
                 }      //C
 
@@ -2897,19 +3263,16 @@ CGV_FLOAT cmp_quant_solid_color(CMP_INOUT CGU_UINT32 index_out[16],
 
 #ifndef ASPM_GPU
 #ifdef USE_BC7_SP_ERR_IDX
-               if (BC7EncodeRamps2.ramp_init) {
-                   for (CGU_UINT8 ch = 0; ch < channels3or4; ch++)
-                   {
-                       CGV_INT index = (CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16 * 2) + 
-                                       (BTT2(bits[ch]) * 256 * 2 * 2 * 16 * 2) + 
-                                       (epo_dr_0[ch] * 2 * 2 * 16 * 2) +
-                                       (t1o[ch] * 2 * 16 * 2) + 
-                                       (t2o[ch] * 16 * 2) + 
-                                       (iclogBC7 * 2);
-                       epo_0[0][ch] = BC7EncodeRamps2.sp_idx[index + 0] & 0xFF;
-                       epo_0[1][ch] = BC7EncodeRamps2.sp_idx[index + 1] & 0xFF;
-                   }
-               }
+                if (BC7EncodeRamps2.ramp_init)
+                {
+                    for (CGU_UINT8 ch = 0; ch < channels3or4; ch++)
+                    {
+                        CGV_INT index = (CLT2(clogBC7) * 4 * 256 * 2 * 2 * 16 * 2) + (BTT2(bits[ch]) * 256 * 2 * 2 * 16 * 2) + (epo_dr_0[ch] * 2 * 2 * 16 * 2) +
+                                        (t1o[ch] * 2 * 16 * 2) + (t2o[ch] * 16 * 2) + (iclogBC7 * 2);
+                        epo_0[0][ch] = BC7EncodeRamps2.sp_idx[index + 0] & 0xFF;
+                        epo_0[1][ch] = BC7EncodeRamps2.sp_idx[index + 1] & 0xFF;
+                    }
+                }
 #endif
 #else
                 CGU_UINT8 ch;
@@ -2936,7 +3299,7 @@ CGV_FLOAT cmp_quant_solid_color(CMP_INOUT CGU_UINT32 index_out[16],
                 epo_0[1][3] = (CGU_UINT8)MaxC[3];
 #endif
 
-                error_0     = error_t;
+                error_0 = error_t;
             }
 
         }  // E
@@ -2976,17 +3339,16 @@ INLINE CGV_FLOAT old_sq_image(CGV_FLOAT v)
     return v * v;
 }
 
-
 CGV_FLOAT cmp_shake3(CMP_INOUT CGU_Vec4ui epo_code_shake[2],
-                     CMP_IN CGV_Vec4f image_cluster[2],
-                     CMP_IN CGU_UINT32 index_cidx[16],
-                     CMP_IN CGV_Vec4ui image_src[16],
-                     CMP_IN CGU_INT index_bits,
-                     CMP_IN CGU_INT type,
-                     CMP_IN CGU_UINT8 max_bits[4],
-                     CMP_IN CGU_UINT8 use_par,
-                     CMP_IN CGU_INT numEntries,  // max 16
-                     CMP_IN CGU_UINT8 channels3or4)
+                     CMP_IN CGV_Vec4f     image_cluster[2],
+                     CMP_IN CGU_UINT32    index_cidx[16],
+                     CMP_IN CGV_Vec4ui    image_src[16],
+                     CMP_IN CGU_INT       index_bits,
+                     CMP_IN CGU_INT       type,
+                     CMP_IN CGU_UINT8     max_bits[4],
+                     CMP_IN CGU_UINT8     use_par,
+                     CMP_IN CGU_INT       numEntries,  // max 16
+                     CMP_IN CGU_UINT8     channels3or4)
 {
     CGV_FLOAT best_err = CMP_FLOAT_MAX;
 
@@ -3086,13 +3448,13 @@ CGV_FLOAT cmp_shake3(CMP_INOUT CGU_Vec4ui epo_code_shake[2],
     return best_err;
 }
 
-                     CGV_FLOAT cmp_requantized_index(CMP_INOUT CGU_UINT8 index_out[16],
+CGV_FLOAT cmp_requantized_index(CMP_INOUT CGU_UINT8  index_out[16],
                                 CMP_INOUT CGU_Vec4ui epo_code_best[2],
-                                CMP_IN CGU_INT index_bits,
-                                CMP_IN CGU_UINT8 max_bits[4],
-                                CMP_IN CGV_Vec4ui image_src[16],
-                                CMP_IN CGU_INT numEntries,
-                                CMP_IN CGU_UINT8 channels3or4)
+                                CMP_IN CGU_INT       index_bits,
+                                CMP_IN CGU_UINT8     max_bits[4],
+                                CMP_IN CGV_Vec4ui    image_src[16],
+                                CMP_IN CGU_INT       numEntries,
+                                CMP_IN CGU_UINT8     channels3or4)
 {
     //CGV_Vec4f image_requantize[16];
     //CGV_FLOAT err_r = 0.0F;
@@ -3110,7 +3472,7 @@ CGV_FLOAT cmp_shake3(CMP_INOUT CGU_Vec4ui epo_code_shake[2],
     //         image_requantize[k][3] = 0.0f;
     // }
 
-        //=========================================
+    //=========================================
     // requantized image based on new epo_code
     //=========================================
     CGV_FLOAT image_requantize[SOURCE_BLOCK_SIZE][MAX_CHANNELS];
@@ -3124,8 +3486,6 @@ CGV_FLOAT cmp_shake3(CMP_INOUT CGU_Vec4ui epo_code_shake[2],
         }
     }
 
-
-
     //=========================================
     // Calc the error for the requantized image
     //=========================================
@@ -3138,7 +3498,7 @@ CGV_FLOAT cmp_shake3(CMP_INOUT CGU_Vec4ui epo_code_shake[2],
     //     CGV_FLOAT err_cmin   = 262145.0f;  // (256 * 256 * 4) + 1;  CMP_FLOAT_MAX;
     //     CGU_UINT8 hold_index = 0;
     //     CGV_FLOAT image_err;
-    // 
+    //
     //     for (CGU_UINT8 k1 = 0; k1 < block_entries; k1++)
     //     {
     //         imageDiff.x = image_requantize[k1].x - image_src[k].x;
@@ -3146,14 +3506,14 @@ CGV_FLOAT cmp_shake3(CMP_INOUT CGU_Vec4ui epo_code_shake[2],
     //         imageDiff.z = image_requantize[k1].z - image_src[k].z;
     //         imageDiff.w = image_requantize[k1].w - image_src[k].w;
     //         image_err   = cmp_dot4f(imageDiff, imageDiff);
-    // 
+    //
     //         if (image_err < err_cmin)
     //         {
     //             err_cmin   = image_err;
     //             hold_index = k1;
     //         }
     //     }
-    // 
+    //
     //     index_out[k] = hold_index;
     //     err_r += err_cmin;
     // }
@@ -3190,17 +3550,16 @@ CGV_FLOAT cmp_shake3(CMP_INOUT CGU_Vec4ui epo_code_shake[2],
     return err_r;
 }
 
-
 CGV_FLOAT cmp_optimize_IndexAndEndPoints(CMP_INOUT CGU_Vec4ui epo_code_out[2],
                                          CMP_INOUT CGU_UINT32 index_io[16],
                                          CMP_INOUT CGU_UINT32 index_packed_out[2],
-                                         CMP_IN CGV_Vec4ui image_src[16],
-                                         CMP_IN CGU_INT numEntries,
-                                         CMP_IN CGU_UINT8 Mi_,
-                                         CMP_IN CGU_UINT8 bits,
-                                         CMP_IN CGU_UINT8 channels3or4,
-                                         CMP_IN CGU_FLOAT errorThreshold,
-                                         CMP_IN CGU_INT blockMode)
+                                         CMP_IN CGV_Vec4ui    image_src[16],
+                                         CMP_IN CGU_INT       numEntries,
+                                         CMP_IN CGU_UINT8     Mi_,
+                                         CMP_IN CGU_UINT8     bits,
+                                         CMP_IN CGU_UINT8     channels3or4,
+                                         CMP_IN CGU_FLOAT     errorThreshold,
+                                         CMP_IN CGU_INT       blockMode)
 {
     CGV_FLOAT err_best = CMP_FLOAT_MAX;
     CGU_INT   type;
@@ -3216,12 +3575,12 @@ CGV_FLOAT cmp_optimize_IndexAndEndPoints(CMP_INOUT CGU_Vec4ui epo_code_out[2],
     for (ch = 0; ch < channels3or4; ch++)
         max_bits[ch] = (bits + channels2 - 1) / channels2;
 
-    CGU_INT index_bits = g_modesettings[blockMode].indexBits;
+    CGU_INT index_bits  = g_modesettings[blockMode].indexBits;
     CGU_INT clt_clogBC7 = index_bits - 2;
-    
+
     if (clt_clogBC7 > 3)
         return CMP_FLOAT_MAX;
-   
+
     Mi_ = Mi_ - 1;
 
     CGU_UINT32 index_tmp[16];
@@ -3277,16 +3636,8 @@ CGV_FLOAT cmp_optimize_IndexAndEndPoints(CMP_INOUT CGU_Vec4ui epo_code_out[2],
                 {
                     CGU_Vec4ui epo_code_shake[2] = {{0, 0, 0, 0}, {0, 0, 0, 0}};
 
-                    err_shake = cmp_shake3( epo_code_shake, 
-                                            image_cluster, 
-                                            index_cluster, 
-                                            image_src, 
-                                            index_bits, 
-                                            type, 
-                                            max_bits, 
-                                            use_par, 
-                                            numEntries, 
-                                            channels3or4);
+                    err_shake =
+                        cmp_shake3(epo_code_shake, image_cluster, index_cluster, image_src, index_bits, type, max_bits, use_par, numEntries, channels3or4);
 
                     if (err_shake < err_cluster)
                     {
@@ -3304,13 +3655,7 @@ CGV_FLOAT cmp_optimize_IndexAndEndPoints(CMP_INOUT CGU_Vec4ui epo_code_out[2],
             // test results for quality
             //=========================
             CGU_UINT8 index_best[16] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
-            err_requant              = cmp_requantized_index(index_best, 
-                                                             epo_code_best, 
-                                                             index_bits, 
-                                                             max_bits, 
-                                                             image_src, 
-                                                             numEntries, 
-                                                             channels3or4);
+            err_requant              = cmp_requantized_index(index_best, epo_code_best, index_bits, max_bits, image_src, numEntries, channels3or4);
             if (err_requant < err_best)
             {
                 //better = 1;
@@ -3360,17 +3705,16 @@ void cmp_Write8BitV2(CMP_INOUT CGU_UINT8 base[16], CMP_IN CGU_INT offset, CMP_IN
     }
 }
 
-
-void cmp_Encode_mode01237(CMP_IN CGU_INT blockMode,
-                          CMP_IN CGU_UINT8 bestPartition,
-                          CMP_IN CGU_UINT32 packedEndpoints[6],
-                          CMP_IN CGU_UINT8 index16[16],
+void cmp_Encode_mode01237(CMP_IN CGU_INT      blockMode,
+                          CMP_IN CGU_UINT8    bestPartition,
+                          CMP_IN CGU_UINT32   packedEndpoints[6],
+                          CMP_IN CGU_UINT8    index16[16],
                           CMP_INOUT CGU_UINT8 cmp_out[16])
 {
-    CGU_UINT8    blockindex[SOURCE_BLOCK_SIZE];
-    CGU_UINT32   indexBitsV = g_modesettings[blockMode].indexBits;
-    CGU_UINT32   k;
-    CGU_UINT32   ch;
+    CGU_UINT8  blockindex[SOURCE_BLOCK_SIZE];
+    CGU_UINT32 indexBitsV = g_modesettings[blockMode].indexBits;
+    CGU_UINT32 k;
+    CGU_UINT32 ch;
 
     for (k = 0; k < COMPRESSED_BLOCK_SIZE; k++)
         cmp_out[k] = 0;
@@ -3522,7 +3866,6 @@ void cmp_Encode_mode01237(CMP_IN CGU_INT blockMode,
     }
 }
 
-
 CGV_FLOAT cmp_process_mode(CMP_INOUT CGU_UINT32 best_cmp_out[5], CMP_IN CGU_Vec4ui image_src[16], CMP_IN CGU_INT block_mode)
 {
 #ifdef USE_OLDCODE
@@ -3558,11 +3901,11 @@ CGV_FLOAT cmp_process_mode(CMP_INOUT CGU_UINT32 best_cmp_out[5], CMP_IN CGU_Vec4
     CGV_FLOAT storedError[64];
     CGU_UINT8 sortedPartition[64];
 
-    CGV_FLOAT   quality    = 1.0f;
-    CGV_FLOAT   opaque_err = 0.0f;
-    CGV_Vec4ui  image_subsets[3][16];
-    CGU_INT     subset_entryCount[MAX_SUBSETS] = {0, 0, 0};
-    CGU_UINT8   bestPartition = 0;
+    CGV_FLOAT  quality    = 1.0f;
+    CGV_FLOAT  opaque_err = 0.0f;
+    CGV_Vec4ui image_subsets[3][16];
+    CGU_INT    subset_entryCount[MAX_SUBSETS] = {0, 0, 0};
+    CGU_UINT8  bestPartition                  = 0;
 
     for (CGU_UINT8 mode_blockPartition = 0; mode_blockPartition < 64; mode_blockPartition++)
     {
@@ -3659,7 +4002,7 @@ CGV_FLOAT cmp_process_mode(CMP_INOUT CGU_UINT32 best_cmp_out[5], CMP_IN CGU_Vec4
 
             for (subset = 0; subset < g_modesettings[block_mode].maxSubSets; subset++)
             {
-                CGU_UINT32 numEntries     = subset_entryCount[subset];
+                CGU_UINT32 numEntries  = subset_entryCount[subset];
                 bestEntryCount[subset] = numEntries;
 
                 if (numEntries)
@@ -3747,7 +4090,7 @@ CGV_FLOAT cmp_process_mode(CMP_INOUT CGU_UINT32 best_cmp_out[5], CMP_IN CGU_Vec4
 
     CGU_UINT8 cmp_out[COMPRESSED_BLOCK_SIZE];
     cmp_Encode_mode01237(block_mode, bestPartition, packedEndpoints, bestindex16, cmp_out);
-    
+
     best_cmp_out[0] = (CGU_UINT32)cmp_out[0] + (CGU_UINT32)(cmp_out[1] << 8) + (CGU_UINT32)(cmp_out[2] << 16) + (CGU_UINT32)(cmp_out[3] << 24);
     best_cmp_out[1] = (CGU_UINT32)cmp_out[4] + (CGU_UINT32)(cmp_out[5] << 8) + (CGU_UINT32)(cmp_out[6] << 16) + (CGU_UINT32)(cmp_out[7] << 24);
     best_cmp_out[2] = (CGU_UINT32)cmp_out[8] + (CGU_UINT32)(cmp_out[9] << 8) + (CGU_UINT32)(cmp_out[10] << 16) + (CGU_UINT32)(cmp_out[11] << 24);
@@ -3825,7 +4168,7 @@ CGV_FLOAT cmp_process_mode(CMP_INOUT CGU_UINT32 best_cmp_out[5], CMP_IN CGU_Vec4
     return 0.0f;
 #endif
 }
-#endif // Not ASPM_HLSL
+#endif  // Not ASPM_HLSL
 
 //======================================= MODES 45 =============================================
 #ifndef ASPM_HLSL
@@ -3834,20 +4177,18 @@ CGV_FLOAT cmp_process_mode(CMP_INOUT CGU_UINT32 best_cmp_out[5], CMP_IN CGU_Vec4
 // Compression Results
 struct cmp_mode_parameters2
 {
-    CGV_INT      color_qendpoint[8];
-    CGV_INT      alpha_qendpoint[8];
-    CGV_UINT8    color_index[16];
-    CGV_UINT8    alpha_index[16];
-    CGV_UINT32   idxMode;
-    CGV_UINT32   rotated_channel;
+    CGV_INT    color_qendpoint[8];
+    CGV_INT    alpha_qendpoint[8];
+    CGV_UINT8  color_index[16];
+    CGV_UINT8  alpha_index[16];
+    CGV_UINT32 idxMode;
+    CGV_UINT32 rotated_channel;
 };
 
-CMP_STATIC CMP_CONSTANT CGU_UINT8  componentRotations2[4][4] = {
-    { COMP_ALPHA, COMP_RED,   COMP_GREEN, COMP_BLUE },
-    { COMP_RED,   COMP_ALPHA, COMP_GREEN, COMP_BLUE },
-    { COMP_GREEN, COMP_RED,   COMP_ALPHA, COMP_BLUE },
-    { COMP_BLUE,  COMP_RED,   COMP_GREEN, COMP_ALPHA }
-};
+CMP_STATIC CMP_CONSTANT CGU_UINT8 componentRotations2[4][4] = {{COMP_ALPHA, COMP_RED, COMP_GREEN, COMP_BLUE},
+                                                               {COMP_RED, COMP_ALPHA, COMP_GREEN, COMP_BLUE},
+                                                               {COMP_GREEN, COMP_RED, COMP_ALPHA, COMP_BLUE},
+                                                               {COMP_BLUE, COMP_RED, COMP_GREEN, COMP_ALPHA}};
 
 INLINE CGV_UINT8 old_shift_right_uint(CGV_UINT8 v, CGU_UINT8 bits)
 {
@@ -4002,11 +4343,11 @@ void cmp_Encode_mode5(CMP_INOUT CGV_UINT8 cmp_out[COMPRESSED_BLOCK_SIZE], cmp_mo
 void Compress_mode45(CMP_INOUT CGU_UINT32 cmp_out[4], CGU_INT blockMode, CGU_Vec4ui image_src[SOURCE_BLOCK_SIZE])
 {
     cmp_mode_parameters2 best_candidate;
-    CGU_UINT32      channels3or4 = 4;
-    CGU_UINT8       numClusters0[2];
-    CGU_UINT8       numClusters1[2];
-    CGU_INT         modeBits[2];
-    CGU_INT         max_idxMode;
+    CGU_UINT32           channels3or4 = 4;
+    CGU_UINT8            numClusters0[2];
+    CGU_UINT8            numClusters1[2];
+    CGU_INT              modeBits[2];
+    CGU_INT              max_idxMode;
 
     if (blockMode == 4)
     {
@@ -4031,7 +4372,7 @@ void Compress_mode45(CMP_INOUT CGU_UINT32 cmp_out[4], CGU_INT blockMode, CGU_Vec
 
     CGU_Vec4ui src_color_Block[SOURCE_BLOCK_SIZE];
     CGU_Vec4ui src_alpha_Block[SOURCE_BLOCK_SIZE];
-    CGV_FLOAT  best_err  = CMP_FLOAT_MAX;
+    CGV_FLOAT  best_err = CMP_FLOAT_MAX;
 
     // Go through each possible rotation and selection of index rotationBits)
     for (CGU_UINT8 rotated_channel = 0; rotated_channel < channels3or4; rotated_channel++)
@@ -4042,7 +4383,7 @@ void Compress_mode45(CMP_INOUT CGU_UINT32 cmp_out[4], CGU_INT blockMode, CGU_Vec
         {
             for (CGU_INT p = 0; p < 3; p++)
             {
-                src_color_Block[k][p] = image_src[k][componentRotations2[rotated_channel][p+1]];
+                src_color_Block[k][p] = image_src[k][componentRotations2[rotated_channel][p + 1]];
                 src_alpha_Block[k][p] = image_src[k][componentRotations2[rotated_channel][0]];
             }
             src_color_Block[k][3] = image_src[k][3];
@@ -4054,7 +4395,7 @@ void Compress_mode45(CMP_INOUT CGU_UINT32 cmp_out[4], CGU_INT blockMode, CGU_Vec
 
         for (CGU_INT idxMode = 0; idxMode < max_idxMode; idxMode++)
         {
-            err_quantizer  = cmp_GetQuantizeIndex_old(best_candidate.color_index, src_color_Block, SOURCE_BLOCK_SIZE, numClusters0[idxMode], 3);
+            err_quantizer = cmp_GetQuantizeIndex_old(best_candidate.color_index, src_color_Block, SOURCE_BLOCK_SIZE, numClusters0[idxMode], 3);
 
             err_quantizer += cmp_GetQuantizeIndex_old(best_candidate.alpha_index, src_alpha_Block, SOURCE_BLOCK_SIZE, numClusters1[idxMode], 3) / 3.0F;
 
@@ -4076,7 +4417,8 @@ void Compress_mode45(CMP_INOUT CGU_UINT32 cmp_out[4], CGU_INT blockMode, CGU_Vec
                 CGU_UINT32 alpha_index[16];
                 CGU_UINT32 color_index[16];
 
-                for (int k = 0; k < 16; k++) {
+                for (int k = 0; k < 16; k++)
+                {
                     alpha_index[k] = best_candidate.alpha_index[k];
                     color_index[k] = best_candidate.color_index[k];
                 }
@@ -4084,34 +4426,19 @@ void Compress_mode45(CMP_INOUT CGU_UINT32 cmp_out[4], CGU_INT blockMode, CGU_Vec
                 CGU_UINT32 color_index_packed_out[2] = {0, 0};
                 CGU_UINT32 alpha_index_packed_out[2] = {0, 0};
 
-                err_overallError = cmp_optimize_IndexAndEndPoints(color_qendpoint2,
-                                                                color_index,
-                                                                color_index_packed_out,
-                                                                src_color_Block,
-                                                                16,
-                                                                numClusters0[idxMode],
-                                                                modeBits[0],
-                                                                3,
-                                                                0.01f,
-                                                                blockMode);
+                err_overallError = cmp_optimize_IndexAndEndPoints(
+                    color_qendpoint2, color_index, color_index_packed_out, src_color_Block, 16, numClusters0[idxMode], modeBits[0], 3, 0.01f, blockMode);
 
-                 // Alpha scalar block
-                err_overallError += cmp_optimize_IndexAndEndPoints(alpha_qendpoint2,
-                                                                alpha_index,
-                                                                alpha_index_packed_out,
-                                                                src_alpha_Block,
-                                                                16,
-                                                                numClusters1[idxMode],
-                                                                modeBits[1],
-                                                                3,
-                                                                0.01f,
-                                                                blockMode) / 3;
-
+                // Alpha scalar block
+                err_overallError +=
+                    cmp_optimize_IndexAndEndPoints(
+                        alpha_qendpoint2, alpha_index, alpha_index_packed_out, src_alpha_Block, 16, numClusters1[idxMode], modeBits[1], 3, 0.01f, blockMode) /
+                    3;
 
                 // If we beat the previous best then encode the block
                 if (err_overallError < best_err)
                 {
-                    best_err = err_overallError;
+                    best_err                       = err_overallError;
                     best_candidate.idxMode         = idxMode;
                     best_candidate.rotated_channel = rotated_channel;
 
@@ -4133,7 +4460,8 @@ void Compress_mode45(CMP_INOUT CGU_UINT32 cmp_out[4], CGU_INT blockMode, CGU_Vec
                     best_candidate.color_qendpoint[6] = color_qendpoint2[1].z;
                     best_candidate.color_qendpoint[7] = color_qendpoint2[1].w;
 
-                    for (int k = 0; k < 16; k++) {
+                    for (int k = 0; k < 16; k++)
+                    {
                         best_candidate.color_index[k] = color_index[k];
                         best_candidate.alpha_index[k] = alpha_index[k];
                     }
@@ -4144,11 +4472,14 @@ void Compress_mode45(CMP_INOUT CGU_UINT32 cmp_out[4], CGU_INT blockMode, CGU_Vec
                     else
                         cmp_Encode_mode5(cmp_out16, best_candidate);
 
-                   cmp_out[0] = (CGU_UINT32)cmp_out16[0]  + (CGU_UINT32)(cmp_out16[1] << 8)  + (CGU_UINT32)(cmp_out16[2] << 16)  + (CGU_UINT32)(cmp_out16[3] << 24);
-                   cmp_out[1] = (CGU_UINT32)cmp_out16[4]  + (CGU_UINT32)(cmp_out16[5] << 8)  + (CGU_UINT32)(cmp_out16[6] << 16)  + (CGU_UINT32)(cmp_out16[7] << 24);
-                   cmp_out[2] = (CGU_UINT32)cmp_out16[8]  + (CGU_UINT32)(cmp_out16[9] << 8)  + (CGU_UINT32)(cmp_out16[10] << 16) + (CGU_UINT32)(cmp_out16[11] << 24);
-                   cmp_out[3] = (CGU_UINT32)cmp_out16[12] + (CGU_UINT32)(cmp_out16[13] << 8) + (CGU_UINT32)(cmp_out16[14] << 16) + (CGU_UINT32)(cmp_out16[15] << 24);
-
+                    cmp_out[0] =
+                        (CGU_UINT32)cmp_out16[0] + (CGU_UINT32)(cmp_out16[1] << 8) + (CGU_UINT32)(cmp_out16[2] << 16) + (CGU_UINT32)(cmp_out16[3] << 24);
+                    cmp_out[1] =
+                        (CGU_UINT32)cmp_out16[4] + (CGU_UINT32)(cmp_out16[5] << 8) + (CGU_UINT32)(cmp_out16[6] << 16) + (CGU_UINT32)(cmp_out16[7] << 24);
+                    cmp_out[2] =
+                        (CGU_UINT32)cmp_out16[8] + (CGU_UINT32)(cmp_out16[9] << 8) + (CGU_UINT32)(cmp_out16[10] << 16) + (CGU_UINT32)(cmp_out16[11] << 24);
+                    cmp_out[3] =
+                        (CGU_UINT32)cmp_out16[12] + (CGU_UINT32)(cmp_out16[13] << 8) + (CGU_UINT32)(cmp_out16[14] << 16) + (CGU_UINT32)(cmp_out16[15] << 24);
                 }
             }
         }  // B
@@ -4161,11 +4492,11 @@ void Compress_mode45(CMP_INOUT CGU_UINT32 cmp_out[4], CGU_INT blockMode, CGU_Vec
 #ifdef ENABLE_CMP_REFINE_MODE6_API
 
 CGU_BOOL get_ideal_cluster2(CMP_INOUT CGV_Vec4f image_cluster[2],
-                            CMP_IN CGU_UINT32 index_cluster[16],
-                            CMP_IN CGU_INT Mi_,
-                            CMP_IN CGU_Vec4ui image_src[16],
-                            CMP_IN CGU_UINT32 numEntries,
-                            CMP_IN CGU_UINT32 channels3or4)
+                            CMP_IN CGU_UINT32   index_cluster[16],
+                            CMP_IN CGU_INT      Mi_,
+                            CMP_IN CGU_Vec4ui   image_src[16],
+                            CMP_IN CGU_UINT32   numEntries,
+                            CMP_IN CGU_UINT32   channels3or4)
 {
     // get ideal cluster centers
     CGV_Vec4f image_cluster_mean[16];
@@ -4222,18 +4553,16 @@ CGU_BOOL get_ideal_cluster2(CMP_INOUT CGV_Vec4f image_cluster[2],
     return TRUE;
 }
 
-
-
 CGV_FLOAT shake2(CMP_INOUT CGU_Vec4ui epo_code_shake[2],
-                 CMP_IN CGV_Vec4f image_cluster[2],
-                 CMP_IN CGU_UINT32 index_cluster[16],
-                 CMP_IN CGU_Vec4ui image_src[16],
-                 CMP_IN CGU_UINT32 index_bits,
-                 CMP_IN CGU_UINT32 mtype,
-                 CMP_IN CGU_UINT32 max_bits[4],
-                 CMP_IN CGU_UINT32 use_par,
-                 CMP_IN CGU_UINT32 numEntries,  // max 16
-                 CMP_IN CGU_UINT32 channels3or4)
+                 CMP_IN CGV_Vec4f     image_cluster[2],
+                 CMP_IN CGU_UINT32    index_cluster[16],
+                 CMP_IN CGU_Vec4ui    image_src[16],
+                 CMP_IN CGU_UINT32    index_bits,
+                 CMP_IN CGU_UINT32    mtype,
+                 CMP_IN CGU_UINT32    max_bits[4],
+                 CMP_IN CGU_UINT32    use_par,
+                 CMP_IN CGU_UINT32    numEntries,  // max 16
+                 CMP_IN CGU_UINT32    channels3or4)
 {
     CMP_UNUSED(mtype);
     CGV_FLOAT best_err = CMP_FLOAT_MAX;
@@ -4389,12 +4718,12 @@ CGV_FLOAT shake2(CMP_INOUT CGU_Vec4ui epo_code_shake[2],
 }
 
 CGV_FLOAT requantized_image_err2(CMP_INOUT CGU_UINT32 index_best[16],
-                                 CMP_IN CGU_Vec4ui epo_code_best[2],
-                                 CMP_IN CGU_UINT32 index_bits,
-                                 CMP_IN CGU_UINT32 max_bits[4],
-                                 CMP_IN CGU_Vec4ui image_src[16],
-                                 CMP_IN CGU_UINT32 numEntries,  // max 16
-                                 CMP_IN CGU_UINT32 channels3or4)
+                                 CMP_IN CGU_Vec4ui    epo_code_best[2],
+                                 CMP_IN CGU_UINT32    index_bits,
+                                 CMP_IN CGU_UINT32    max_bits[4],
+                                 CMP_IN CGU_Vec4ui    image_src[16],
+                                 CMP_IN CGU_UINT32    numEntries,  // max 16
+                                 CMP_IN CGU_UINT32    channels3or4)
 {  // IN: 3 = RGB or 4 = RGBA (4 = MAX_CHANNELS)
 
     CMP_UNUSED(channels3or4);
@@ -4453,12 +4782,12 @@ CGV_FLOAT requantized_image_err2(CMP_INOUT CGU_UINT32 index_best[16],
 
 CGV_FLOAT cmp_mode6_optimize_IndexAndEndPoints(CMP_INOUT CGU_Vec4ui epo_code_out[2],  //
                                                CMP_INOUT CGU_UINT32 index_io[16],     // Make sure input index is 0..15 range
-                                               CMP_IN CGU_Vec4ui image_src[16],
-                                               CMP_IN CGU_UINT32 numEntries,          // max 16
-                                               CMP_IN CGU_UINT32 Mi_,                 // last cluster , This should be no larger than 16
-                                               CMP_IN CGU_UINT32 bits,                // total for all components
-                                               CMP_IN CGU_UINT32 channels3or4,        // IN: 3 = RGB or 4 = RGBA (4 = MAX_CHANNELS)
-                                               CMP_IN CGU_FLOAT errorThreshold) 
+                                               CMP_IN CGU_Vec4ui    image_src[16],
+                                               CMP_IN CGU_UINT32    numEntries,    // max 16
+                                               CMP_IN CGU_UINT32    Mi_,           // last cluster , This should be no larger than 16
+                                               CMP_IN CGU_UINT32    bits,          // total for all components
+                                               CMP_IN CGU_UINT32    channels3or4,  // IN: 3 = RGB or 4 = RGBA (4 = MAX_CHANNELS)
+                                               CMP_IN CGU_FLOAT     errorThreshold)
 {
     CMP_UNUSED(bits);
     CGV_FLOAT  err_best    = CMP_FLOAT_MAX;
@@ -4470,7 +4799,6 @@ CGV_FLOAT cmp_mode6_optimize_IndexAndEndPoints(CMP_INOUT CGU_Vec4ui epo_code_out
                                             // iv = Mi_;
                                             // while (iv >>= 1)
                                             //     index_bits++;
-
 
     Mi_ = Mi_ - 1;
 
@@ -4520,16 +4848,16 @@ CGV_FLOAT cmp_mode6_optimize_IndexAndEndPoints(CMP_INOUT CGU_Vec4ui epo_code_out
                 if (get_ideal_cluster2(image_cluster, index_cluster, Mi_, image_src, numEntries, channels3or4))
                 {
                     CGU_Vec4ui epo_code_shake[2] = {{0, 0, 0, 0}, {0, 0, 0, 0}};
-                    err_shake                    = shake2(  epo_code_shake,  // return new epo
-                                                            image_cluster,
-                                                            index_cluster,
-                                                            image_src,
-                                                            index_bits,
-                                                            type,
-                                                            max_bits,
-                                                            use_par,
-                                                            numEntries,  // max 16
-                                                            channels3or4);
+                    err_shake                    = shake2(epo_code_shake,  // return new epo
+                                       image_cluster,
+                                       index_cluster,
+                                       image_src,
+                                       index_bits,
+                                       type,
+                                       max_bits,
+                                       use_par,
+                                       numEntries,  // max 16
+                                       channels3or4);
 
                     if (err_shake < err_cluster)
                     {
@@ -4547,13 +4875,13 @@ CGV_FLOAT cmp_mode6_optimize_IndexAndEndPoints(CMP_INOUT CGU_Vec4ui epo_code_out
             // test results for quality
             //=========================
             CGU_UINT32 index_best[16] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
-            err_requant               = requantized_image_err2( index_best,     // new index results
-                                                                epo_code_best,  // prior result input
-                                                                index_bits,
-                                                                max_bits,
-                                                                image_src,
-                                                                numEntries,
-                                                                channels3or4);
+            err_requant               = requantized_image_err2(index_best,     // new index results
+                                                 epo_code_best,  // prior result input
+                                                 index_bits,
+                                                 max_bits,
+                                                 image_src,
+                                                 numEntries,
+                                                 channels3or4);
             if (err_requant < err_best)
             {
                 //better = 1;
@@ -4582,27 +4910,27 @@ CGV_FLOAT cmp_mode6_optimize_IndexAndEndPoints(CMP_INOUT CGU_Vec4ui epo_code_out
 
 #endif
 
-#endif // ENABLE_CMP_API : CPU & GPU Code block
+#endif  // ENABLE_CMP_API : CPU & GPU Code block
 
 //=================================================================================
 // GPU API Interfaces
 // mode 4 5 6 all have 1 subset per block, and fix-up index is always index 0
 //=================================================================================
-CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void TryMode456CS(CGU_UINT32 GI CMP_SVGROUPINDEX, CGU_Vec3ui groupID CMP_SVGROUPID) 
+CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void TryMode456CS(CGU_UINT32 GI CMP_SVGROUPINDEX, CGU_Vec3ui groupID CMP_SVGROUPID)
 {
-    CMP_CONSTANT     CGU_UINT32 MAX_USED_THREAD = 16;
-    CGU_UINT32       BLOCK_IN_GROUP  = THREAD_GROUP_SIZE / MAX_USED_THREAD;
-    CGU_UINT32       blockInGroup    = GI / MAX_USED_THREAD;
-    CGU_UINT32       blockID         = g_start_block_id + groupID.x * BLOCK_IN_GROUP + blockInGroup;
-    CGU_UINT32       threadBase      = blockInGroup * MAX_USED_THREAD;
-    CGU_UINT32       threadInBlock   = GI - threadBase;
+    CMP_CONSTANT CGU_UINT32 MAX_USED_THREAD = 16;
+    CGU_UINT32              BLOCK_IN_GROUP  = THREAD_GROUP_SIZE / MAX_USED_THREAD;
+    CGU_UINT32              blockInGroup    = GI / MAX_USED_THREAD;
+    CGU_UINT32              blockID         = g_start_block_id + groupID.x * BLOCK_IN_GROUP + blockInGroup;
+    CGU_UINT32              threadBase      = blockInGroup * MAX_USED_THREAD;
+    CGU_UINT32              threadInBlock   = GI - threadBase;
 
     CGU_UINT32 block_y = blockID / g_num_block_x;
     CGU_UINT32 block_x = blockID - block_y * g_num_block_x;
     CGU_UINT32 base_x  = block_x * BLOCK_SIZE_X;
     CGU_UINT32 base_y  = block_y * BLOCK_SIZE_Y;
 
-#if (defined(ENABLE_MODE4) || defined(ENABLE_MODE5) || defined(ENABLE_MODE6)|| defined(ENABLE_CMP_MODE6))
+#if (defined(ENABLE_MODE4) || defined(ENABLE_MODE5) || defined(ENABLE_MODE6) || defined(ENABLE_CMP_MODE6))
 
     if (threadInBlock < 16)
     {
@@ -4650,66 +4978,66 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void TryMode456CS(CGU_UINT32 GI CMP_SVGR
     endPoint[0] = shared_temp[threadBase].endPoint_low;
     endPoint[1] = shared_temp[threadBase].endPoint_high;
 
-    CGU_UINT32 error = 0xFFFFFFFF;
-    CGU_UINT32 mode = 0;
+    CGU_UINT32 error          = 0xFFFFFFFF;
+    CGU_UINT32 mode           = 0;
     CGU_UINT32 index_selector = 0;
-    CGU_UINT32 rotation = 0;
+    CGU_UINT32 rotation       = 0;
 
     CGU_Vec2ui indexPrec;
-    if (threadInBlock < 8) // all threads of threadInBlock < 8 will be working on trying out mode 4, since only mode 4 has index selector bit
+    if (threadInBlock < 8)  // all threads of threadInBlock < 8 will be working on trying out mode 4, since only mode 4 has index selector bit
     {
-        if (0 == (threadInBlock & 1)) // thread 0, 2, 4, 6
+        if (0 == (threadInBlock & 1))  // thread 0, 2, 4, 6
         {
             //2 represents 2bit index precision; 1 represents 3bit index precision
             index_selector = 0;
-            indexPrec = CGU_Vec2ui( 2, 1 );
+            indexPrec      = CGU_Vec2ui(2, 1);
         }
-        else                          // thread 1, 3, 5, 7
+        else  // thread 1, 3, 5, 7
         {
             //2 represents 2bit index precision; 1 represents 3bit index precision
             index_selector = 1;
-            indexPrec = CGU_Vec2ui( 1, 2 );
+            indexPrec      = CGU_Vec2ui(1, 2);
         }
     }
     else
     {
-         //2 represents 2bit index precision
-        indexPrec = CGU_Vec2ui( 2, 2 );
+        //2 represents 2bit index precision
+        indexPrec = CGU_Vec2ui(2, 2);
     }
 
     CGU_Vec4ui pixel_r;
     CGU_UINT32 color_index;
     CGU_UINT32 alpha_index;
-    CGU_Vec4i span;
-    CGU_Vec2i span_norm_sqr;
-    CGU_Vec2i dotProduct;
+    CGU_Vec4i  span;
+    CGU_Vec2i  span_norm_sqr;
+    CGU_Vec2i  dotProduct;
 
 #if defined(ENABLE_MODE4) || defined(ENABLE_MODE5)
-    if (threadInBlock < 12) // Try mode 4 5 in threads 0..11
+    if (threadInBlock < 12)  // Try mode 4 5 in threads 0..11
     {
         CGU_Vec4ui ep_quantized[2];
         // mode 4 5 have component rotation
-        if ((threadInBlock < 2) || (8 == threadInBlock))       // rotation = 0 in thread 0, 1
+        if ((threadInBlock < 2) || (8 == threadInBlock))  // rotation = 0 in thread 0, 1
         {
             rotation = 0;
         }
         else if ((threadInBlock < 4) || (9 == threadInBlock))  // rotation = 1 in thread 2, 3
         {
             rotation = 1;
-            set_pixel_rotation(endPoint[0],rotation);
-            set_pixel_rotation(endPoint[1],rotation);
+            set_pixel_rotation(endPoint[0], rotation);
+            set_pixel_rotation(endPoint[1], rotation);
         }
-        else if ((threadInBlock < 6) || (10 == threadInBlock)) // rotation = 2 in thread 4, 5
+        else if ((threadInBlock < 6) || (10 == threadInBlock))  // rotation = 2 in thread 4, 5
         {
             rotation = 2;
-            set_pixel_rotation(endPoint[0],rotation);
-            set_pixel_rotation(endPoint[1],rotation);
+            set_pixel_rotation(endPoint[0], rotation);
+            set_pixel_rotation(endPoint[1], rotation);
         }
-        else if ((threadInBlock < 8) || (11 == threadInBlock)) // rotation = 3 in thread 6, 7
+        else if ((threadInBlock < 8) || (11 == threadInBlock))  // rotation = 3 in thread 6, 7
         {
             rotation = 3;
-            set_pixel_rotation(endPoint[0],rotation);
-            set_pixel_rotation(endPoint[1],rotation);
+            set_pixel_rotation(endPoint[0], rotation);
+            set_pixel_rotation(endPoint[1], rotation);
         }
 
         if (threadInBlock < 8)  // try mode 4 in threads 0..7
@@ -4720,30 +5048,30 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void TryMode456CS(CGU_UINT32 GI CMP_SVGR
             // Index selector   0   1   0   1   0   1   0   1
 
             mode = 4;
-            compress_endpoints4( endPoint,ep_quantized );
+            compress_endpoints4(endPoint, ep_quantized);
         }
-        else                    // try mode 5 in threads 8..11
+        else  // try mode 5 in threads 8..11
         {
             // mode 5 thread distribution
             // Thread    8  9  10  11
             // Rotation  0  1   2   3
 
             mode = 5;
-            compress_endpoints5( endPoint,ep_quantized );
+            compress_endpoints5(endPoint, ep_quantized);
         }
 
         CGU_Vec4ui pixel = shared_temp[threadBase + 0].pixel;
-        set_pixel_rotation(pixel,rotation);
+        set_pixel_rotation(pixel, rotation);
 
-        span = cmp_castimp(endPoint[1] - endPoint[0]);
-        span_norm_sqr = CGU_Vec2i( dot( span.rgb, span.rgb ), span.a * span.a );
+        span          = cmp_castimp(endPoint[1] - endPoint[0]);
+        span_norm_sqr = CGU_Vec2i(dot(span.rgb, span.rgb), span.a * span.a);
 
         // should be the same as above
         CGU_Vec3ui diff0 = pixel.rgb - endPoint[0].rgb;
         CGU_Vec3ui diff1 = pixel.rgb - endPoint[1].rgb;
-        dotProduct = CGU_Vec2i( dot( diff0, diff0), dot( diff1, diff1) );
+        dotProduct       = CGU_Vec2i(dot(diff0, diff0), dot(diff1, diff1));
 
-        if ( dotProduct.x > dotProduct.y )
+        if (dotProduct.x > dotProduct.y)
         {
             span.rgb.x = -span.rgb.x;
             span.rgb.y = -span.rgb.y;
@@ -4753,87 +5081,91 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void TryMode456CS(CGU_UINT32 GI CMP_SVGR
 
         CGU_UINT32 diffa0 = pixel.a - endPoint[0].a;
         CGU_UINT32 diffa1 = pixel.a - endPoint[1].a;
-        dotProduct = CGU_Vec2i( dot( diffa0, diffa0 ), dot( diffa1,diffa1 ) );
-        if ( dotProduct.x > dotProduct.y )
+        dotProduct        = CGU_Vec2i(dot(diffa0, diffa0), dot(diffa1, diffa1));
+        if (dotProduct.x > dotProduct.y)
         {
             span.a = -span.a;
             swap(endPoint[0].a, endPoint[1].a);
         }
 
         error = 0;
-        for ( CGU_UINT32 i = 0; i < 16; i ++ )
+        for (CGU_UINT32 i = 0; i < 16; i++)
         {
             pixel = shared_temp[threadBase + i].pixel;
-            set_pixel_rotation(pixel,rotation);
+            set_pixel_rotation(pixel, rotation);
 
             diff0 = pixel.rgb - endPoint[0].rgb;
 
-            dotProduct.x = dot( span.rgb, diff0 );
-            color_index = ( span_norm_sqr.x <= 0 /*endPoint[0] == endPoint[1]*/ || dotProduct.x <= 0 /*pixel == endPoint[0]*/ ) ? 0
-                : ( ( dotProduct.x < span_norm_sqr.x ) ? aStep[indexPrec.x][ CGU_UINT32( dotProduct.x * 63.49999 / span_norm_sqr.x ) ] : aStep[indexPrec.x][63] );
+            dotProduct.x = dot(span.rgb, diff0);
+            color_index =
+                (span_norm_sqr.x <= 0 /*endPoint[0] == endPoint[1]*/ || dotProduct.x <= 0 /*pixel == endPoint[0]*/)
+                    ? 0
+                    : ((dotProduct.x < span_norm_sqr.x) ? aStep[indexPrec.x][CGU_UINT32(dotProduct.x * 63.49999 / span_norm_sqr.x)] : aStep[indexPrec.x][63]);
 
-            diffa0 = pixel.a - endPoint[0].a;
-            dotProduct.y = dot( span.a, diffa0 );
-            alpha_index = ( span_norm_sqr.y <= 0 || dotProduct.y <= 0 ) ? 0
-                : ( ( dotProduct.y < span_norm_sqr.y ) ? aStep[indexPrec.y][ CGU_UINT32( dotProduct.y * 63.49999 / span_norm_sqr.y ) ] : aStep[indexPrec.y][63] );
+            diffa0       = pixel.a - endPoint[0].a;
+            dotProduct.y = dot(span.a, diffa0);
+            alpha_index =
+                (span_norm_sqr.y <= 0 || dotProduct.y <= 0)
+                    ? 0
+                    : ((dotProduct.y < span_norm_sqr.y) ? aStep[indexPrec.y][CGU_UINT32(dotProduct.y * 63.49999 / span_norm_sqr.y)] : aStep[indexPrec.y][63]);
 
-            pixel_r.rgb = ( endPoint[0].rgb * ( 64 - aWeight[indexPrec.x][color_index] ) + endPoint[1].rgb * aWeight[indexPrec.x][color_index] + 32U );
+            pixel_r.rgb = (endPoint[0].rgb * (64 - aWeight[indexPrec.x][color_index]) + endPoint[1].rgb * aWeight[indexPrec.x][color_index] + 32U);
 
-            pixel_r.rgb.x =  pixel_r.rgb.x >> 6;
-            pixel_r.rgb.y =  pixel_r.rgb.y >> 6;
-            pixel_r.rgb.z =  pixel_r.rgb.z >> 6;
+            pixel_r.rgb.x = pixel_r.rgb.x >> 6;
+            pixel_r.rgb.y = pixel_r.rgb.y >> 6;
+            pixel_r.rgb.z = pixel_r.rgb.z >> 6;
 
-            pixel_r.a   = ( endPoint[0].a   * ( 64 - aWeight[indexPrec.y][alpha_index] ) + endPoint[1].a   * aWeight[indexPrec.y][alpha_index] + 32 ) >> 6;
+            pixel_r.a = (endPoint[0].a * (64 - aWeight[indexPrec.y][alpha_index]) + endPoint[1].a * aWeight[indexPrec.y][alpha_index] + 32) >> 6;
 
-            Ensure_A_Is_Larger( pixel_r, pixel );
+            Ensure_A_Is_Larger(pixel_r, pixel);
 
             pixel_r -= pixel;
-            set_pixel_rotation(pixel_r,rotation);
+            set_pixel_rotation(pixel_r, rotation);
             error += ComputeError(pixel_r, pixel_r);
         }
     }
-    else 
+    else
 #endif
 #ifdef ENABLE_MODE6
-    if (threadInBlock < 16)// Try mode 6 in threads 12..15, since in mode 4 5 6, only mode 6 has p bit
+        if (threadInBlock < 16)  // Try mode 6 in threads 12..15, since in mode 4 5 6, only mode 6 has p bit
     {
         CGU_UINT32 p = threadInBlock - 12;
         CGU_Vec4ui ep_quantized[2];
 
-        compress_endpoints6( endPoint,ep_quantized, CGU_Vec2ui(p & 1 , (p >> 1)& 1 ) );
+        compress_endpoints6(endPoint, ep_quantized, CGU_Vec2ui(p & 1, (p >> 1) & 1));
 
         CGU_Vec4ui pixel = shared_temp[threadBase + 0].pixel;
 
-        span = cmp_castimp( endPoint[1] - endPoint[0] );
-        span_norm_sqr = dot( span, span );
+        span          = cmp_castimp(endPoint[1] - endPoint[0]);
+        span_norm_sqr = dot(span, span);
 
         CGU_Vec4ui diff4 = pixel - endPoint[0];
-        dotProduct = dot( span, diff4 );
-        if ( span_norm_sqr.x > 0 && dotProduct.x >= 0 && CGU_UINT32( dotProduct.x * 63.49999 ) > CGU_UINT32( 32 * span_norm_sqr.x ) )
+        dotProduct       = dot(span, diff4);
+        if (span_norm_sqr.x > 0 && dotProduct.x >= 0 && CGU_UINT32(dotProduct.x * 63.49999) > CGU_UINT32(32 * span_norm_sqr.x))
         {
             span = -span;
             swap(endPoint[0], endPoint[1]);
         }
-            
+
         error = 0;
-        for ( CGU_UINT32 i = 0; i < 16; i ++ )
+        for (CGU_UINT32 i = 0; i < 16; i++)
         {
-            pixel = shared_temp[threadBase + i].pixel;
-            diff4 = pixel - endPoint[0];
-            dotProduct.x = dot( span, diff4 );
-            color_index = ( span_norm_sqr.x <= 0 || dotProduct.x <= 0 ) ? 0
-                : ( ( dotProduct.x < span_norm_sqr.x ) ? aStep[0][ CGU_UINT32( dotProduct.x * 63.49999 / span_norm_sqr.x ) ] : aStep[0][63] );
-            
-            pixel_r = (  endPoint[0] * ( 64 - aWeight[0][color_index] ) + 
-                         endPoint[1] * aWeight[0][color_index]  + 32U ) >> 6;
-        
-            Ensure_A_Is_Larger( pixel_r, pixel );
+            pixel        = shared_temp[threadBase + i].pixel;
+            diff4        = pixel - endPoint[0];
+            dotProduct.x = dot(span, diff4);
+            color_index  = (span_norm_sqr.x <= 0 || dotProduct.x <= 0)
+                               ? 0
+                               : ((dotProduct.x < span_norm_sqr.x) ? aStep[0][CGU_UINT32(dotProduct.x * 63.49999 / span_norm_sqr.x)] : aStep[0][63]);
+
+            pixel_r = (endPoint[0] * (64 - aWeight[0][color_index]) + endPoint[1] * aWeight[0][color_index] + 32U) >> 6;
+
+            Ensure_A_Is_Larger(pixel_r, pixel);
             pixel_r -= pixel;
             error += ComputeError(pixel_r, pixel_r);
         }
 
-        mode = 6;
-        rotation = p;    // Borrow rotation for p
+        mode     = 6;
+        rotation = p;  // Borrow rotation for p
     }
 #endif
 
@@ -4845,68 +5177,66 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void TryMode456CS(CGU_UINT32 GI CMP_SVGR
 
     if (threadInBlock < 8)
     {
-        if ( shared_temp[GI].error > shared_temp[GI + 8].error )
+        if (shared_temp[GI].error > shared_temp[GI + 8].error)
         {
-            shared_temp[GI].error           = shared_temp[GI + 8].error;
-            shared_temp[GI].mode            = shared_temp[GI + 8].mode;
-            shared_temp[GI].index_selector  = shared_temp[GI + 8].index_selector;
-            shared_temp[GI].rotation        = shared_temp[GI + 8].rotation;
+            shared_temp[GI].error          = shared_temp[GI + 8].error;
+            shared_temp[GI].mode           = shared_temp[GI + 8].mode;
+            shared_temp[GI].index_selector = shared_temp[GI + 8].index_selector;
+            shared_temp[GI].rotation       = shared_temp[GI + 8].rotation;
         }
     }
     GroupSync();
 
     if (threadInBlock < 4)
     {
-        if ( shared_temp[GI].error > shared_temp[GI + 4].error )
+        if (shared_temp[GI].error > shared_temp[GI + 4].error)
         {
-            shared_temp[GI].error = shared_temp[GI + 4].error;
-            shared_temp[GI].mode = shared_temp[GI + 4].mode;
+            shared_temp[GI].error          = shared_temp[GI + 4].error;
+            shared_temp[GI].mode           = shared_temp[GI + 4].mode;
             shared_temp[GI].index_selector = shared_temp[GI + 4].index_selector;
-            shared_temp[GI].rotation = shared_temp[GI + 4].rotation;
+            shared_temp[GI].rotation       = shared_temp[GI + 4].rotation;
         }
     }
     GroupSync();
 
     if (threadInBlock < 2)
     {
-        if ( shared_temp[GI].error > shared_temp[GI + 2].error )
+        if (shared_temp[GI].error > shared_temp[GI + 2].error)
         {
-            shared_temp[GI].error = shared_temp[GI + 2].error;
-            shared_temp[GI].mode = shared_temp[GI + 2].mode;
+            shared_temp[GI].error          = shared_temp[GI + 2].error;
+            shared_temp[GI].mode           = shared_temp[GI + 2].mode;
             shared_temp[GI].index_selector = shared_temp[GI + 2].index_selector;
-            shared_temp[GI].rotation = shared_temp[GI + 2].rotation;
+            shared_temp[GI].rotation       = shared_temp[GI + 2].rotation;
         }
     }
     GroupSync();
 
-
     if (threadInBlock < 1)
     {
-        if ( shared_temp[GI].error > shared_temp[GI + 1].error )
+        if (shared_temp[GI].error > shared_temp[GI + 1].error)
         {
-            shared_temp[GI].error           = shared_temp[GI + 1].error;
-            shared_temp[GI].mode            = shared_temp[GI + 1].mode;
-            shared_temp[GI].index_selector  = shared_temp[GI + 1].index_selector;
-            shared_temp[GI].rotation        = shared_temp[GI + 1].rotation;
+            shared_temp[GI].error          = shared_temp[GI + 1].error;
+            shared_temp[GI].mode           = shared_temp[GI + 1].mode;
+            shared_temp[GI].index_selector = shared_temp[GI + 1].index_selector;
+            shared_temp[GI].rotation       = shared_temp[GI + 1].rotation;
         }
 
         // Save the fast mode settings for modes 4&5 check if q = 0 for mode 6)
-        g_OutBuff1[blockID].error           = shared_temp[GI].error;
-        g_OutBuff1[blockID].mode            = shared_temp[GI].mode & 0x07;
-        g_OutBuff1[blockID].rotation        = shared_temp[GI].rotation;
-        g_OutBuff1[blockID].index_selector  = shared_temp[GI].index_selector;
-        g_OutBuff1[blockID].partition       = 0;
-        g_OutBuff1[blockID].data2           = 0;
+        g_OutBuff1[blockID].error          = shared_temp[GI].error;
+        g_OutBuff1[blockID].mode           = shared_temp[GI].mode & 0x07;
+        g_OutBuff1[blockID].rotation       = shared_temp[GI].rotation;
+        g_OutBuff1[blockID].index_selector = shared_temp[GI].index_selector;
+        g_OutBuff1[blockID].partition      = 0;
+        g_OutBuff1[blockID].data2          = 0;
 
-
-       // Enable cmp test
+        // Enable cmp test
 #ifdef ENABLE_CMP_MODE6
-       if ((g_quality > 0.05f)
+        if ((g_quality > 0.05f)
 #ifdef ENABLE_MODE6
-           && (shared_temp[GI].mode == 6)
+            && (shared_temp[GI].mode == 6)
 #endif
-           )
-       {
+        )
+        {
             CGU_Vec4ui image_src[16];
             for (int i = 0; i < 16; i++)
             {
@@ -4924,7 +5254,7 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void TryMode456CS(CGU_UINT32 GI CMP_SVGR
             CGU_UINT32 besterr = cmp_GetIndexedEndPoints(epo_code_out,
                                                          best_index_out,
                                                          image_src,
-                                                         15,          // numEntries 0..15 (Note this function is changed from using 16)
+                                                         15,  // numEntries 0..15 (Note this function is changed from using 16)
                                                          0xffffffff);
 
             // Error cal needs updating to be the same all over
@@ -4933,20 +5263,20 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void TryMode456CS(CGU_UINT32 GI CMP_SVGR
                 cmp_pack4bitindex32(index_packed_out, best_index_out);
 
 #ifdef ENABLE_CMP_REFINE_MODE6_API
-            if (g_quality > 0.5f)
-            {
-                // Refined for better quailty using prior best_index_out initial input
-                besterr = cmp_mode6_optimize_IndexAndEndPoints(epo_code_out,
-                                                     best_index_out,
-                                                     image_src,
-                                                     16,                              // numEntries
-                                                     g_modesettings[6].clusters,      // 16,
-                                                     g_modesettings[6].bits,          // 58,
-                                                     g_modesettings[6].channels3or4,  // 4,
-                                                     0.1f);
+                if (g_quality > 0.5f)
+                {
+                    // Refined for better quailty using prior best_index_out initial input
+                    besterr = cmp_mode6_optimize_IndexAndEndPoints(epo_code_out,
+                                                                   best_index_out,
+                                                                   image_src,
+                                                                   16,                              // numEntries
+                                                                   g_modesettings[6].clusters,      // 16,
+                                                                   g_modesettings[6].bits,          // 58,
+                                                                   g_modesettings[6].channels3or4,  // 4,
+                                                                   0.1f);
 
-                cmp_pack4bitindex32(index_packed_out, best_index_out);
-            }
+                    cmp_pack4bitindex32(index_packed_out, best_index_out);
+                }
 #endif
 
                 cmp_encode_mode6(cmp_out6, epo_code_out, index_packed_out);
@@ -4959,27 +5289,28 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void TryMode456CS(CGU_UINT32 GI CMP_SVGR
                 g_OutBuff1[blockID].data2.z = cmp_out6[2];
                 g_OutBuff1[blockID].data2.w = cmp_out6[3];
 
-            } // if better then fast mode
+            }  // if better then fast mode
         }
 #endif
     }
 
 #else
     // Init
-    if (threadInBlock < 1) {
-        g_OutBuff1[blockID].error           = MAX_UINT;
-        g_OutBuff1[blockID].mode            = 0;
-        g_OutBuff1[blockID].rotation        = 0;
-        g_OutBuff1[blockID].index_selector  = 0;
-        g_OutBuff1[blockID].partition       = 0;
-        g_OutBuff1[blockID].data2           = 0;
+    if (threadInBlock < 1)
+    {
+        g_OutBuff1[blockID].error          = MAX_UINT;
+        g_OutBuff1[blockID].mode           = 0;
+        g_OutBuff1[blockID].rotation       = 0;
+        g_OutBuff1[blockID].index_selector = 0;
+        g_OutBuff1[blockID].partition      = 0;
+        g_OutBuff1[blockID].data2          = 0;
     }
     GroupSync();
 #endif
-
 }
 
-CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void TryMode137CS(CGU_UINT32 GI CMP_SVGROUPINDEX, CGU_Vec3ui groupID CMP_SVGROUPID)  // mode 1 3 7 all have 2 subsets per block
+CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1)
+void TryMode137CS(CGU_UINT32 GI CMP_SVGROUPINDEX, CGU_Vec3ui groupID CMP_SVGROUPID)  // mode 1 3 7 all have 2 subsets per block
 {
     const CGU_UINT32 MAX_USED_THREAD = 64;
     CGU_UINT32       BLOCK_IN_GROUP  = THREAD_GROUP_SIZE / MAX_USED_THREAD;
@@ -5125,7 +5456,7 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void TryMode137CS(CGU_UINT32 GI CMP_SVGR
             diff.w = shared_temp[threadBase + 0].pixel.w - endPoint[0][0].w;
 
             // TODO: again, this shouldn't be necessary here in error calculation
-            CGU_INT dotProduct = dot(span[0],diff);
+            CGU_INT dotProduct = dot(span[0], diff);
             if (span_norm_sqr[0] > 0 && dotProduct > 0 && CGU_UINT32(dotProduct * 63.49999) > CGU_UINT32(32 * span_norm_sqr[0]))
             {
                 span[0].x = -span[0].x;
@@ -5295,22 +5626,23 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void TryMode137CS(CGU_UINT32 GI CMP_SVGR
             shared_temp[GI].rotation  = shared_temp[GI + 1].rotation;
         }
 
-        if ((g_InBuff[blockID].error > shared_temp[GI].error)){
-            g_OutBuff1[blockID].error           = shared_temp[GI].error;
-            g_OutBuff1[blockID].mode            = shared_temp[GI].mode;
-            g_OutBuff1[blockID].partition       = shared_temp[GI].partition;
-            g_OutBuff1[blockID].rotation        = shared_temp[GI].rotation;
-            g_OutBuff1[blockID].index_selector  = 0;
-            g_OutBuff1[blockID].data2           = 0;
+        if ((g_InBuff[blockID].error > shared_temp[GI].error))
+        {
+            g_OutBuff1[blockID].error          = shared_temp[GI].error;
+            g_OutBuff1[blockID].mode           = shared_temp[GI].mode;
+            g_OutBuff1[blockID].partition      = shared_temp[GI].partition;
+            g_OutBuff1[blockID].rotation       = shared_temp[GI].rotation;
+            g_OutBuff1[blockID].index_selector = 0;
+            g_OutBuff1[blockID].data2          = 0;
         }
         else
         {
-            g_OutBuff1[blockID].error           = g_InBuff[blockID].error;
-            g_OutBuff1[blockID].mode            = g_InBuff[blockID].mode;
-            g_OutBuff1[blockID].partition       = g_InBuff[blockID].partition;
-            g_OutBuff1[blockID].index_selector  = g_InBuff[blockID].index_selector;
-            g_OutBuff1[blockID].rotation        = g_InBuff[blockID].rotation;
-            g_OutBuff1[blockID].data2           = g_InBuff[blockID].data2;
+            g_OutBuff1[blockID].error          = g_InBuff[blockID].error;
+            g_OutBuff1[blockID].mode           = g_InBuff[blockID].mode;
+            g_OutBuff1[blockID].partition      = g_InBuff[blockID].partition;
+            g_OutBuff1[blockID].index_selector = g_InBuff[blockID].index_selector;
+            g_OutBuff1[blockID].rotation       = g_InBuff[blockID].rotation;
+            g_OutBuff1[blockID].data2          = g_InBuff[blockID].data2;
         }
     }
 #else
@@ -5318,12 +5650,12 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void TryMode137CS(CGU_UINT32 GI CMP_SVGR
     if (threadInBlock < 1)
     {
         // cary over prior results
-            g_OutBuff1[blockID].error           = g_InBuff[blockID].error;
-            g_OutBuff1[blockID].mode            = g_InBuff[blockID].mode;
-            g_OutBuff1[blockID].partition       = g_InBuff[blockID].partition;
-            g_OutBuff1[blockID].index_selector  = g_InBuff[blockID].index_selector;
-            g_OutBuff1[blockID].rotation        = g_InBuff[blockID].rotation;
-            g_OutBuff1[blockID].data2           = g_InBuff[blockID].data2;
+        g_OutBuff1[blockID].error          = g_InBuff[blockID].error;
+        g_OutBuff1[blockID].mode           = g_InBuff[blockID].mode;
+        g_OutBuff1[blockID].partition      = g_InBuff[blockID].partition;
+        g_OutBuff1[blockID].index_selector = g_InBuff[blockID].index_selector;
+        g_OutBuff1[blockID].rotation       = g_InBuff[blockID].rotation;
+        g_OutBuff1[blockID].data2          = g_InBuff[blockID].data2;
     }
 #endif
 }
@@ -5367,7 +5699,7 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void TryMode02CS(CGU_UINT32 GI CMP_SVGRO
     }
 
     CGU_Vec4ui pixel_r;
-    CGU_Vec4ui endPoint[3][2];        // endPoint[0..1 for subset id][0..1 for low and high in the subset]
+    CGU_Vec4ui endPoint[3][2];  // endPoint[0..1 for subset id][0..1 for low and high in the subset]
     CGU_Vec4ui endPointBackup[3][2];
     CGU_UINT32 color_index[16];
 
@@ -5375,32 +5707,32 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void TryMode02CS(CGU_UINT32 GI CMP_SVGRO
     {
         CGU_UINT32 partition = threadInBlock + 64;
 
-        endPoint[0][0] = MAX_UINT;
-        endPoint[0][1] = MIN_UINT;
-        endPoint[1][0] = MAX_UINT;
-        endPoint[1][1] = MIN_UINT;
-        endPoint[2][0] = MAX_UINT;
-        endPoint[2][1] = MIN_UINT;
+        endPoint[0][0]   = MAX_UINT;
+        endPoint[0][1]   = MIN_UINT;
+        endPoint[1][0]   = MAX_UINT;
+        endPoint[1][1]   = MIN_UINT;
+        endPoint[2][0]   = MAX_UINT;
+        endPoint[2][1]   = MIN_UINT;
         CGU_UINT32 bits2 = blockPartitions2[partition - 64];
         CGU_UINT32 i;
-        for ( i = 0; i < 16; i ++ )
+        for (i = 0; i < 16; i++)
         {
-            CGU_Vec4ui pixel = shared_temp[threadBase + i].pixel;
-            CGU_UINT32 subset_index = ( bits2 >> ( i * 2 ) ) & 0x03;
-            if ( subset_index == 2 )
+            CGU_Vec4ui pixel        = shared_temp[threadBase + i].pixel;
+            CGU_UINT32 subset_index = (bits2 >> (i * 2)) & 0x03;
+            if (subset_index == 2)
             {
-                endPoint[2][0] = cmp_min( endPoint[2][0], pixel );
-                endPoint[2][1] = cmp_max( endPoint[2][1], pixel );
+                endPoint[2][0] = cmp_min(endPoint[2][0], pixel);
+                endPoint[2][1] = cmp_max(endPoint[2][1], pixel);
             }
-            else if ( subset_index == 1 )
+            else if (subset_index == 1)
             {
-                endPoint[1][0] = cmp_min( endPoint[1][0], pixel );
-                endPoint[1][1] = cmp_max( endPoint[1][1], pixel );
+                endPoint[1][0] = cmp_min(endPoint[1][0], pixel);
+                endPoint[1][1] = cmp_max(endPoint[1][1], pixel);
             }
             else
             {
-                endPoint[0][0] = cmp_min( endPoint[0][0], pixel );
-                endPoint[0][1] = cmp_max( endPoint[0][1], pixel );
+                endPoint[0][0] = cmp_min(endPoint[0][0], pixel);
+                endPoint[0][1] = cmp_max(endPoint[0][1], pixel);
             }
         }
 
@@ -5421,10 +5753,10 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void TryMode02CS(CGU_UINT32 GI CMP_SVGRO
             max_p = 1;
         }
 
-        CGU_UINT32 final_p[3] = { 0, 0, 0 };
-        CGU_UINT32 error[3] = { MAX_UINT, MAX_UINT, MAX_UINT };
+        CGU_UINT32 final_p[3] = {0, 0, 0};
+        CGU_UINT32 error[3]   = {MAX_UINT, MAX_UINT, MAX_UINT};
         CGU_Vec4ui ep_quantized[2];
-        for ( CGU_UINT32 p = 0; p < max_p; p ++ )
+        for (CGU_UINT32 p = 0; p < max_p; p++)
         {
             endPoint[0][0] = endPointBackup[0][0];
             endPoint[0][1] = endPointBackup[0][1];
@@ -5433,186 +5765,193 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void TryMode02CS(CGU_UINT32 GI CMP_SVGRO
             endPoint[2][0] = endPointBackup[2][0];
             endPoint[2][1] = endPointBackup[2][1];
 
-            for ( i = 0; i < 3; i ++ )
+            for (i = 0; i < 3; i++)
             {
                 if (0 == g_mode_id)
                 {
-                    compress_endpoints0( endPoint[i],ep_quantized, CGU_Vec2ui(p& 1, (p >> 1)& 1));
+                    compress_endpoints0(endPoint[i], ep_quantized, CGU_Vec2ui(p & 1, (p >> 1) & 1));
                 }
                 else
                 {
-                    compress_endpoints2( endPoint[i],ep_quantized );
+                    compress_endpoints2(endPoint[i], ep_quantized);
                 }
             }
 
             CGU_UINT32 step_selector = 1 + (2 == g_mode_id);
 
             CGU_Vec4i span[3];
-            span[0] = cmp_castimp(endPoint[0][1] - endPoint[0][0]);
-            span[1] = cmp_castimp(endPoint[1][1] - endPoint[1][0]);
-            span[2] = cmp_castimp(endPoint[2][1] - endPoint[2][0]);
+            span[0]   = cmp_castimp(endPoint[0][1] - endPoint[0][0]);
+            span[1]   = cmp_castimp(endPoint[1][1] - endPoint[1][0]);
+            span[2]   = cmp_castimp(endPoint[2][1] - endPoint[2][0]);
             span[0].w = span[1].w = span[2].w = 0;
 
             CGU_INT span_norm_sqr[3];
-            span_norm_sqr[0] = dot( span[0], span[0] );
-            span_norm_sqr[1] = dot( span[1], span[1] );
-            span_norm_sqr[2] = dot( span[2], span[2] );
+            span_norm_sqr[0] = dot(span[0], span[0]);
+            span_norm_sqr[1] = dot(span[1], span[1]);
+            span_norm_sqr[2] = dot(span[2], span[2]);
 
             // TODO: again, this shouldn't be necessary here in error calculation
-            CGU_UINT32 ci[3] = { 0, candidateFixUpIndex1D[partition].x, candidateFixUpIndex1D[partition].y };
+            CGU_UINT32 ci[3] = {0, candidateFixUpIndex1D[partition].x, candidateFixUpIndex1D[partition].y};
             CGU_Vec4ui diff;
-            for (i = 0; i < 3; i ++)
+            for (i = 0; i < 3; i++)
             {
-                diff = shared_temp[threadBase + ci[i]].pixel - endPoint[i][0];
-                CGU_INT dotProduct = dot( span[i], diff );
-                if ( span_norm_sqr[i] > 0 && dotProduct > 0 && CGU_UINT32( dotProduct * 63.49999 ) > CGU_UINT32( 32 * span_norm_sqr[i] ) )
+                diff               = shared_temp[threadBase + ci[i]].pixel - endPoint[i][0];
+                CGU_INT dotProduct = dot(span[i], diff);
+                if (span_norm_sqr[i] > 0 && dotProduct > 0 && CGU_UINT32(dotProduct * 63.49999) > CGU_UINT32(32 * span_norm_sqr[i]))
                 {
                     span[i] = -span[i];
                     swap(endPoint[i][0], endPoint[i][1]);
                 }
             }
 
-            CGU_UINT32 p_error[3] = { 0, 0, 0 };
+            CGU_UINT32 p_error[3] = {0, 0, 0};
 
-            for ( i = 0; i < 16; i ++ )
+            for (i = 0; i < 16; i++)
             {
-                CGU_UINT32 subset_index = ( bits2 >> ( i * 2 ) ) & 0x03;
-                if ( subset_index == 2 )
+                CGU_UINT32 subset_index = (bits2 >> (i * 2)) & 0x03;
+                if (subset_index == 2)
                 {
-                    diff = shared_temp[threadBase + i].pixel - endPoint[2][0];
-                    CGU_INT dotProduct = dot( span[2], diff );
-                    color_index[i] = ( span_norm_sqr[2] <= 0 || dotProduct <= 0 ) ? 0
-                        : ( ( dotProduct < span_norm_sqr[2] ) ? aStep[step_selector][ CGU_UINT32( dotProduct * 63.49999 / span_norm_sqr[2] ) ] : aStep[step_selector][63] );
+                    diff               = shared_temp[threadBase + i].pixel - endPoint[2][0];
+                    CGU_INT dotProduct = dot(span[2], diff);
+                    color_index[i]     = (span_norm_sqr[2] <= 0 || dotProduct <= 0)
+                                             ? 0
+                                             : ((dotProduct < span_norm_sqr[2]) ? aStep[step_selector][CGU_UINT32(dotProduct * 63.49999 / span_norm_sqr[2])]
+                                                                                : aStep[step_selector][63]);
                 }
-                else if ( subset_index == 1 )
+                else if (subset_index == 1)
                 {
-                    diff =  shared_temp[threadBase + i].pixel - endPoint[1][0];
-                    CGU_INT dotProduct = dot( span[1], diff );
-                    color_index[i] = ( span_norm_sqr[1] <= 0 || dotProduct <= 0 ) ? 0
-                        : ( ( dotProduct < span_norm_sqr[1] ) ? aStep[step_selector][ CGU_UINT32( dotProduct * 63.49999 / span_norm_sqr[1] ) ] : aStep[step_selector][63] );
+                    diff               = shared_temp[threadBase + i].pixel - endPoint[1][0];
+                    CGU_INT dotProduct = dot(span[1], diff);
+                    color_index[i]     = (span_norm_sqr[1] <= 0 || dotProduct <= 0)
+                                             ? 0
+                                             : ((dotProduct < span_norm_sqr[1]) ? aStep[step_selector][CGU_UINT32(dotProduct * 63.49999 / span_norm_sqr[1])]
+                                                                                : aStep[step_selector][63]);
                 }
                 else
                 {
-                    diff = shared_temp[threadBase + i].pixel - endPoint[0][0];
-                    CGU_INT dotProduct = dot( span[0], diff );
-                    color_index[i] = ( span_norm_sqr[0] <= 0 || dotProduct <= 0 ) ? 0
-                        : ( ( dotProduct < span_norm_sqr[0] ) ? aStep[step_selector][ CGU_UINT32( dotProduct * 63.49999 / span_norm_sqr[0] ) ] : aStep[step_selector][63] );
+                    diff               = shared_temp[threadBase + i].pixel - endPoint[0][0];
+                    CGU_INT dotProduct = dot(span[0], diff);
+                    color_index[i]     = (span_norm_sqr[0] <= 0 || dotProduct <= 0)
+                                             ? 0
+                                             : ((dotProduct < span_norm_sqr[0]) ? aStep[step_selector][CGU_UINT32(dotProduct * 63.49999 / span_norm_sqr[0])]
+                                                                                : aStep[step_selector][63]);
                 }
 
-                pixel_r = ( endPoint[subset_index][0]*( 64 - aWeight[step_selector][color_index[i]] ) + 
-                            endPoint[subset_index][1]* aWeight[step_selector][color_index[i]] + 32U ) >> 6;
+                pixel_r = (endPoint[subset_index][0] * (64 - aWeight[step_selector][color_index[i]]) +
+                           endPoint[subset_index][1] * aWeight[step_selector][color_index[i]] + 32U) >>
+                          6;
                 pixel_r.a = 255;
 
-                CGU_Vec4ui pixel = shared_temp[threadBase + i].pixel;                
-                Ensure_A_Is_Larger( pixel_r, pixel );
+                CGU_Vec4ui pixel = shared_temp[threadBase + i].pixel;
+                Ensure_A_Is_Larger(pixel_r, pixel);
                 pixel_r -= pixel;
 
                 CGU_UINT32 pixel_error = ComputeError(pixel_r, pixel_r);
 
-                if ( subset_index == 2 )
+                if (subset_index == 2)
                     p_error[2] += pixel_error;
-                else if ( subset_index == 1 )
+                else if (subset_index == 1)
                     p_error[1] += pixel_error;
                 else
                     p_error[0] += pixel_error;
             }
 
-            for ( i = 0; i < 3; i++ )
+            for (i = 0; i < 3; i++)
             {
                 if (p_error[i] < error[i])
                 {
-                    error[i] = p_error[i];
-                    final_p[i] = p;    // Borrow rotation for p
+                    error[i]   = p_error[i];
+                    final_p[i] = p;  // Borrow rotation for p
                 }
             }
         }
 
-        shared_temp[GI].error = error[0] + error[1] + error[2];
+        shared_temp[GI].error     = error[0] + error[1] + error[2];
         shared_temp[GI].partition = partition;
-        shared_temp[GI].rotation = (final_p[2] << 4) | (final_p[1] << 2) | final_p[0];
+        shared_temp[GI].rotation  = (final_p[2] << 4) | (final_p[1] << 2) | final_p[0];
     }
     GroupSync();
 
     if (threadInBlock < 32)
     {
-        if ( shared_temp[GI].error > shared_temp[GI + 32].error )
+        if (shared_temp[GI].error > shared_temp[GI + 32].error)
         {
-            shared_temp[GI].error = shared_temp[GI + 32].error;
+            shared_temp[GI].error     = shared_temp[GI + 32].error;
             shared_temp[GI].partition = shared_temp[GI + 32].partition;
-            shared_temp[GI].rotation = shared_temp[GI + 32].rotation;
+            shared_temp[GI].rotation  = shared_temp[GI + 32].rotation;
         }
     }
     GroupSync();
 
     if (threadInBlock < 16)
     {
-        if ( shared_temp[GI].error > shared_temp[GI + 16].error )
+        if (shared_temp[GI].error > shared_temp[GI + 16].error)
         {
-            shared_temp[GI].error = shared_temp[GI + 16].error;
+            shared_temp[GI].error     = shared_temp[GI + 16].error;
             shared_temp[GI].partition = shared_temp[GI + 16].partition;
-            shared_temp[GI].rotation = shared_temp[GI + 16].rotation;
+            shared_temp[GI].rotation  = shared_temp[GI + 16].rotation;
         }
     }
     GroupSync();
 
     if (threadInBlock < 8)
     {
-        if ( shared_temp[GI].error > shared_temp[GI + 8].error )
+        if (shared_temp[GI].error > shared_temp[GI + 8].error)
         {
-            shared_temp[GI].error = shared_temp[GI + 8].error;
+            shared_temp[GI].error     = shared_temp[GI + 8].error;
             shared_temp[GI].partition = shared_temp[GI + 8].partition;
-            shared_temp[GI].rotation = shared_temp[GI + 8].rotation;
+            shared_temp[GI].rotation  = shared_temp[GI + 8].rotation;
         }
     }
     GroupSync();
 
     if (threadInBlock < 4)
     {
-        if ( shared_temp[GI].error > shared_temp[GI + 4].error )
+        if (shared_temp[GI].error > shared_temp[GI + 4].error)
         {
-            shared_temp[GI].error = shared_temp[GI + 4].error;
+            shared_temp[GI].error     = shared_temp[GI + 4].error;
             shared_temp[GI].partition = shared_temp[GI + 4].partition;
-            shared_temp[GI].rotation = shared_temp[GI + 4].rotation;
+            shared_temp[GI].rotation  = shared_temp[GI + 4].rotation;
         }
     }
     GroupSync();
 
     if (threadInBlock < 2)
     {
-        if ( shared_temp[GI].error > shared_temp[GI + 2].error )
+        if (shared_temp[GI].error > shared_temp[GI + 2].error)
         {
-            shared_temp[GI].error = shared_temp[GI + 2].error;
+            shared_temp[GI].error     = shared_temp[GI + 2].error;
             shared_temp[GI].partition = shared_temp[GI + 2].partition;
-            shared_temp[GI].rotation = shared_temp[GI + 2].rotation;
+            shared_temp[GI].rotation  = shared_temp[GI + 2].rotation;
         }
     }
     GroupSync();
 
     if (threadInBlock < 1)
     {
-        if ( shared_temp[GI].error > shared_temp[GI + 1].error )
+        if (shared_temp[GI].error > shared_temp[GI + 1].error)
         {
-            shared_temp[GI].error = shared_temp[GI + 1].error;
+            shared_temp[GI].error     = shared_temp[GI + 1].error;
             shared_temp[GI].partition = shared_temp[GI + 1].partition;
-            shared_temp[GI].rotation = shared_temp[GI + 1].rotation;
+            shared_temp[GI].rotation  = shared_temp[GI + 1].rotation;
         }
 
         if (g_InBuff[blockID].error > shared_temp[GI].error)
         {
-            g_OutBuff1[blockID].error       = shared_temp[GI].error;
-            g_OutBuff1[blockID].mode        = g_mode_id;
-            g_OutBuff1[blockID].partition   = shared_temp[GI].partition;
-            g_OutBuff1[blockID].rotation    = shared_temp[GI].rotation;
-            g_OutBuff1[blockID].data2       = 0;
+            g_OutBuff1[blockID].error     = shared_temp[GI].error;
+            g_OutBuff1[blockID].mode      = g_mode_id;
+            g_OutBuff1[blockID].partition = shared_temp[GI].partition;
+            g_OutBuff1[blockID].rotation  = shared_temp[GI].rotation;
+            g_OutBuff1[blockID].data2     = 0;
         }
         else
         {
-            g_OutBuff1[blockID].error           = g_InBuff[blockID].error;
-            g_OutBuff1[blockID].mode            = g_InBuff[blockID].mode;
-            g_OutBuff1[blockID].partition       = g_InBuff[blockID].partition;
-            g_OutBuff1[blockID].index_selector  = g_InBuff[blockID].index_selector;
-            g_OutBuff1[blockID].rotation        = g_InBuff[blockID].rotation;
-            g_OutBuff1[blockID].data2           = g_InBuff[blockID].data2;
+            g_OutBuff1[blockID].error          = g_InBuff[blockID].error;
+            g_OutBuff1[blockID].mode           = g_InBuff[blockID].mode;
+            g_OutBuff1[blockID].partition      = g_InBuff[blockID].partition;
+            g_OutBuff1[blockID].index_selector = g_InBuff[blockID].index_selector;
+            g_OutBuff1[blockID].rotation       = g_InBuff[blockID].rotation;
+            g_OutBuff1[blockID].data2          = g_InBuff[blockID].data2;
         }
     }
 #endif
@@ -5621,11 +5960,11 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void TryMode02CS(CGU_UINT32 GI CMP_SVGRO
 CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void EncodeBlocks(CGU_UINT32 GI CMP_SVGROUPINDEX, CGU_Vec3ui groupID CMP_SVGROUPID)
 {
     CMP_CONSTANT CGU_UINT32 MAX_USED_THREAD = 16;
-    CGU_UINT32       BLOCK_IN_GROUP  = THREAD_GROUP_SIZE / MAX_USED_THREAD;
-    CGU_UINT32       blockInGroup    = GI / MAX_USED_THREAD;
-    CGU_UINT32       blockID         = g_start_block_id + groupID.x * BLOCK_IN_GROUP + blockInGroup;
-    CGU_UINT32       threadBase      = blockInGroup * MAX_USED_THREAD;
-    CGU_UINT32       threadInBlock   = GI - threadBase;
+    CGU_UINT32              BLOCK_IN_GROUP  = THREAD_GROUP_SIZE / MAX_USED_THREAD;
+    CGU_UINT32              blockInGroup    = GI / MAX_USED_THREAD;
+    CGU_UINT32              blockID         = g_start_block_id + groupID.x * BLOCK_IN_GROUP + blockInGroup;
+    CGU_UINT32              threadBase      = blockInGroup * MAX_USED_THREAD;
+    CGU_UINT32              threadInBlock   = GI - threadBase;
 
     CGU_UINT32 block_y = blockID / g_num_block_x;
     CGU_UINT32 block_x = blockID - block_y * g_num_block_x;
@@ -5640,8 +5979,8 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void EncodeBlocks(CGU_UINT32 GI CMP_SVGR
 
     if (threadInBlock < 16)
     {
-        CGU_Vec4f px            = g_Input.Load(CGU_Vec3ui(base_x + threadInBlock % 4, base_y + threadInBlock / 4, 0)) * 255.0f;
-        px                      = clamp(px, 0.0f, 255.0f);
+        CGU_Vec4f px = g_Input.Load(CGU_Vec3ui(base_x + threadInBlock % 4, base_y + threadInBlock / 4, 0)) * 255.0f;
+        px           = clamp(px, 0.0f, 255.0f);
 
         CGU_Vec4ui pixel;
         pixel.r = (CGU_UINT32)px.r;
@@ -5650,13 +5989,13 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void EncodeBlocks(CGU_UINT32 GI CMP_SVGR
         pixel.a = (CGU_UINT32)px.a;
 
         if ((4 == best_mode) || (5 == best_mode))
-            set_pixel_rotation(pixel,best_rotation);
+            set_pixel_rotation(pixel, best_rotation);
 
         shared_temp[GI].pixel = pixel;
     }
     GroupSync();
 
-    CGU_UINT32 bits = blockPartitions[best_partition];
+    CGU_UINT32 bits  = blockPartitions[best_partition];
     CGU_UINT32 bits2 = blockPartitions2[best_partition - 64];
 
     CGU_Vec4ui ep[2];
@@ -5667,7 +6006,7 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void EncodeBlocks(CGU_UINT32 GI CMP_SVGR
     CGU_Vec3ui diff3;
     CGU_Vec4ui diff4;
 
-    CMP_UNROLL for (CGU_INT ii = 2; ii >= 0; -- ii)
+    CMP_UNROLL for (CGU_INT ii = 2; ii >= 0; --ii)
     {
         if (threadInBlock < 16)
         {
@@ -5677,8 +6016,8 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void EncodeBlocks(CGU_UINT32 GI CMP_SVGR
 
             CGU_Vec4ui pixel = shared_temp[GI].pixel;
 
-            CGU_UINT32 subset_index = ( bits >> threadInBlock ) & 0x01;
-            CGU_UINT32 subset_index2 = ( bits2 >> ( threadInBlock * 2 ) ) & 0x03;
+            CGU_UINT32 subset_index  = (bits >> threadInBlock) & 0x01;
+            CGU_UINT32 subset_index2 = (bits2 >> (threadInBlock * 2)) & 0x03;
             if (0 == ii)
             {
                 if ((0 == best_mode) || (2 == best_mode))
@@ -5770,7 +6109,6 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void EncodeBlocks(CGU_UINT32 GI CMP_SVGR
 
     if (threadInBlock < 3)
     {
-
         CGU_Vec2ui P;
 
         if (1 == best_mode)
@@ -5779,40 +6117,40 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void EncodeBlocks(CGU_UINT32 GI CMP_SVGR
         }
         else
         {
-            P = CGU_Vec2ui((best_rotation >> (threadInBlock * 2 + 0))&1, (best_rotation >> (threadInBlock * 2 + 1))&1);
+            P = CGU_Vec2ui((best_rotation >> (threadInBlock * 2 + 0)) & 1, (best_rotation >> (threadInBlock * 2 + 1)) & 1);
         }
 
         if (0 == best_mode)
         {
-            compress_endpoints0( ep,ep_quantized, P );
+            compress_endpoints0(ep, ep_quantized, P);
         }
         else if (1 == best_mode)
         {
-            compress_endpoints1( ep,ep_quantized, P );
+            compress_endpoints1(ep, ep_quantized, P);
         }
         else if (2 == best_mode)
         {
-            compress_endpoints2( ep,ep_quantized );
+            compress_endpoints2(ep, ep_quantized);
         }
         else if (3 == best_mode)
         {
-            compress_endpoints3( ep,ep_quantized, P );
+            compress_endpoints3(ep, ep_quantized, P);
         }
         else if (4 == best_mode)
         {
-            compress_endpoints4( ep,ep_quantized );
+            compress_endpoints4(ep, ep_quantized);
         }
         else if (5 == best_mode)
         {
-            compress_endpoints5( ep,ep_quantized);
+            compress_endpoints5(ep, ep_quantized);
         }
         else if (6 == best_mode)
         {
-            compress_endpoints6( ep,ep_quantized, P );
+            compress_endpoints6(ep, ep_quantized, P);
         }
-        else //if (7 == mode)
+        else  //if (7 == mode)
         {
-            compress_endpoints7( ep,ep_quantized, P );
+            compress_endpoints7(ep, ep_quantized, P);
         }
 
         CGU_Vec4i span = cmp_castimp(ep[1] - ep[0]);
@@ -5824,23 +6162,23 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void EncodeBlocks(CGU_UINT32 GI CMP_SVGR
         {
             if (0 == threadInBlock)
             {
-                CGU_Vec2i span_norm_sqr = CGU_Vec2i( dot( span.rgb, span.rgb ),span.a * span.a );
-                
-                diff3 = shared_temp[threadBase + 0].pixel.rgb - ep[0].rgb;
-                CGU_Vec2i dotProduct = CGU_Vec2i( dot( span.rgb, diff3 ), span.a * ( shared_temp[threadBase + 0].pixel.a - ep[0].a ) );
-                if ( span_norm_sqr.x > 0 && dotProduct.x > 0 && CGU_UINT32( dotProduct.x * 63.49999 ) > CGU_UINT32( 32 * span_norm_sqr.x ) )
+                CGU_Vec2i span_norm_sqr = CGU_Vec2i(dot(span.rgb, span.rgb), span.a * span.a);
+
+                diff3                = shared_temp[threadBase + 0].pixel.rgb - ep[0].rgb;
+                CGU_Vec2i dotProduct = CGU_Vec2i(dot(span.rgb, diff3), span.a * (shared_temp[threadBase + 0].pixel.a - ep[0].a));
+                if (span_norm_sqr.x > 0 && dotProduct.x > 0 && CGU_UINT32(dotProduct.x * 63.49999) > CGU_UINT32(32 * span_norm_sqr.x))
                 {
                     swap(ep[0].rgb, ep[1].rgb);
                     swap(ep_quantized[0].rgb, ep_quantized[1].rgb);
                 }
-                if ( span_norm_sqr.y > 0 && dotProduct.y > 0 && CGU_UINT32( dotProduct.y * 63.49999 ) > CGU_UINT32( 32 * span_norm_sqr.y ) )
+                if (span_norm_sqr.y > 0 && dotProduct.y > 0 && CGU_UINT32(dotProduct.y * 63.49999) > CGU_UINT32(32 * span_norm_sqr.y))
                 {
                     swap(ep[0].a, ep[1].a);
                     swap(ep_quantized[0].a, ep_quantized[1].a);
                 }
             }
         }
-        else //if ((0 == mode) || (2 == mode) || (1 == mode) || (3 == mode) || (7 == mode) || (6 == mode))
+        else  //if ((0 == mode) || (2 == mode) || (1 == mode) || (3 == mode) || (7 == mode) || (6 == mode))
         {
             CGU_INT p;
             if (0 == threadInBlock)
@@ -5851,28 +6189,27 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void EncodeBlocks(CGU_UINT32 GI CMP_SVGR
             {
                 p = candidateFixUpIndex1D[best_partition].x;
             }
-            else //if (2 == threadInBlock)
+            else  //if (2 == threadInBlock)
             {
                 p = candidateFixUpIndex1D[best_partition].y;
             }
 
-            CGU_INT span_norm_sqr = dot( span, span );
-            diff4 = shared_temp[threadBase + p].pixel - ep[0];
-            CGU_INT dotProduct = dot( span, diff4 );
-            if ( span_norm_sqr > 0 && dotProduct > 0 && CGU_UINT32( dotProduct * 63.49999 ) > CGU_UINT32( 32 * span_norm_sqr ) )
+            CGU_INT span_norm_sqr = dot(span, span);
+            diff4                 = shared_temp[threadBase + p].pixel - ep[0];
+            CGU_INT dotProduct    = dot(span, diff4);
+            if (span_norm_sqr > 0 && dotProduct > 0 && CGU_UINT32(dotProduct * 63.49999) > CGU_UINT32(32 * span_norm_sqr))
             {
                 swap(ep[0], ep[1]);
-                swap(ep_quantized[0], ep_quantized[1]);		
+                swap(ep_quantized[0], ep_quantized[1]);
             }
         }
 
-        shared_temp[GI].endPoint_low = ep[0];
-        shared_temp[GI].endPoint_high = ep[1];
-        shared_temp[GI].endPoint_low_quantized = ep_quantized[0];
+        shared_temp[GI].endPoint_low            = ep[0];
+        shared_temp[GI].endPoint_high           = ep[1];
+        shared_temp[GI].endPoint_low_quantized  = ep_quantized[0];
         shared_temp[GI].endPoint_high_quantized = ep_quantized[1];
     }
     GroupSync();
-
 
     if (threadInBlock < 16)
     {
@@ -5932,17 +6269,21 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void EncodeBlocks(CGU_UINT32 GI CMP_SVGR
         if ((4 == best_mode) || (5 == best_mode))
         {
             CGU_Vec2i span_norm_sqr;
-            span_norm_sqr.x = dot( span.rgb, span.rgb );
-            span_norm_sqr.y = span.a * span.a;
-            diff3 = shared_temp[threadBase + threadInBlock].pixel.rgb - epTemp[0].rgb;
-            CGU_INT dotProduct = dot( span.rgb, diff3 );
-            color_index = ( span_norm_sqr.x <= 0 || dotProduct <= 0 ) ? 0
-                    : ( ( dotProduct < span_norm_sqr.x ) ? aStep[indexPrec.x][ CGU_UINT32( dotProduct * 63.49999 / span_norm_sqr.x ) ] : aStep[indexPrec.x][63] );
+            span_norm_sqr.x    = dot(span.rgb, span.rgb);
+            span_norm_sqr.y    = span.a * span.a;
+            diff3              = shared_temp[threadBase + threadInBlock].pixel.rgb - epTemp[0].rgb;
+            CGU_INT dotProduct = dot(span.rgb, diff3);
+            color_index =
+                (span_norm_sqr.x <= 0 || dotProduct <= 0)
+                    ? 0
+                    : ((dotProduct < span_norm_sqr.x) ? aStep[indexPrec.x][CGU_UINT32(dotProduct * 63.49999 / span_norm_sqr.x)] : aStep[indexPrec.x][63]);
 
             CGU_UINT32 diffa = shared_temp[threadBase + threadInBlock].pixel.a - epTemp[0].a;
-            dotProduct = dot( span.a, diffa );
-            alpha_index = ( span_norm_sqr.y <= 0 || dotProduct <= 0 ) ? 0
-                    : ( ( dotProduct < span_norm_sqr.y ) ? aStep[indexPrec.y][ CGU_UINT32( dotProduct * 63.49999 / span_norm_sqr.y ) ] : aStep[indexPrec.y][63] );
+            dotProduct       = dot(span.a, diffa);
+            alpha_index =
+                (span_norm_sqr.y <= 0 || dotProduct <= 0)
+                    ? 0
+                    : ((dotProduct < span_norm_sqr.y) ? aStep[indexPrec.y][CGU_UINT32(dotProduct * 63.49999 / span_norm_sqr.y)] : aStep[indexPrec.y][63]);
 
             if (best_index_selector)
             {
@@ -5951,15 +6292,16 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void EncodeBlocks(CGU_UINT32 GI CMP_SVGR
         }
         else
         {
-            CGU_INT span_norm_sqr = dot( span, span );
-            diff4 = shared_temp[threadBase + threadInBlock].pixel - epTemp[0] ;
-            CGU_INT dotProduct = dot( span, diff4);
-            color_index = ( span_norm_sqr <= 0 || dotProduct <= 0 ) ? 0
-                    : ( ( dotProduct < span_norm_sqr ) ? aStep[indexPrec.x][ CGU_UINT32( dotProduct * 63.49999 / span_norm_sqr ) ] : aStep[indexPrec.x][63] );
+            CGU_INT span_norm_sqr = dot(span, span);
+            diff4                 = shared_temp[threadBase + threadInBlock].pixel - epTemp[0];
+            CGU_INT dotProduct    = dot(span, diff4);
+            color_index           = (span_norm_sqr <= 0 || dotProduct <= 0)
+                                        ? 0
+                                        : ((dotProduct < span_norm_sqr) ? aStep[indexPrec.x][CGU_UINT32(dotProduct * 63.49999 / span_norm_sqr)] : aStep[indexPrec.x][63]);
         }
 
         shared_temp[GI].error = color_index;
-        shared_temp[GI].mode = alpha_index;
+        shared_temp[GI].mode  = alpha_index;
     }
     GroupSync();
 
@@ -5968,7 +6310,7 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void EncodeBlocks(CGU_UINT32 GI CMP_SVGR
         CGU_Vec4ui blockRed  = {0x001fffc0, 0xfffe0000, 0x00000001, 0x00000000};
         CGU_Vec4ui blockBlue = {0x00000040, 0xfffffff8, 0x00000001, 0x00000000};
 
-        CGU_Vec4ui block     = {0, 0, 0, 0};
+        CGU_Vec4ui block = {0, 0, 0, 0};
 
         switch (best_mode)
         {
@@ -5997,12 +6339,14 @@ CMP_NUMTHREADS(THREAD_GROUP_SIZE, 1, 1) void EncodeBlocks(CGU_UINT32 GI CMP_SVGR
             //block = blockRed;
             break;
         case 6:
-            if (use_cmp) {
+            if (use_cmp)
+            {
                 block = g_InBuff[blockID].data2;
                 //block = blockBlue;
             }
-            else {
-                block_package6( block, threadBase );
+            else
+            {
+                block_package6(block, threadBase);
                 //block = blockRed;
             }
             break;
@@ -6031,59 +6375,59 @@ CMP_STATIC CGU_Vec4ui CompressBlockBC7_CMPMSC(CMP_IN CGU_Vec4f image_src[16], CM
 
 #ifndef ASPM_HLSL
 #ifdef SIMULATE_GPU
-        HLSLHost(image_src);
-        cmp = g_OutBuff[0];
+    HLSLHost(image_src);
+    cmp = g_OutBuff[0];
 #else
-        CGU_Vec4ui image_srcui[16];
-        // Transfer local pixel data over to shared global
-        for (CGU_INT ii = 0; ii < 16; ii++)
-        {
-            image_srcui[ii].x = image_src[ii].x;
-            image_srcui[ii].y = image_src[ii].y;
-            image_srcui[ii].z = image_src[ii].z;
-            image_srcui[ii].w = image_src[ii].w;
-        }
+    CGU_Vec4ui image_srcui[16];
+    // Transfer local pixel data over to shared global
+    for (CGU_INT ii = 0; ii < 16; ii++)
+    {
+        image_srcui[ii].x = image_src[ii].x;
+        image_srcui[ii].y = image_src[ii].y;
+        image_srcui[ii].z = image_src[ii].z;
+        image_srcui[ii].w = image_src[ii].w;
+    }
 
-#if defined (ENABLE_CMP_MODE6)
-        CGU_Vec4ui epo_code_out[2]     = {{0, 0, 0, 0}, {0, 0, 0, 0}};
-        CGU_UINT32  best_index_out[16];
-        CGU_FLOAT   besterr;
-        CGU_FLOAT   err;
+#if defined(ENABLE_CMP_MODE6)
+    CGU_Vec4ui epo_code_out[2] = {{0, 0, 0, 0}, {0, 0, 0, 0}};
+    CGU_UINT32 best_index_out[16];
+    CGU_FLOAT  besterr;
+    CGU_FLOAT  err;
 
-        // Fast Encode of block
-        besterr = cmp_GetIndexedEndPoints(epo_code_out,
-                                          best_index_out,
-                                          image_srcui,
-                                          15,  // numEntries 0..15 (Note this function is changed from using 16)
-                                          0xffffffff);
-        CGU_UINT32 index_packed_out[2] = {0, 0};
-        cmp_pack4bitindex32(index_packed_out, best_index_out);
+    // Fast Encode of block
+    besterr                        = cmp_GetIndexedEndPoints(epo_code_out,
+                                      best_index_out,
+                                      image_srcui,
+                                      15,  // numEntries 0..15 (Note this function is changed from using 16)
+                                      0xffffffff);
+    CGU_UINT32 index_packed_out[2] = {0, 0};
+    cmp_pack4bitindex32(index_packed_out, best_index_out);
 
 #ifdef ENABLE_CMP_REFINE_MODE6_API
-        // Refined for better quailty
-        err = cmp_mode6_optimize_IndexAndEndPoints(epo_code_out,
-                                             best_index_out,
-                                             image_srcui,                     // using shared_temp[].pixel with 0 thread offset
-                                             16,                              // numEntries
-                                             g_modesettings[6].clusters,      // 16,
-                                             g_modesettings[6].bits,          // 58,
-                                             g_modesettings[6].channels3or4,  // 4,
-                                             0.1f);
-        cmp_pack4bitindex32(index_packed_out, best_index_out);
+    // Refined for better quailty
+    err = cmp_mode6_optimize_IndexAndEndPoints(epo_code_out,
+                                               best_index_out,
+                                               image_srcui,                     // using shared_temp[].pixel with 0 thread offset
+                                               16,                              // numEntries
+                                               g_modesettings[6].clusters,      // 16,
+                                               g_modesettings[6].bits,          // 58,
+                                               g_modesettings[6].channels3or4,  // 4,
+                                               0.1f);
+    cmp_pack4bitindex32(index_packed_out, best_index_out);
 #endif
 
-        // encode results
-        CGU_UINT32 cmp_out6[4] = {0, 0, 0, 0};
-        cmp_encode_mode6(cmp_out6, epo_code_out, index_packed_out);
-        cmp.x = cmp_out6[0];
-        cmp.y = cmp_out6[1];
-        cmp.z = cmp_out6[2];
-        cmp.w = cmp_out6[3];
+    // encode results
+    CGU_UINT32 cmp_out6[4] = {0, 0, 0, 0};
+    cmp_encode_mode6(cmp_out6, epo_code_out, index_packed_out);
+    cmp.x = cmp_out6[0];
+    cmp.y = cmp_out6[1];
+    cmp.z = cmp_out6[2];
+    cmp.w = cmp_out6[3];
 #endif
 
-#if defined (ENABLE_CMP_MODE4) || defined(ENABLE_CMP_MODE5)
+#if defined(ENABLE_CMP_MODE4) || defined(ENABLE_CMP_MODE5)
     {
-        CGU_UINT32 cmp_out[4] = {0, 0, 0, 0}; 
+        CGU_UINT32 cmp_out[4] = {0, 0, 0, 0};
         Compress_mode45(cmp_out, 4, image_srcui);
         cmp.x = cmp_out[0];
         cmp.y = cmp_out[1];
@@ -6094,7 +6438,7 @@ CMP_STATIC CGU_Vec4ui CompressBlockBC7_CMPMSC(CMP_IN CGU_Vec4f image_src[16], CM
 
 #if defined(ENABLE_CMP_MODE1)
     {
-        CGU_UINT32 cmp_out1[5] = {0, 0, 0, 0, 0}; 
+        CGU_UINT32 cmp_out1[5] = {0, 0, 0, 0, 0};
         cmp_process_mode(cmp_out1, image_srcui, 1);
         cmp.x = cmp_out1[0];
         cmp.y = cmp_out1[1];
@@ -6103,9 +6447,8 @@ CMP_STATIC CGU_Vec4ui CompressBlockBC7_CMPMSC(CMP_IN CGU_Vec4f image_src[16], CM
     }
 #endif
 
-#endif // SIMULATE_GPU
-#endif // Not HLSL
+#endif  // SIMULATE_GPU
+#endif  // Not HLSL
 
     return cmp;
 }
-

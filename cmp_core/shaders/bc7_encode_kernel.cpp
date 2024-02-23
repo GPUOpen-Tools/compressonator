@@ -1,5 +1,5 @@
 //===================================================================================
-// Copyright (c) 2021    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2021-2024    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -184,7 +184,7 @@ CMP_EXPORT void init_BC7ramps()
                         BC7EncodeRamps.ramp[(CLT(clogBC7) * 4 * 256 * 256 * 16) + (BTT(bits) * 256 * 256 * 16) + (p1 * 256 * 16) + (p2 * 16) + index] =
                             //cmp_floor((CGV_FLOAT)BC7EncodeRamps.ep_d[BTT(bits)][p1] + rampWeights[clogBC7][index] * (CGV_FLOAT)((BC7EncodeRamps.ep_d[BTT(bits)][p2] - BC7EncodeRamps.ep_d[BTT(bits)][p1]))+ 0.5F);
                             cmp_floor(BC7EncodeRamps.ep_d[BTT(bits)][p1] +
-                                  rampWeights[clogBC7][index] * ((BC7EncodeRamps.ep_d[BTT(bits)][p2] - BC7EncodeRamps.ep_d[BTT(bits)][p1])) + 0.5F);
+                                      rampWeights[clogBC7][index] * ((BC7EncodeRamps.ep_d[BTT(bits)][p2] - BC7EncodeRamps.ep_d[BTT(bits)][p1])) + 0.5F);
                     }  //index<(1 << clogBC7)
                 }      //p2<(1 << bits)
             }          //p1<(1 << bits)
@@ -221,9 +221,9 @@ CMP_EXPORT void init_BC7ramps()
                             (CGV_INT)
                                 BC7EncodeRamps.ramp[(CLT(clogBC7) * 4 * 256 * 256 * 16) + (BTT(bits) * 256 * 256 * 16) + (p1 * 256 * 16) + (p2 * 16) + index];
 #else
-                        CGV_INT floatf =
-                            cmp_floor((CGV_FLOAT)BC7EncodeRamps.ep_d[BTT(bits)][p1] +
-                                  rampWeights[clogBC7][index] * (CGV_FLOAT)((BC7EncodeRamps.ep_d[BTT(bits)][p2] - BC7EncodeRamps.ep_d[BTT(bits)][p1])) + 0.5F);
+                        CGV_INT floatf = cmp_floor(
+                            (CGV_FLOAT)BC7EncodeRamps.ep_d[BTT(bits)][p1] +
+                            rampWeights[clogBC7][index] * (CGV_FLOAT)((BC7EncodeRamps.ep_d[BTT(bits)][p2] - BC7EncodeRamps.ep_d[BTT(bits)][p1])) + 0.5F);
 #endif
                         BC7EncodeRamps.sp_idx[(CLT(clogBC7) * 4 * 256 * 2 * 2 * 16 * 2) + (BTT(bits) * 256 * 2 * 2 * 16 * 2) + (floatf * 2 * 2 * 16 * 2) +
                                               ((p1 & 0x1) * 2 * 16 * 2) + ((p2 & 0x1) * 16 * 2) + (index * 2) + 0] = p1;
@@ -922,7 +922,7 @@ INLINE CGV_FLOAT GetRamp(CGU_INT   clogBC7,  // ramp bits Valid range 2..4
     return rampf;
 #else
     return (CGV_FLOAT)cmp_floor((CGV_FLOAT)BC7EncodeRamps.ep_d[BTT(bits)][p1] +
-                            rampWeights[clogBC7][index] * (CGV_FLOAT)((BC7EncodeRamps.ep_d[BTT(bits)][p2] - BC7EncodeRamps.ep_d[BTT(bits)][p1])) + 0.5F);
+                                rampWeights[clogBC7][index] * (CGV_FLOAT)((BC7EncodeRamps.ep_d[BTT(bits)][p2] - BC7EncodeRamps.ep_d[BTT(bits)][p1])) + 0.5F);
 #endif
 #endif
 }
@@ -1636,13 +1636,13 @@ CGV_FLOAT shake(CGV_INT   epo_code_shaker_out[2 * MAX_CHANNELS],
     return best_err;
 }
 
-CGV_FLOAT optimize_IndexAndEndPoints(CGV_UINT8 index_io[MAX_SUBSET_SIZE],
-                                     CGV_INT   epo_code_out[8],
-                                     CGV_FLOAT image_src[SOURCE_BLOCK_SIZE * MAX_CHANNELS],
-                                     CGV_INT   numEntries,    // max 16
-                                     CGU_UINT8 Mi_,           // last cluster , This should be no larger than 16
-                                     CGU_UINT8 bits,          // total for all components
-                                     CGU_UINT8 channels3or4,  // IN: 3 = RGB or 4 = RGBA (4 = MAX_CHANNELS)
+CGV_FLOAT optimize_IndexAndEndPoints(CGV_UINT8                         index_io[MAX_SUBSET_SIZE],
+                                     CGV_INT                           epo_code_out[8],
+                                     CGV_FLOAT                         image_src[SOURCE_BLOCK_SIZE * MAX_CHANNELS],
+                                     CGV_INT                           numEntries,    // max 16
+                                     CGU_UINT8                         Mi_,           // last cluster , This should be no larger than 16
+                                     CGU_UINT8                         bits,          // total for all components
+                                     CGU_UINT8                         channels3or4,  // IN: 3 = RGB or 4 = RGBA (4 = MAX_CHANNELS)
                                      CMP_UNIFORM CMP_GLOBAL BC7_Encode u_BC7Encode[])
 {
     CGV_FLOAT err_best = CMP_FLOAT_MAX;
@@ -2553,7 +2553,8 @@ void Compress_mode45(CGU_INT blockMode, BC7_EncodeState EncodeState[], CMP_UNIFO
                                                                EncodeState->numClusters1[idxMode],
                                                                CMP_STATIC_CAST(CGU_UINT8, EncodeState->modeBits[1]),
                                                                3,
-                                                               u_BC7Encode) / 3.0f;
+                                                               u_BC7Encode) /
+                                    3.0f;
 
                 // If we beat the previous best then encode the block
                 if (err_overallError < EncodeState->best_err)
@@ -2672,7 +2673,7 @@ void BC7_CompressBlock(BC7_EncodeState EncodeState[], CMP_UNIFORM CMP_GLOBAL BC7
         image_src[i].w = EncodeState->image_src[i + 48];
     }
 
-    CGU_Vec4ui cmp                = CompressBlockBC7_UNORM(image_src, u_BC7Encode->quality);
+    CGU_Vec4ui cmp = CompressBlockBC7_UNORM(image_src, u_BC7Encode->quality);
 
     //EncodeState->cmp_isout16Bytes = true;
     //EncodeState->cmp_out[0]       = cmp.x & 0xFF;
@@ -2693,10 +2694,10 @@ void BC7_CompressBlock(BC7_EncodeState EncodeState[], CMP_UNIFORM CMP_GLOBAL BC7
     //EncodeState->cmp_out[15]      = (cmp.w >> 24) & 0xFF;
 
     EncodeState->cmp_isout16Bytes = false;
-    EncodeState->best_cmp_out[0]    = cmp.x;
-    EncodeState->best_cmp_out[1]    = cmp.y;
-    EncodeState->best_cmp_out[2]    = cmp.z;
-    EncodeState->best_cmp_out[3]    = cmp.w;
+    EncodeState->best_cmp_out[0]  = cmp.x;
+    EncodeState->best_cmp_out[1]  = cmp.y;
+    EncodeState->best_cmp_out[2]  = cmp.z;
+    EncodeState->best_cmp_out[3]  = cmp.w;
     return;
 #else
     CGU_BOOL blockNeedsAlpha   = FALSE;
@@ -2726,8 +2727,8 @@ void BC7_CompressBlock(BC7_EncodeState EncodeState[], CMP_UNIFORM CMP_GLOBAL BC7
         blockNeedsAlpha = TRUE;
     }
 
-    EncodeState->best_err         = CMP_FLOAT_MAX;
-    EncodeState->opaque_err       = alpha_err;
+    EncodeState->best_err   = CMP_FLOAT_MAX;
+    EncodeState->opaque_err = alpha_err;
 
 #ifdef USE_ICMP
     EncodeState->refineIterations = 4;
@@ -2878,7 +2879,7 @@ INLINE void store_data_uint32(CGU_UINT8 dst[], CGU_INT width, CGV_INT v_xx, CGU_
 #ifdef USE_VARYING
         scatter_uint2(dst_ptr, v_xx * data_size + k, data[k]);
 #else
-        dst_ptr[v_xx * data_size + k]                                   = data[k];
+        dst_ptr[v_xx * data_size + k] = data[k];
 #endif
     }
 }
@@ -2911,14 +2912,14 @@ INLINE void store_data_uint32(CGU_UINT8 dst[], CGV_UINT32 width, CGU_INT v_xx, C
         CGU_UINT32* dst_ptr = (CGV_UINT32*)&dst[(yy)*width * data_size];
         scatter_uint2(dst_ptr, v_xx * data_size + k, data[k]);
 #else
-        dst[((yy)*width * data_size) + v_xx * data_size + k]            = data[k];
+        dst[((yy)*width * data_size) + v_xx * data_size + k] = data[k];
 #endif
     }
 }
 
 void CompressBlockBC7_XY(CMP_UNIFORM texture_surface u_srcptr[], CGU_INT block_x, CGU_INT block_y, CGU_UINT8 u_dst[], CMP_UNIFORM BC7_Encode u_settings[])
 {
-    BC7_EncodeState _state;
+    BC7_EncodeState                      _state;
     varying BC7_EncodeState* CMP_UNIFORM state = &_state;
 
     copy_BC7_Encode_settings(state, u_settings);
@@ -3044,8 +3045,8 @@ void GetBC7Ramp(CGU_UINT32 endpoint[][MAX_DIMENSION_BIG],
         for (i = 0; i < clusters[1]; i++)
         {
 #ifdef USE_HIGH_PRECISION_INTERPOLATION_BC7
-            ramp[COMP_ALPHA][i] =
-                (CGU_FLOAT)cmp_floor((ep[0][COMP_ALPHA] * (1.0 - rampLerpWeightsBC7[rampIndex][i])) + (ep[1][COMP_ALPHA] * rampLerpWeightsBC7[rampIndex][i]) + 0.5);
+            ramp[COMP_ALPHA][i] = (CGU_FLOAT)cmp_floor((ep[0][COMP_ALPHA] * (1.0 - rampLerpWeightsBC7[rampIndex][i])) +
+                                                       (ep[1][COMP_ALPHA] * rampLerpWeightsBC7[rampIndex][i]) + 0.5);
             ramp[COMP_ALPHA][i] = bc7_minf(255.0, bc7_maxf(0., ramp[COMP_ALPHA][i]));
 #else
             ramp[COMP_ALPHA][i] = interpolate(ep[0][COMP_ALPHA], ep[1][COMP_ALPHA], i, rampIndex);
@@ -3396,12 +3397,12 @@ void DecompressBC7_internal(CGU_UINT8 out[MAX_SUBSET_SIZE][MAX_DIMENSION_BIG], c
     }
 }
 
-void CompressBlockBC7_Internal(CGU_UINT8  image_src[SOURCE_BLOCK_SIZE][4],
-                               CMP_GLOBAL CGV_UINT8 cmp_out[COMPRESSED_BLOCK_SIZE],
+void CompressBlockBC7_Internal(CGU_UINT8                         image_src[SOURCE_BLOCK_SIZE][4],
+                               CMP_GLOBAL CGV_UINT8              cmp_out[COMPRESSED_BLOCK_SIZE],
                                CMP_UNIFORM CMP_GLOBAL BC7_Encode u_BC7Encode[])
 {
-    BC7_EncodeState _state                 = {0};
-    varying BC7_EncodeState* CMP_UNIFORM state = &_state;
+    BC7_EncodeState                      _state = {0};
+    varying BC7_EncodeState* CMP_UNIFORM state  = &_state;
 
     copy_BC7_Encode_settings(state, u_BC7Encode);
 
@@ -3546,7 +3547,7 @@ int CMP_CDECL CompressBlockBC7(const unsigned char* srcBlock, unsigned int srcSt
 
     BC7_EncodeState EncodeState
 #ifndef ASPM
-        = { 0 }
+        = {0}
 #endif
     ;
     EncodeState.best_err      = CMP_FLOAT_MAX;
@@ -3605,7 +3606,7 @@ int CMP_CDECL DecompressBlockBC7(const unsigned char cmpBlock[16], unsigned char
 //============================================== OpenCL USER INTERFACE ====================================================
 #ifdef ASPM_OPENCL
 CMP_STATIC CMP_KERNEL void CMP_GPUEncoder(CMP_UNIFORM CMP_GLOBAL const CGU_Vec4uc ImageSource[],
-                                          CMP_GLOBAL CGV_UINT8 ImageDestination[],
+                                          CMP_GLOBAL CGV_UINT8                    ImageDestination[],
                                           CMP_UNIFORM CMP_GLOBAL Source_Info      SourceInfo[],
                                           CMP_UNIFORM CMP_GLOBAL BC7_Encode       BC7Encode[])
 {

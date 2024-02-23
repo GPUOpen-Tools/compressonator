@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2018  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -29,16 +29,17 @@
 #ifndef _Codec_ETC_H_INCLUDED_
 #define _Codec_ETC_H_INCLUDED_
 
-#include "common.h"
 #include "codec_block_4x4.h"
+#include "codec_common.h"
+#include "common.h"
 
 #ifdef USE_ETCPACK
 #include "etcpack.h"
 #include "etcpack_lib.h"
 #else
 typedef unsigned char uint8;
-void cmp_decompressBlockETC2c(unsigned int block_part1, unsigned int block_part2, uint8 *img);
-void cmp_compressBlockETC2FastPerceptual(uint8 *img, uint8 *imgdec, unsigned int &compressed1, unsigned int &compressed2);
+void                  cmp_decompressBlockETC2c(unsigned int block_part1, unsigned int block_part2, uint8* img);
+void                  cmp_compressBlockETC2FastPerceptual(uint8* img, uint8* imgdec, unsigned int& compressed1, unsigned int& compressed2);
 #endif
 
 #define SWIZZLE_DWORD(i) ((((i >> 24) & BYTE_MASK)) | (((i >> 16) & BYTE_MASK) << 8) | (((i >> 8) & BYTE_MASK) << 16) | ((i & BYTE_MASK) << 24))
@@ -46,12 +47,13 @@ void cmp_compressBlockETC2FastPerceptual(uint8 *img, uint8 *imgdec, unsigned int
 #define ATC_OFFSET_ALPHA 0
 #define ATC_OFFSET_RGB 2
 
-class CCodec_ETC : public CCodec_Block_4x4 {
-  public:
+class CCodec_ETC : public CCodec_Block_4x4
+{
+public:
     CCodec_ETC(CodecType codecType);
     virtual ~CCodec_ETC();
 
-  protected:
+protected:
     CodecError CompressRGBBlock(CMP_BYTE rgbBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[2]);
     CodecError CompressRGBABlock_ExplicitAlpha(CMP_BYTE rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[4]);
     CodecError CompressRGBABlock_InterpolatedAlpha(CMP_BYTE rgbaBlock[BLOCK_SIZE_4X4X4], CMP_DWORD compressedBlock[4]);
@@ -68,5 +70,4 @@ class CCodec_ETC : public CCodec_Block_4x4 {
     void GetCompressedAlphaRamp(CMP_BYTE alpha[8], CMP_DWORD compressedBlock[2]);
 };
 
-
-#endif // !defined(_Codec_ETC_H_INCLUDED_)
+#endif  // !defined(_Codec_ETC_H_INCLUDED_)

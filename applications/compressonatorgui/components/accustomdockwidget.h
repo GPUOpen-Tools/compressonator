@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -27,7 +27,6 @@
 #ifndef ACCUSTOMDOCKWIDGET_H
 #define ACCUSTOMDOCKWIDGET_H
 
-
 #include <qdebug.h>
 #include <qdockwidget.h>
 #include <qlabel.h>
@@ -43,20 +42,20 @@
 
 #include "acdockwidgettitlebar.h"
 
-
-class acCustomDockWidget : public QDockWidget {
+class acCustomDockWidget : public QDockWidget
+{
     Q_OBJECT
-  public:
-    acCustomDockWidget(const QString title, QWidget *parent = nullptr);
+public:
+    acCustomDockWidget(const QString title, QWidget* parent = nullptr);
 
-    acDockWidgetTitlebar    *custTitleBar;
-    QString                  m_CustomTitle;
-    QWidget                 *m_CentralWidget;
-    QString                  m_tabName;
-    QString                  m_fileName;
-    int                      m_type = 0;        // Identify what type of docked view it is (Image, 3DModel etc..)
+    acDockWidgetTitlebar* custTitleBar;
+    QString               m_CustomTitle;
+    QWidget*              m_CentralWidget;
+    QString               m_tabName;
+    QString               m_fileName;
+    int                   m_type = 0;  // Identify what type of docked view it is (Image, 3DModel etc..)
 
-  public slots :
+public slots:
     void OntopLevelChanged(bool topLevel);
 };
 

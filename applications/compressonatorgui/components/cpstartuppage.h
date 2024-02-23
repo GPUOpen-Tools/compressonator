@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2020-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -53,11 +53,11 @@ protected:
 };
 #endif
 
-class cpStartupPage 
+class cpStartupPage
 #ifdef USE_QTWEBENGINE
-    : public QWebEngineView  
+    : public QWebEngineView
 #else
-    : public QWidget 
+    : public QWidget
 #endif
 {
     Q_OBJECT
@@ -69,19 +69,19 @@ public:
     bool UpdateHTML(QVector<QString>& projectsNames);
 
 #ifndef USE_QTWEBENGINE
-    QPushButton*  m_PButtonUserGuide;
-    QPushButton*  m_PButtonGettingStarted;
-    QPushButton*  m_PButtonCompressonatorWeb;
+    QPushButton* m_PButtonUserGuide;
+    QPushButton* m_PButtonGettingStarted;
+    QPushButton* m_PButtonCompressonatorWeb;
 
-    QStringList       m_Projectlist;
-    QListWidget*      m_Projectlistview;
+    QStringList  m_Projectlist;
+    QListWidget* m_Projectlistview;
 
-    QStringList       m_RecentProjectlist;
-    QStringList       m_RecentProjectlistFullPath;
-    QListWidget*      m_RecentProjectsview;
-    QLabel*           m_LNoRecentProjects;
-    QStringList       m_NewFeatureslist;
-    QListWidget*      m_NewFeaturesview;
+    QStringList  m_RecentProjectlist;
+    QStringList  m_RecentProjectlistFullPath;
+    QListWidget* m_RecentProjectsview;
+    QLabel*      m_LNoRecentProjects;
+    QStringList  m_NewFeatureslist;
+    QListWidget* m_NewFeaturesview;
 #endif
 
 Q_SIGNALS:
@@ -91,14 +91,14 @@ public slots:
     virtual void setSource(const QUrl& name);
 
 #ifndef USE_QTWEBENGINE
-    void         onPageButtonClick(QString& Request, QString& Msg);
-    void         onPButtonUserGuide();
-    void         onPButtonGettingStarted();
-    void         onPButtonCompressonatorWeb();
+    void onPageButtonClick(QString& Request, QString& Msg);
+    void onPButtonUserGuide();
+    void onPButtonGettingStarted();
+    void onPButtonCompressonatorWeb();
 
-    void         onProjectlistviewClicked(QListWidgetItem* item);
-    void         onRecentProjectsviewClicked(QListWidgetItem* item);
-    void         onNewFeaturesviewClicked(QListWidgetItem* item);
+    void onProjectlistviewClicked(QListWidgetItem* item);
+    void onRecentProjectsviewClicked(QListWidgetItem* item);
+    void onNewFeaturesviewClicked(QListWidgetItem* item);
 #endif
 
 protected:

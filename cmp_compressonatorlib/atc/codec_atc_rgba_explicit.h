@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -30,13 +30,23 @@
 #define _CODEC_ATC_RGBA_H_INCLUDED_
 
 #include "codec_atc.h"
+#include "codec_common.h"
 
-class CCodec_ATC_RGBA_Explicit : public CCodec_ATC {
-  public:
+class CCodec_ATC_RGBA_Explicit : public CCodec_ATC
+{
+public:
     CCodec_ATC_RGBA_Explicit();
     virtual ~CCodec_ATC_RGBA_Explicit();
 
-    virtual CodecError Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
-    virtual CodecError Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc = NULL, CMP_DWORD_PTR pUser1 = NULL, CMP_DWORD_PTR pUser2 = NULL);
+    virtual CodecError Compress(CCodecBuffer&       bufferIn,
+                                CCodecBuffer&       bufferOut,
+                                Codec_Feedback_Proc pFeedbackProc = NULL,
+                                CMP_DWORD_PTR       pUser1        = NULL,
+                                CMP_DWORD_PTR       pUser2        = NULL);
+    virtual CodecError Decompress(CCodecBuffer&       bufferIn,
+                                  CCodecBuffer&       bufferOut,
+                                  Codec_Feedback_Proc pFeedbackProc = NULL,
+                                  CMP_DWORD_PTR       pUser1        = NULL,
+                                  CMP_DWORD_PTR       pUser2        = NULL);
 };
-#endif // !defined(_CODEC_ATC_RGBA_H_INCLUDED_)
+#endif  // !defined(_CODEC_ATC_RGBA_H_INCLUDED_)

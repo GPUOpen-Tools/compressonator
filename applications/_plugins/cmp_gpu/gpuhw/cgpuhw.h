@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright (c) 2020    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2020-2024    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -34,8 +34,6 @@
 #include "compute_gpuhw.h"
 #include "plugininterface.h"
 
-
-
 // {ED2D5C9E-E135-4607-872F-36C2A72265FD}
 static const GUID g_GUID_GPU = {0xed2d5c9e, 0xe135, 0x4607, {0x87, 0x2f, 0x36, 0xc2, 0xa7, 0x22, 0x65, 0xfd}};
 
@@ -44,8 +42,9 @@ static const GUID g_GUID_GPU = {0xed2d5c9e, 0xe135, 0x4607, {0x87, 0x2f, 0x36, 0
 
 using namespace CMP_Compute_Base;
 
-class Plugin_CGpuHW : public PluginInterface_Pipeline {
-  public:
+class Plugin_CGpuHW : public PluginInterface_Pipeline
+{
+public:
     Plugin_CGpuHW();
     virtual ~Plugin_CGpuHW();
     int       TC_PluginGetVersion(TC_PluginVersion* pPluginVersion);
@@ -58,10 +57,8 @@ class Plugin_CGpuHW : public PluginInterface_Pipeline {
     CMP_ERROR TC_GetDeviceInfo(void* pDeviceInfo);
     int       TC_Close();
 
-  private:
+private:
     ComputeBase* m_pComputeBase;
 };
-
-
 
 #endif

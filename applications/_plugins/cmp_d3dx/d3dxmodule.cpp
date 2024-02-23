@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2020-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -47,115 +47,144 @@ D3DXModule g_aD3DXModules[] = {
     {("D3DX9_25.DLL"), ("D3DX9_25 (April 05 SDK)"), false},
     {("D3DX9_24.DLL"), ("D3DX9_24 (February 05 SDK)"), false},
 };
-const DWORD g_dwD3DXModules = (sizeof(g_aD3DXModules) / sizeof(g_aD3DXModules[0]));
-DWORD g_dwNewestD3DXModule = 0;
+const DWORD g_dwD3DXModules      = (sizeof(g_aD3DXModules) / sizeof(g_aD3DXModules[0]));
+DWORD       g_dwNewestD3DXModule = 0;
 
-CD3DXModule::CD3DXModule(void) : CModule() {
-    m_pCreateBuffer = NULL;
-    m_pCompileShader = NULL;
-    m_pAssembleShader = NULL;
+CD3DXModule::CD3DXModule(void)
+    : CModule()
+{
+    m_pCreateBuffer      = NULL;
+    m_pCompileShader     = NULL;
+    m_pAssembleShader    = NULL;
     m_pDisassembleShader = NULL;
-    m_pFilterTexture = NULL;
+    m_pFilterTexture     = NULL;
 }
 
-CD3DXModule::CD3DXModule(LPCTSTR lpModuleName) {
+CD3DXModule::CD3DXModule(LPCTSTR lpModuleName)
+{
     LoadModule(lpModuleName);
 }
 
-CD3DXModule::~CD3DXModule(void) {
+CD3DXModule::~CD3DXModule(void)
+{
     UnloadModule();
 }
 
-bool CD3DXModule::LoadModule(LPCTSTR lpModuleName) {
-    if(__super::LoadModule(lpModuleName)) {
-        m_pCreateBuffer = (D3DXCreateBufferProc) GetProcAddress("D3DXCreateBuffer");
-        m_pCompileShader = (D3DXCompileShaderProc) GetProcAddress("D3DXCompileShader");
-        m_pAssembleShader = (D3DXAssembleShaderProc) GetProcAddress("D3DXAssembleShader");
-        m_pDisassembleShader = (D3DXDisassembleShaderProc) GetProcAddress("D3DXDisassembleShader");
-        m_pFilterTexture = (D3DXFilterTextureProc) GetProcAddress("D3DXFilterTexture");
-        if(!m_pCompileShader || !m_pAssembleShader || !m_pDisassembleShader || !m_pFilterTexture) {
+bool CD3DXModule::LoadModule(LPCTSTR lpModuleName)
+{
+    if (__super::LoadModule(lpModuleName))
+    {
+        m_pCreateBuffer      = (D3DXCreateBufferProc)GetProcAddress("D3DXCreateBuffer");
+        m_pCompileShader     = (D3DXCompileShaderProc)GetProcAddress("D3DXCompileShader");
+        m_pAssembleShader    = (D3DXAssembleShaderProc)GetProcAddress("D3DXAssembleShader");
+        m_pDisassembleShader = (D3DXDisassembleShaderProc)GetProcAddress("D3DXDisassembleShader");
+        m_pFilterTexture     = (D3DXFilterTextureProc)GetProcAddress("D3DXFilterTexture");
+        if (!m_pCompileShader || !m_pAssembleShader || !m_pDisassembleShader || !m_pFilterTexture)
+        {
             UnloadModule();
             return false;
-        } else
+        }
+        else
             return true;
-    } else
+    }
+    else
         return false;
 }
 
-void CD3DXModule::UnloadModule() {
+void CD3DXModule::UnloadModule()
+{
     __super::UnloadModule();
-    m_pCreateBuffer = NULL;
-    m_pCompileShader = NULL;
-    m_pAssembleShader = NULL;
+    m_pCreateBuffer      = NULL;
+    m_pCompileShader     = NULL;
+    m_pAssembleShader    = NULL;
     m_pDisassembleShader = NULL;
-    m_pFilterTexture = NULL;
+    m_pFilterTexture     = NULL;
 }
 
-HRESULT CD3DXModule::D3DXCreateBuffer(DWORD NumBytes, LPD3DXBUFFER *ppBuffer) {
-    if(m_pCreateBuffer)
+HRESULT CD3DXModule::D3DXCreateBuffer(DWORD NumBytes, LPD3DXBUFFER* ppBuffer)
+{
+    if (m_pCreateBuffer)
         return m_pCreateBuffer(NumBytes, ppBuffer);
     else
         return D3DERR_INVALIDCALL;
 }
 
-HRESULT CD3DXModule::D3DXCompileShader(LPCSTR pSrcData, UINT SrcDataLen, CONST D3DXMACRO* pDefines,
-                                       LPD3DXINCLUDE pInclude, LPCSTR pFunctionName, LPCSTR pProfile,
-                                       DWORD Flags, LPD3DXBUFFER* ppShader,  LPD3DXBUFFER* ppErrorMsgs,
-                                       LPD3DXCONSTANTTABLE* ppConstantTable) {
-    if(m_pCompileShader)
-        return m_pCompileShader(pSrcData, SrcDataLen, pDefines, pInclude, pFunctionName, pProfile, Flags,
-                                ppShader,  ppErrorMsgs, ppConstantTable);
+HRESULT CD3DXModule::D3DXCompileShader(LPCSTR               pSrcData,
+                                       UINT                 SrcDataLen,
+                                       CONST D3DXMACRO*     pDefines,
+                                       LPD3DXINCLUDE        pInclude,
+                                       LPCSTR               pFunctionName,
+                                       LPCSTR               pProfile,
+                                       DWORD                Flags,
+                                       LPD3DXBUFFER*        ppShader,
+                                       LPD3DXBUFFER*        ppErrorMsgs,
+                                       LPD3DXCONSTANTTABLE* ppConstantTable)
+{
+    if (m_pCompileShader)
+        return m_pCompileShader(pSrcData, SrcDataLen, pDefines, pInclude, pFunctionName, pProfile, Flags, ppShader, ppErrorMsgs, ppConstantTable);
     else
         return D3DERR_INVALIDCALL;
 }
 
-HRESULT CD3DXModule::D3DXAssembleShader(LPCSTR pSrcData, UINT SrcDataLen, CONST D3DXMACRO* pDefines,
-                                        LPD3DXINCLUDE pInclude, DWORD Flags, LPD3DXBUFFER* ppShader,
-                                        LPD3DXBUFFER* ppErrorMsgs) {
-    if(m_pAssembleShader)
+HRESULT CD3DXModule::D3DXAssembleShader(LPCSTR           pSrcData,
+                                        UINT             SrcDataLen,
+                                        CONST D3DXMACRO* pDefines,
+                                        LPD3DXINCLUDE    pInclude,
+                                        DWORD            Flags,
+                                        LPD3DXBUFFER*    ppShader,
+                                        LPD3DXBUFFER*    ppErrorMsgs)
+{
+    if (m_pAssembleShader)
         return m_pAssembleShader(pSrcData, SrcDataLen, pDefines, pInclude, Flags, ppShader, ppErrorMsgs);
     else
         return D3DERR_INVALIDCALL;
 }
 
-HRESULT CD3DXModule::D3DXDisassembleShader(CONST DWORD* pShader, BOOL EnableColorCode, LPCSTR pComments,
-        LPD3DXBUFFER* ppDisassembly) {
-    if(m_pDisassembleShader)
+HRESULT CD3DXModule::D3DXDisassembleShader(CONST DWORD* pShader, BOOL EnableColorCode, LPCSTR pComments, LPD3DXBUFFER* ppDisassembly)
+{
+    if (m_pDisassembleShader)
         return m_pDisassembleShader(pShader, EnableColorCode, pComments, ppDisassembly);
     else
         return D3DERR_INVALIDCALL;
 }
 
-HRESULT CD3DXModule::D3DXFilterTexture(LPDIRECT3DBASETEXTURE9 pBaseTexture, CONST PALETTEENTRY* pPalette, UINT SrcLevel, DWORD Filter) {
-    if(m_pFilterTexture)
+HRESULT CD3DXModule::D3DXFilterTexture(LPDIRECT3DBASETEXTURE9 pBaseTexture, CONST PALETTEENTRY* pPalette, UINT SrcLevel, DWORD Filter)
+{
+    if (m_pFilterTexture)
         return m_pFilterTexture(pBaseTexture, pPalette, SrcLevel, Filter);
     else
         return D3DERR_INVALIDCALL;
 }
 
-DWORD LoadD3DX(CD3DXModule& D3DX, std::string& strD3DXModule) {
+DWORD LoadD3DX(CD3DXModule& D3DX, std::string& strD3DXModule)
+{
     g_aD3DXModules[0].bFound = false;
-    for(DWORD i = 1; i < g_dwD3DXModules; i++)
+    for (DWORD i = 1; i < g_dwD3DXModules; i++)
         g_aD3DXModules[0].bFound |= g_aD3DXModules[i].bFound = D3DX.LoadModule(g_aD3DXModules[i].szModuleName);
 
-    if(!g_aD3DXModules[0].bFound)
+    if (!g_aD3DXModules[0].bFound)
         return LOAD_FAILED;
 
-    for(g_dwNewestD3DXModule = 1; g_dwNewestD3DXModule < g_dwD3DXModules; g_dwNewestD3DXModule++)
-        if(g_aD3DXModules[g_dwNewestD3DXModule].bFound) {
-            sprintf_s(szLatestD3DX9, MAX_PATH,"Use latest D3DX9 - %s", g_aD3DXModules[g_dwNewestD3DXModule].szDescription);
+    for (g_dwNewestD3DXModule = 1; g_dwNewestD3DXModule < g_dwD3DXModules; g_dwNewestD3DXModule++)
+        if (g_aD3DXModules[g_dwNewestD3DXModule].bFound)
+        {
+            sprintf_s(szLatestD3DX9, MAX_PATH, "Use latest D3DX9 - %s", g_aD3DXModules[g_dwNewestD3DXModule].szDescription);
             break;
         }
 
-    if(!strD3DXModule.length() == 0  && D3DX.LoadModule(strD3DXModule.c_str())) {
-        for(DWORD dwD3DXModule = 0; dwD3DXModule < g_dwD3DXModules; dwD3DXModule++) {
+    if (!strD3DXModule.length() == 0 && D3DX.LoadModule(strD3DXModule.c_str()))
+    {
+        for (DWORD dwD3DXModule = 0; dwD3DXModule < g_dwD3DXModules; dwD3DXModule++)
+        {
             // need to do this with no case sens
-            if(strD3DXModule.compare(g_aD3DXModules[dwD3DXModule].szModuleName) == 0)
+            if (strD3DXModule.compare(g_aD3DXModules[dwD3DXModule].szModuleName) == 0)
                 return dwD3DXModule;
         }
-    } else {
+    }
+    else
+    {
         strD3DXModule = "";
-        if(D3DX.LoadModule(g_aD3DXModules[g_dwNewestD3DXModule].szModuleName))
+        if (D3DX.LoadModule(g_aD3DXModules[g_dwNewestD3DXModule].szModuleName))
             return 0;
         else
             return LOAD_FAILED;

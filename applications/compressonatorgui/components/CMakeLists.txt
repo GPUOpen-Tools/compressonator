@@ -30,6 +30,7 @@ set(COMPONENTS_H
   ${PROJECT_SOURCE_DIR}/applications/compressonatorgui/components/cpsetmeshoptions.h
   ${PROJECT_SOURCE_DIR}/applications/compressonatorgui/components/cpstartuppage.h
   ${PROJECT_SOURCE_DIR}/applications/compressonatorgui/components/cpwelcomepage.h
+  ${PROJECT_SOURCE_DIR}/applications/compressonatorgui/components/cptreewidget.h
 )
 
 set(COMPONENTS_SRC
@@ -62,6 +63,7 @@ set(COMPONENTS_SRC
   ${PROJECT_SOURCE_DIR}/applications/compressonatorgui/components/cpsetmeshoptions.cpp
   ${PROJECT_SOURCE_DIR}/applications/compressonatorgui/components/cpstartuppage.cpp
   ${PROJECT_SOURCE_DIR}/applications/compressonatorgui/components/cpwelcomepage.cpp
+  ${PROJECT_SOURCE_DIR}/applications/compressonatorgui/components/cptreewidget.cpp
 )
 
 add_library(CMP_GUI_Components STATIC ${COMPONENTS_H} ${COMPONENTS_SRC})
@@ -87,12 +89,13 @@ target_include_directories(CMP_GUI_Components PRIVATE
 )
 
 target_link_libraries(CMP_GUI_Components 
-                      Qt5::Widgets 
-                      Qt5::OpenGL 
-                      Qt5::Qml 
-                      Qt5::WebEngineWidgets
-                      )
+    Qt5::Widgets 
+    Qt5::OpenGL 
+    Qt5::Qml 
+    Qt5::WebEngineWidgets
+)
 
-set_target_properties(CMP_GUI_Components PROPERTIES 
+set_target_properties(CMP_GUI_Components PROPERTIES
         AUTOMOC ON
-        FOLDER "Libs")
+        FOLDER ${PROJECT_FOLDER_APPS_LIBS}
+)

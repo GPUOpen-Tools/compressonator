@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016-2022 (c), Advanced Micro Devices, Inc. All rights reserved
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -29,18 +29,19 @@
 #include <windows.h>
 #endif
 
-#include "cmdline.h"
-#include "pluginmanager.h"
-#include "cmp_plugininterface.h"
-#include "textureio.h"
-#include "version.h"
-#include "time.h"
-#include "cmp_fileio.h"
-
 #if (OPTION_CMP_QT == 1)
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qdebug.h>
 #endif
+
+#include "cmdline.h"
+#include "cmp_fileio.h"
+#include "cmp_plugininterface.h"
+#include "plugininterface.h"
+#include "pluginmanager.h"
+#include "textureio.h"
+#include "time.h"
+#include "version.h"
 
 // Standard App Static Plugin Interfaces for minimal support
 #if (OPTION_BUILD_ASTC == 1)
@@ -82,7 +83,7 @@ extern void* make_Plugin_CAnalysis();
 extern void* make_Image_Plugin_BRLG();
 #endif
 
-#ifdef USE_LOSSLESS_COMPRESSION
+#ifdef USE_LOSSLESS_COMPRESSION_BINARY
 extern void* make_Image_Plugin_BINARY();
 #endif
 
@@ -93,9 +94,8 @@ extern void* make_Plugin_KTX2();
 // Setup Static Host Pluging Libs
 extern void CMP_RegisterHostPlugins();
 
-extern bool        CompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2);
-extern void        LocalPrintF(char* buff);
-extern std::string DefaultDestination(std::string SourceFile, CMP_FORMAT DestFormat, std::string DestFileExt, CMP_BOOL suffixDestFormat);
+extern bool CompressionCallback(float fProgress, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2);
+extern void LocalPrintF(char* buff);
 
 extern PluginManager g_pluginManager;
 bool                 g_bAbortCompression = false;
@@ -103,7 +103,7 @@ CMIPS*               g_CMIPS;  // Global MIPS functions shared between app and a
 
 void AboutCompressonator()
 {
-    char year[5] = "2023";
+    char year[5] = "2024";
 
 #ifdef USE_AUTODATE
     time_t now     = time(0);
@@ -151,7 +151,7 @@ void PrintUsage()
 #endif
 
     printf("-fd <format>          Specifies the destination texture format to use\n");
-    printf("-decomp <filename>    If the destination  file is compressed optionally\n");
+    printf("-decomp <filename>    If the destination file is compressed optionally\n");
     printf("                      decompress it\n");
     printf("                      to the specified file. Note the destination  must\n");
     printf("                      be compatible \n");
@@ -177,6 +177,7 @@ void PrintUsage()
 #endif
     printf("-UseMangledFileNames Enable file mangling for destination files by appending the source extension and codec type to the file name.\n");
     printf("-doswizzle           Swizzle the source images Red and Blue channels\n");
+    printf("-PackageBRLG         Packages all files in a directory and its subdirectories into a single BRLG file output\n");
     printf("\n");
     printf("The following is a list of channel formats\n");
     printf("ARGB_8888      format with 8-bit fixed channels\n");
@@ -300,7 +301,12 @@ void PrintUsage()
     printf("                             different block modes in order to obtain the\n");
     printf("                             highest quality\n");
 #ifdef USE_LOSSLESS_COMPRESSION
-    printf("-PageSize <value>            Page size, in bytes, to use for BrotliG compression\n");
+    printf("-PageSize <value>            Page size, in bytes, to use for Brotli-G compression\n");
+    printf("-NoPreconditionBRLG          Disable preconditioning of BCn textures before Brotli-G compression\n");
+    printf("-DoSwizzleBRLG               Enable block swizzling during Brotli-G preconditioning for BCn textures, might further reduce compressed file size\n");
+    printf(
+        "-DoDeltaEncodeBRLG           Enable delta encoding of colours during Brotli-G preconditioning for BCn textures, might further reduce compressed file "
+        "size\n");
 #endif
 #ifdef USE_3DMESH_OPTIMIZE
     printf("-optVCacheSize <value>        Enable vertices optimization with hardware cache size in the value specified. \n");
@@ -364,6 +370,7 @@ void PrintUsage()
     printf("compressonatorcli -UseGPUDecompress result.dds image.bmp\n\n");
 #endif
     printf("Example compression with decompressed result (Useful for qualitative analysis):\n\n");
+    printf("compressonatorcli -fd BC7 -decomp result_decompression.bmp images.bmp result.dds\n\n");
 #ifdef USE_MESH_DRACO_EXTENSION
     printf("Example draco compression usage (support glTF and OBJ file only):\n\n");
     printf("compressonatorcli -draco source.gltf dest.gltf\n");
@@ -372,7 +379,7 @@ void PrintUsage()
     printf("Note: You can specify .obj as compressed file format as well, but a new .drc file will be created for this case.\n\n");
 #ifdef USE_MESH_DRACO_SETTING
     printf("Specifies quantization bits settings:\n");
-    printf("CompressonatorCLI -draco -dracolvl 7 -qpos 12 -qtexc 8 -qnorm 8 source.gltf dest.gltf\n\n");
+    printf("compressonatorcli -draco -dracolvl 7 -qpos 12 -qtexc 8 -qnorm 8 source.gltf dest.gltf\n\n");
 #endif
     printf("Example draco decompression usage (support glTF and drc file only):\n\n");
     printf("compressonatorcli source.gltf dest.gltf\n");
@@ -384,10 +391,20 @@ void PrintUsage()
     printf(
         "Using default settings : Optimize vertices with cache size = 16; Optimize overdraw with ACMR Threshold = 1.05; Optimize vertices fetch. "
         "\n\n");
-    printf("CompressonatorCLI -meshopt source.gltf dest.gltf\n");
-    printf("CompressonatorCLI -meshopt source.obj dest.obj\n\n");
+    printf("compressonatorcli -meshopt source.gltf dest.gltf\n");
+    printf("compressonatorcli -meshopt source.obj dest.obj\n\n");
     printf("Specifies settings :\n\n");
-    printf("CompressonatorCLI -meshopt -optVCacheSize  32 -optOverdrawACMRThres  1.03 -optVFetch 0 source.gltf dest.gltf\n");
+    printf("compressonatorcli -meshopt -optVCacheSize  32 -optOverdrawACMRThres  1.03 -optVFetch 0 source.gltf dest.gltf\n\n");
+#ifdef USE_LOSSLESS_COMPRESSION
+    printf("Example compression using Brotli-G:\n\n");
+    printf("compressonatorcli -fd BRLG source.dds dest.brlg\n");
+    printf("compressonatorcli -fd BRLG -DoSwizzleBRLG source.dds dest.brlg\n");
+    printf("compressonatorcli -fd BRLG -NoPreconditionBRLG source.dds dest.brlg\n\n");
+
+    printf("Example Brotli-G packaging:\n\n");
+    printf("compressonatorcli -fd BRLG source_folder/ dest.brlg\n");
+    printf("compressonatorcli packaged.brlg dest_folder/\n\n");
+#endif
 #endif
 #ifdef _WIN32
     printf("For additional help go to documents folder and type index.html \n");

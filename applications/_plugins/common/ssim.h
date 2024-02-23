@@ -1,5 +1,5 @@
 //=============================================================================
-// Copyright 2021 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2021-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -22,7 +22,7 @@
 
 #if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+#endif  // _MSC_VER > 1000
 
 #include <testreport.h>
 
@@ -32,5 +32,5 @@
 
 using namespace cv;
 
-void getMSE_PSNR(const Mat &I1, const Mat &I2, double &mse, double &psnr);
-Scalar getSSIM(const Mat &i1, const Mat &i2, CMP_Feedback_Proc pFeedbackProc);
+void   getMSE_PSNR(const Mat& I1, const Mat& I2, double& mse, double& psnr);
+Scalar getSSIM(const Mat& i1, const Mat& i2, CMP_Feedback_Proc pFeedbackProc);

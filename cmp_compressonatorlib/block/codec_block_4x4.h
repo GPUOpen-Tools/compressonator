@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -31,8 +31,9 @@
 
 #include "codec_block.h"
 
-class CCodec_Block_4x4 : public CCodec_Block {
-  public:
+class CCodec_Block_4x4 : public CCodec_Block
+{
+public:
     CCodec_Block_4x4(CodecType codecType);
     virtual ~CCodec_Block_4x4();
 
@@ -43,18 +44,23 @@ class CCodec_Block_4x4 : public CCodec_Block {
     virtual bool SetParameter(const CMP_CHAR* pszParamName, CODECFLOAT fValue);
     virtual bool GetParameter(const CMP_CHAR* pszParamName, CODECFLOAT& fValue);
 
-    virtual CCodecBuffer* CreateBuffer(
-        CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
-        CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0,
-        CMP_DWORD dwDataSize = 0) const;
+    virtual CCodecBuffer* CreateBuffer(CMP_BYTE  nBlockWidth,
+                                       CMP_BYTE  nBlockHeight,
+                                       CMP_BYTE  nBlockDepth,
+                                       CMP_DWORD dwWidth,
+                                       CMP_DWORD dwHeight,
+                                       CMP_DWORD dwPitch    = 0,
+                                       CMP_BYTE* pData      = 0,
+                                       CMP_DWORD dwDataSize = 0) const;
 
-    virtual CMP_DWORD GetBlockHeight() {
+    virtual CMP_DWORD GetBlockHeight()
+    {
         return 4;
     };
 
-  protected:
+protected:
     bool m_bUseSSE;
     bool m_bUseSSE2;
 };
 
-#endif // !defined(_CODEC_BLOCK_4x4_H_INCLUDED_)
+#endif  // !defined(_CODEC_BLOCK_4x4_H_INCLUDED_)

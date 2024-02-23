@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2018  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -26,7 +26,7 @@
 //  Description: implementation of the CCodec_ETC2 class
 //
 //////////////////////////////////////////////////////////////////////////////
-#pragma warning(disable:4100)
+#pragma warning(disable : 4100)
 
 #include "common.h"
 #include "codec_etc2_rgba.h"
@@ -35,35 +35,44 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////////////
 
-CCodec_ETC2_RGBA::CCodec_ETC2_RGBA(CodecType codecType):CCodec_ETC2(codecType) {
-
+CCodec_ETC2_RGBA::CCodec_ETC2_RGBA(CodecType codecType)
+    : CCodec_ETC2(codecType)
+{
 }
 
-CCodec_ETC2_RGBA::~CCodec_ETC2_RGBA() {
-
+CCodec_ETC2_RGBA::~CCodec_ETC2_RGBA()
+{
 }
 
-CodecError CCodec_ETC2_RGBA::Compress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+CodecError CCodec_ETC2_RGBA::Compress(CCodecBuffer&       bufferIn,
+                                      CCodecBuffer&       bufferOut,
+                                      Codec_Feedback_Proc pFeedbackProc,
+                                      CMP_DWORD_PTR       pUser1,
+                                      CMP_DWORD_PTR       pUser2)
+{
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
 
-    if(bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
+    if (bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
         return CE_Unknown;
 
     const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
     const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
 
-    CMP_BYTE srcBlock[BLOCK_SIZE_4X4X4];
+    CMP_BYTE  srcBlock[BLOCK_SIZE_4X4X4];
     CMP_DWORD compressedBlock[4];
-    for(CMP_DWORD j = 0; j < dwBlocksY; j++) {
-        for(CMP_DWORD i = 0; i < dwBlocksX; i++) {
-            bufferIn.ReadBlockRGBA(i*4, j*4, 4, 4, srcBlock);
+    for (CMP_DWORD j = 0; j < dwBlocksY; j++)
+    {
+        for (CMP_DWORD i = 0; i < dwBlocksX; i++)
+        {
+            bufferIn.ReadBlockRGBA(i * 4, j * 4, 4, 4, srcBlock);
             CompressRGBABlock(srcBlock, compressedBlock);
-            bufferOut.WriteBlock(i*4, j*4, compressedBlock, 4);
+            bufferOut.WriteBlock(i * 4, j * 4, compressedBlock, 4);
         }
-        if(pFeedbackProc) {
+        if (pFeedbackProc)
+        {
             float fProgress = 100.f * (j * dwBlocksX) / (dwBlocksX * dwBlocksY);
-            if(pFeedbackProc(fProgress, pUser1, pUser2))
+            if (pFeedbackProc(fProgress, pUser1, pUser2))
                 return CE_Aborted;
         }
     }
@@ -71,33 +80,41 @@ CodecError CCodec_ETC2_RGBA::Compress(CCodecBuffer& bufferIn, CCodecBuffer& buff
     return CE_OK;
 }
 
-CodecError CCodec_ETC2_RGBA::Decompress(CCodecBuffer& bufferIn, CCodecBuffer& bufferOut, Codec_Feedback_Proc pFeedbackProc, CMP_DWORD_PTR pUser1, CMP_DWORD_PTR pUser2) {
+CodecError CCodec_ETC2_RGBA::Decompress(CCodecBuffer&       bufferIn,
+                                        CCodecBuffer&       bufferOut,
+                                        Codec_Feedback_Proc pFeedbackProc,
+                                        CMP_DWORD_PTR       pUser1,
+                                        CMP_DWORD_PTR       pUser2)
+{
     assert(bufferIn.GetWidth() == bufferOut.GetWidth());
     assert(bufferIn.GetHeight() == bufferOut.GetHeight());
 
-    if(bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
+    if (bufferIn.GetWidth() != bufferOut.GetWidth() || bufferIn.GetHeight() != bufferOut.GetHeight())
         return CE_Unknown;
 
-    const CMP_DWORD dwBlocksX = ((bufferIn.GetWidth() + 3) >> 2);
-    const CMP_DWORD dwBlocksY = ((bufferIn.GetHeight() + 3) >> 2);
-    const CMP_DWORD dwBlocksXY = dwBlocksX*dwBlocksY;
+    const CMP_DWORD dwBlocksX  = ((bufferIn.GetWidth() + 3) >> 2);
+    const CMP_DWORD dwBlocksY  = ((bufferIn.GetHeight() + 3) >> 2);
+    const CMP_DWORD dwBlocksXY = dwBlocksX * dwBlocksY;
 
     CMP_DWORD compressedBlock[4];
-    CMP_BYTE destBlock[BLOCK_SIZE_4X4X4];
-    for(CMP_DWORD j = 0; j < dwBlocksY; j++) {
-        for(CMP_DWORD i = 0; i < dwBlocksX; i++) {
-            bufferIn.ReadBlock(i*4, j*4, compressedBlock, 4);
+    CMP_BYTE  destBlock[BLOCK_SIZE_4X4X4];
+    for (CMP_DWORD j = 0; j < dwBlocksY; j++)
+    {
+        for (CMP_DWORD i = 0; i < dwBlocksX; i++)
+        {
+            bufferIn.ReadBlock(i * 4, j * 4, compressedBlock, 4);
             DecompressRGBABlock(destBlock, compressedBlock);
-            bufferOut.WriteBlockRGBA(i*4, j*4, 4, 4, destBlock);
+            bufferOut.WriteBlockRGBA(i * 4, j * 4, 4, 4, destBlock);
         }
 
-        if (pFeedbackProc) {
+        if (pFeedbackProc)
+        {
             float fProgress = 100.f * (j * dwBlocksX) / dwBlocksXY;
-            if (pFeedbackProc(fProgress, pUser1, pUser2)) {
+            if (pFeedbackProc(fProgress, pUser1, pUser2))
+            {
                 return CE_Aborted;
             }
         }
-
     }
 
     return CE_OK;

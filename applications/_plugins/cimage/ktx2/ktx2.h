@@ -1,5 +1,5 @@
 //=====================================================================
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -54,7 +54,6 @@ public:
     int TC_PluginFileSaveTexture(const char* pszFilename, CMP_Texture* srcTexture);
 };
 
-
 struct CMP_DFD
 {
     uint32_t byteLength;
@@ -75,7 +74,6 @@ typedef struct _DFDSampleType
     uint32_t upper;
 } DFDSampleType;
 
-
 #define IDS_ERROR_FILE_OPEN 1
 #define IDS_ERROR_NOT_KTX 2
 #define IDS_ERROR_UNSUPPORTED_TYPE 3
@@ -93,6 +91,7 @@ extern void* make_Plugin_KTX2();
 #define RGB_BP_UNSIGNED_FLOAT 0x8E8F  // GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_ARB  //bc6
 #define RGB_BP_SIGNED_FLOAT 0x8E8E    // GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_ARB
 #define RGB_BP_UNorm 0x8E8C           // GL_COMPRESSED_RGBA_BPTC_UNORM_ARB  //bc7
+#define RGB_BP_SRGB 0x8E8D            // GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_ARB //bc7_srgb
 #define ATC_RGB_AMD 0x8C92
 #define ATC_RGBA_EXPLICIT_ALPHA_AMD 0x8C93
 #define ATC_RGBA_INTERPOLATED_ALPHA_AMD 0x87EE
@@ -107,12 +106,11 @@ extern void* make_Plugin_KTX2();
 #define COMPRESSED_FORMAT_DXT5_xRBG_TMP 0x6003
 #define COMPRESSED_FORMAT_DXT5_RGxB_TMP 0x6004
 #define COMPRESSED_FORMAT_DXT5_xGxR_TMP 0x6005
-#define COMPRESSED_FORMAT_ATI1N_UNorm_TMP    0x6007
-#define COMPRESSED_FORMAT_ATI1N_SNorm_TMP    0x6008
-#define COMPRESSED_FORMAT_ATI2N_UNorm_TMP    0x6009
-#define COMPRESSED_FORMAT_ATI2N_SNorm_TMP    0x6010
+#define COMPRESSED_FORMAT_ATI1N_UNorm_TMP 0x6007
+#define COMPRESSED_FORMAT_ATI1N_SNorm_TMP 0x6008
+#define COMPRESSED_FORMAT_ATI2N_UNorm_TMP 0x6009
+#define COMPRESSED_FORMAT_ATI2N_SNorm_TMP 0x6010
 #define COMPRESSED_FORMAT_ATI2N_XY_UNorm_TMP 0x6011
-
 
 //----------------------------------------------------------------
 // Definitions from etcpack v2.74

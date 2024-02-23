@@ -1,5 +1,5 @@
-/************************************************************************************//**
-// Copyright (c) 2006-2015 Advanced Micro Devices, Inc. All rights reserved.
+/************************************************************************************/ /**
+// Copyright (c) 2006-2024 Advanced Micro Devices, Inc. All rights reserved.
 /// \author AMD Developer Tools Team
 /// \file
 ****************************************************************************************/
@@ -10,40 +10,43 @@
 
 typedef SSEVec4 SSEVector;
 
-class JRTBoundingBox {
-  public:
-
+class JRTBoundingBox
+{
+public:
     JRTBoundingBox(const float* points, unsigned int num_points);
 
     JRTBoundingBox(const Vec3f* points, unsigned int num_points);
 
     JRTBoundingBox(const Vec3f& min = Vec3f(0, 0, 0), const Vec3f& max = Vec3f(1, 1, 1));
 
-    inline const Vec3f& GetMin() const {
+    inline const Vec3f& GetMin() const
+    {
         return m_min;
     };
-    inline const Vec3f& GetMax() const {
+    inline const Vec3f& GetMax() const
+    {
         return m_max;
     };
 
-    inline Vec3f& GetMin() {
+    inline Vec3f& GetMin()
+    {
         return m_min;
     };
-    inline Vec3f& GetMax() {
+    inline Vec3f& GetMax()
+    {
         return m_max;
     };
 
-    Vec3f GetCenter() const {
-        return (m_max + m_min) / 2 ;
+    Vec3f GetCenter() const
+    {
+        return (m_max + m_min) / 2;
     };
 
     void Expand(const Vec3f& point);
 
     bool RayHit(const Vec3f& origin, const Vec3f& endPoint, float* tmin_out, float* tmax_out) const;
 
-
     void Split(unsigned int axis, float value, JRTBoundingBox& front, JRTBoundingBox& back) const;
-
 
     bool PointInBox(const float origin[3]) const;
 
@@ -67,8 +70,7 @@ class JRTBoundingBox {
 
     void GetCorners(Vec3f* pCorners) const;
 
-  private:
-
+private:
     Vec3f m_min;
     Vec3f m_max;
 };

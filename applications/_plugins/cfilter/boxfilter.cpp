@@ -1,6 +1,6 @@
 //=============================================================================
-// Copyright (c) 2023 Advanced Micro Devices, Inc. All rights reserved.
-// Copyright (c) 2008-2023, ATI Technologies Inc. All rights reserved.
+// Copyright (c) 2022-2024 Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2008, ATI Technologies Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -80,7 +80,9 @@ void* make_Plugin_BoxFilter()
 
 CMIPS* CFilterMips = NULL;
 
-Plugin_BoxFilter::Plugin_BoxFilter() { }
+Plugin_BoxFilter::Plugin_BoxFilter()
+{
+}
 
 Plugin_BoxFilter::~Plugin_BoxFilter()
 {
@@ -130,9 +132,9 @@ int Plugin_BoxFilter::TC_CFilter(MipSet* pMipSet, CMP_MipSet* pMipSetDst, CMP_CF
     if (pCFilterParams->nFilterType == 0)
     {
         pMipSet->m_nMipLevels = 1;
-        
-        int nWidth         = pMipSet->m_nWidth;
-        int nHeight        = pMipSet->m_nHeight;
+
+        int nWidth  = pMipSet->m_nWidth;
+        int nHeight = pMipSet->m_nHeight;
 
         while ((nWidth > pCFilterParams->nMinSize || nHeight > pCFilterParams->nMinSize))
         {
@@ -167,15 +169,13 @@ int Plugin_BoxFilter::TC_CFilter(MipSet* pMipSet, CMP_MipSet* pMipSetDst, CMP_CF
                 }
 
                 assert(pThisMipLevel->m_pbData);
-                
+
                 if (pMipSet->m_TextureType == TT_VolumeTexture && CMP_MaxFacesOrSlices(pMipSet, nCurMipLevel - 1) > 1)
                 {
                     //prev miplevel had 2 or more slices, so avg together slices
 
-                    MipLevel* prevMipLevels[] = {
-                        CFilterMips->GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice * 2),
-                        CFilterMips->GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice * 2 + 1)
-                    };
+                    MipLevel* prevMipLevels[] = {CFilterMips->GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice * 2),
+                                                 CFilterMips->GetMipLevel(pMipSet, nCurMipLevel - 1, nFaceOrSlice * 2 + 1)};
 
                     GenerateMipmapLevel(pThisMipLevel, prevMipLevels, 2, pMipSet->m_format);
                 }
@@ -308,14 +308,14 @@ int Plugin_BoxFilter::GenMipLevelsUsingDXTex(MipSet* pMipSet, CMP_CFilterParams*
         filter = DirectX::TEX_FILTER_FLAGS::TEX_FILTER_POINT;
         break;
     case CMP_D3DX_FILTER_LINEAR:
-        filter = DirectX::TEX_FILTER_FLAGS::TEX_FILTER_LINEAR;
+        filter                 = DirectX::TEX_FILTER_FLAGS::TEX_FILTER_LINEAR;
         extra_mirror_filtering = true;
         break;
     case CMP_D3DX_FILTER_TRIANGLE:
-        filter = DirectX::TEX_FILTER_FLAGS::TEX_FILTER_TRIANGLE;
+        filter                 = DirectX::TEX_FILTER_FLAGS::TEX_FILTER_TRIANGLE;
         extra_mirror_filtering = true;
         break;
-    default: // BOX 
+    default:  // BOX
         filter = DirectX::TEX_FILTER_FLAGS::TEX_FILTER_BOX;
         break;
     }
@@ -325,32 +325,29 @@ int Plugin_BoxFilter::GenMipLevelsUsingDXTex(MipSet* pMipSet, CMP_CFilterParams*
 
     if (extra_mirror_filtering)
     {
-         if (pD3DXFilterParams->dwMipFilterOptions & CMP_D3DX_FILTER_MIRROR)
-             filter |= DirectX::TEX_FILTER_FLAGS::TEX_FILTER_MIRROR;
+        if (pD3DXFilterParams->dwMipFilterOptions & CMP_D3DX_FILTER_MIRROR)
+            filter |= DirectX::TEX_FILTER_FLAGS::TEX_FILTER_MIRROR;
     }
-   
-   DWORD dwMipLevels = CalcMipLevels(pMipSet, pD3DXFilterParams);
+
+    DWORD dwMipLevels = CalcMipLevels(pMipSet, pD3DXFilterParams);
 
     // Create ScratchImage from loaded image
-    DirectX::Image inputPixels =
-    {
-        (size_t)pMipSet->m_nWidth, 
-        (size_t)pMipSet->m_nHeight, 
-        d3dformat,
-        1,                      // rowPitch
-        1,                      // slicePitch
-        CFilterMips->GetMipLevel(pMipSet, 0)->m_pbData
-    };
-
+    DirectX::Image inputPixels = {(size_t)pMipSet->m_nWidth,
+                                  (size_t)pMipSet->m_nHeight,
+                                  d3dformat,
+                                  1,  // rowPitch
+                                  1,  // slicePitch
+                                  CFilterMips->GetMipLevel(pMipSet, 0)->m_pbData};
 
     DirectX::ScratchImage mipMaps;
     DirectX::ScratchImage scratchImage;
-    DirectX::Rect         imputRec     = {0,0,(size_t)pMipSet->m_nWidth,(size_t)pMipSet->m_nHeight};
+    DirectX::Rect         imputRec     = {0, 0, (size_t)pMipSet->m_nWidth, (size_t)pMipSet->m_nHeight};
     DirectX::Image        outputPixels = {};
 
     do
     {
-        if (DirectX::ComputePitch(d3dformat, pMipSet->m_nWidth, pMipSet->m_nHeight, inputPixels.rowPitch, inputPixels.slicePitch, DirectX::CP_FLAGS_NONE) != S_OK)
+        if (DirectX::ComputePitch(d3dformat, pMipSet->m_nWidth, pMipSet->m_nHeight, inputPixels.rowPitch, inputPixels.slicePitch, DirectX::CP_FLAGS_NONE) !=
+            S_OK)
             HANDLE_ERROR_BREAK(retVal = CMP_ERR_GENERIC, " Failed ComputePitch");
 
         if (scratchImage.Initialize2D(d3dformat, pMipSet->m_nWidth, pMipSet->m_nHeight, dwMipLevels, 1) != S_OK)
@@ -364,13 +361,12 @@ int Plugin_BoxFilter::GenMipLevelsUsingDXTex(MipSet* pMipSet, CMP_CFilterParams*
         if (hRes != S_OK)
             HANDLE_ERROR_BREAK(retVal = CMP_ERR_GENERIC, " Failed GenerateMipMaps");
 
-
         for (dwLevel = 0; dwLevel < dwMipLevels; dwLevel++)
         {
             DirectX::Image mipPixel = *mipMaps.GetImage(dwLevel, 0, 0);
 
             // Space for mip level already allocated
-            if (CFilterMips->GetMipLevel(pMipSet, dwLevel)->m_pbData) 
+            if (CFilterMips->GetMipLevel(pMipSet, dwLevel)->m_pbData)
             {
                 if (CFilterMips->GetMipLevel(pMipSet, dwLevel)->m_nWidth != (int)mipPixel.width ||
                     CFilterMips->GetMipLevel(pMipSet, dwLevel)->m_nHeight != (int)mipPixel.height)
@@ -385,8 +381,9 @@ int Plugin_BoxFilter::GenMipLevelsUsingDXTex(MipSet* pMipSet, CMP_CFilterParams*
                         HANDLE_ERROR_BREAK(retVal = CMP_ERR_GENERIC, "Failed Existing AllocateMipLevelData");
                 }
             }
-            else 
-            if (CFilterMips->AllocateMipLevelData(CFilterMips->GetMipLevel(pMipSet, dwLevel), mipPixel.width, mipPixel.height, pMipSet->m_ChannelFormat, pMipSet->m_TextureDataType) == NULL)
+            else if (CFilterMips->AllocateMipLevelData(
+                         CFilterMips->GetMipLevel(pMipSet, dwLevel), mipPixel.width, mipPixel.height, pMipSet->m_ChannelFormat, pMipSet->m_TextureDataType) ==
+                     NULL)
                 HANDLE_ERROR_BREAK(retVal = CMP_ERR_GENERIC, " Failed New AllocateMipLevelData");
 
             if (CFilterMips->GetMipLevel(pMipSet, dwLevel)->m_dwLinearSize == mipPixel.slicePitch)

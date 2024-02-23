@@ -24,7 +24,6 @@
 // http://go.microsoft.com/fwlink/?LinkId=248929
 
 
-#include "cmp_gltffeatures.h"
 #include "cmp_texturedx12.h"
 #include "dxgi.h"
 #include <assert.h>
@@ -524,6 +523,9 @@ DXGI_FORMAT CMP2DXGIFormat(CMP_FORMAT cmp_format) {
         break;
     case CMP_FORMAT_BC7:
         dxgi_format = DXGI_FORMAT_BC7_UNORM;
+        break;
+    case CMP_FORMAT_BC7_SRGB:
+        dxgi_format = DXGI_FORMAT_BC7_UNORM_SRGB;
         break;
     //uncompressed format
     case CMP_FORMAT_ARGB_8888:

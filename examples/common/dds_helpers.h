@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Advanced Micro Devices, Inc. All rights reserved
+// Copyright (c) 2016-2024 Advanced Micro Devices, Inc. All rights reserved
 // Copyright (c) 2004-2006    ATI Technologies Inc.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,12 +24,11 @@
 
 #include "compressonator.h"
 
-
 CMP_FORMAT GetFormat(CMP_DWORD dwFourCC);
-CMP_DWORD GetFourCC(CMP_FORMAT nFormat);
-bool IsDXT5SwizzledFormat(CMP_FORMAT nFormat);
+CMP_DWORD  GetFourCC(CMP_FORMAT nFormat);
+bool       IsDXT5SwizzledFormat(CMP_FORMAT nFormat);
 CMP_FORMAT ParseFormat(const char* pszFormat);
-char* GetFormatDesc(CMP_FORMAT nFormat);
+char*      GetFormatDesc(CMP_FORMAT nFormat);
 
 bool LoadDDSFile(const char* pszFile, CMP_Texture& texture);
 void SaveDDSFile(const char* pszFile, CMP_Texture& texture);

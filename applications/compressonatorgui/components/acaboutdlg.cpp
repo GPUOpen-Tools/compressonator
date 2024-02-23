@@ -4,12 +4,14 @@
 #define AC_STR_HelpAboutWebPage "http://gpuopen.com/gaming-product/compressonator/"
 #define AC_STR_HelpAboutWebPageText "gpuopen.com"
 
-CHelpAboutDialog::CHelpAboutDialog(QWidget *parent)
-    : QDialog(parent) {
-    Init("About Compressonator","Compressonator");
+CHelpAboutDialog::CHelpAboutDialog(QWidget* parent)
+    : QDialog(parent)
+{
+    Init("About Compressonator", "Compressonator");
 }
 
-void CHelpAboutDialog::Init(const QString & title, const QString & productName) {
+void CHelpAboutDialog::Init(const QString& title, const QString& productName)
+{
     Q_UNUSED(productName);
 
     // Set the dialog title:
@@ -26,35 +28,31 @@ void CHelpAboutDialog::Init(const QString & title, const QString & productName) 
     pMainLayout->setSizeConstraint(QLayout::SetFixedSize);
 
     QVBoxLayout* pVerticalLayoutLeft = new QVBoxLayout;
-    QString version = QString("%1.%2.%3").arg(
-                          QString::number(VERSION_MAJOR_MAJOR),
-                          QString::number(VERSION_MAJOR_MINOR),
-                          QString::number(VERSION_MINOR_MAJOR)
-                          //QString::number(0)
-                      );
+    QString      version             = QString("%1.%2.%3")
+                          .arg(QString::number(VERSION_MAJOR_MAJOR), QString::number(VERSION_MAJOR_MINOR), QString::number(VERSION_MINOR_MAJOR)
+                               //QString::number(0)
+                          );
     // Set the Help about string:
     QString helpAboutString = "Compressonator<br>";
     helpAboutString.append(version);
 
-    QString copyRightCaption = "<p> &copy; 2023 Advanced Micro Devices, Inc. All Rights Reserved.</p>";
+    QString copyRightCaption = "<p> &copy; 2024 Advanced Micro Devices, Inc. All Rights Reserved.</p>";
     // Create the QLabels from the strings:
-    QLabel* pHelpAboutStringAsStaticText = new QLabel(helpAboutString);
+    QLabel* pHelpAboutStringAsStaticText  = new QLabel(helpAboutString);
     QLabel* pCopyRightCaptionAsStaticText = new QLabel(copyRightCaption);
 
     // Set QLabels Alignments
     pHelpAboutStringAsStaticText->setAlignment(Qt::AlignCenter);
     pCopyRightCaptionAsStaticText->setAlignment(Qt::AlignCenter);
     // Add the web page link:
-    QString websiteURL = "<a href=\"" AC_STR_HelpAboutWebPage "\">" AC_STR_HelpAboutWebPageText "</a>";
+    QString websiteURL  = "<a href=\"" AC_STR_HelpAboutWebPage "\">" AC_STR_HelpAboutWebPageText "</a>";
     QLabel* pWebsiteURL = new QLabel(websiteURL);
-
 
     pWebsiteURL->setOpenExternalLinks(true);
     pWebsiteURL->setToolTip(AC_STR_HelpAboutWebPageText);
 
     // Add Horizontal Line:
     QFrame* pLine = new QFrame();
-
 
     pLine->setFrameShape(QFrame::HLine);
     pLine->setFrameShadow(QFrame::Sunken);
@@ -83,9 +81,8 @@ void CHelpAboutDialog::Init(const QString & title, const QString & productName) 
 
     // Activate:
     setLayout(pMainLayout);
-
 }
 
-CHelpAboutDialog::~CHelpAboutDialog() {
-
+CHelpAboutDialog::~CHelpAboutDialog()
+{
 }

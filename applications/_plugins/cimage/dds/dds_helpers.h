@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2016-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2016 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,40 +24,56 @@
 
 // DDS.h : Defines the entry point for the DLL application.
 
-
 #ifndef _DDS_HELPERS_H
 #define _DDS_HELPERS_H
-
 
 #include "tc_pluginapi.h"
 #include "texture.h"
 #include "dds.h"
 
-typedef struct _ARGB8888Struct {
-    int        nFlags;
-    void*    pMemory;
-    int        nRMask;
-    int        nRShift;
-    int        nGMask;
-    int        nGShift;
-    int        nBMask;
-    int        nBShift;
+typedef struct _ARGB8888Struct
+{
+    int   nFlags;
+    void* pMemory;
+    int   nRMask;
+    int   nRShift;
+    int   nGMask;
+    int   nGShift;
+    int   nBMask;
+    int   nBShift;
 } ARGB8888Struct;
 
-typedef enum _ExtraFlags {
-    EF_None = 0,
+typedef enum _ExtraFlags
+{
+    EF_None        = 0,
     EF_UseBitMasks = 0x1,
 } ExtraFlags;
 
-typedef TC_PluginError (PreLoopFunction)(FILE*& pFile, DDSD2*& pDDSD, MipSet*& pMipSet, void*& extra);
-typedef TC_PluginError (LoopFunction)(FILE*& pFile, DDSD2*& pDDSD, MipSet*& pMipSet, void*& extra, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
-typedef TC_PluginError (PostLoopFunction)(FILE*& pFile, DDSD2*& pDDSD, MipSet*& pMipSet, void*& extra);
-TC_PluginError GenericLoadFunction(FILE*& pFile, DDSD2*& pDDSD, MipSet*& pMipSet, void*& extra, ChannelFormat channelFormat, TextureDataType textureDataType, PreLoopFunction fnPreLoop, LoopFunction fnLoop, PostLoopFunction fnPostLoop);
+typedef TC_PluginError(PreLoopFunction)(FILE*& pFile, DDSD2*& pDDSD, MipSet*& pMipSet, void*& extra);
+typedef TC_PluginError(
+    LoopFunction)(FILE*& pFile, DDSD2*& pDDSD, MipSet*& pMipSet, void*& extra, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
+typedef TC_PluginError(PostLoopFunction)(FILE*& pFile, DDSD2*& pDDSD, MipSet*& pMipSet, void*& extra);
+TC_PluginError GenericLoadFunction(FILE*&           pFile,
+                                   DDSD2*&          pDDSD,
+                                   MipSet*&         pMipSet,
+                                   void*&           extra,
+                                   ChannelFormat    channelFormat,
+                                   TextureDataType  textureDataType,
+                                   PreLoopFunction  fnPreLoop,
+                                   LoopFunction     fnLoop,
+                                   PostLoopFunction fnPostLoop);
 
-bool IsD3D10Format(const MipSet* pMipSet);
-void DetermineTextureType(const DDSD2* pDDSD, MipSet* pMipSet);
-TC_PluginError GenericLoadFunction(FILE*& pFile, DDSD2*& pDDSD, MipSet*& pMipSet, void*& extra, ChannelFormat channelFormat,
-                                   TextureDataType textureDataType, PreLoopFunction fnPreLoop, LoopFunction fnLoop, PostLoopFunction fnPostLoop);
+bool           IsD3D10Format(const MipSet* pMipSet);
+void           DetermineTextureType(const DDSD2* pDDSD, MipSet* pMipSet);
+TC_PluginError GenericLoadFunction(FILE*&           pFile,
+                                   DDSD2*&          pDDSD,
+                                   MipSet*&         pMipSet,
+                                   void*&           extra,
+                                   ChannelFormat    channelFormat,
+                                   TextureDataType  textureDataType,
+                                   PreLoopFunction  fnPreLoop,
+                                   LoopFunction     fnLoop,
+                                   PostLoopFunction fnPostLoop);
 TC_PluginError PreLoopDefault(FILE*&, DDSD2*&, MipSet*&, void*&);
 TC_PluginError LoopDefault(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*& extra, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
 TC_PluginError PostLoopDefault(FILE*&, DDSD2*&, MipSet*&, void*&);
@@ -93,10 +109,10 @@ TC_PluginError PreLoopG16(FILE*&, DDSD2*&, MipSet*& pMipSet, void*&);
 TC_PluginError LoopG16(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
 TC_PluginError PostLoopG16(FILE*&, DDSD2*&, MipSet*&, void*&);
 TC_PluginError PreLoopA8(FILE*&, DDSD2*&, MipSet*& pMipSet, void*&);
-TC_PluginError LoopA8(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
+TC_PluginError LoopA8(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
 TC_PluginError PostLoopA8(FILE*&, DDSD2*&, MipSet*&, void*&);
 TC_PluginError PreLoopABGR16(FILE*&, DDSD2*&, MipSet*& pMipSet, void*&);
-TC_PluginError LoopABGR16(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
+TC_PluginError LoopABGR16(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
 TC_PluginError PostLoopABGR16(FILE*&, DDSD2*&, MipSet*&, void*&);
 
 TC_PluginError PreLoopG16R16(FILE*&, DDSD2*&, MipSet*& pMipSet, void*&);
@@ -104,16 +120,16 @@ TC_PluginError LoopG16R16(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&, int n
 TC_PluginError PostLoopG16R16(FILE*&, DDSD2*&, MipSet*&, void*&);
 
 TC_PluginError PreLoopABGR32(FILE*&, DDSD2*&, MipSet*& pMipSet, void*&);
-TC_PluginError LoopABGR32(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
+TC_PluginError LoopABGR32(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
 TC_PluginError PostLoopABGR32(FILE*&, DDSD2*&, MipSet*&, void*&);
 
-TC_PluginError LoopR32G32(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
-TC_PluginError LoopR10G10B10A2(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
+TC_PluginError LoopR32G32(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
+TC_PluginError LoopR10G10B10A2(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
 TC_PluginError LoopR9G9B9E5(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
 
-TC_PluginError LoopR16G16(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
+TC_PluginError LoopR16G16(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
 TC_PluginError LoopR32(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
-TC_PluginError LoopR8G8(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&,int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
+TC_PluginError LoopR8G8(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);
 
 TC_PluginError PreLoopR16(FILE*&, DDSD2*&, MipSet*&, void*&);
 TC_PluginError LoopR16(FILE*& pFile, DDSD2*&, MipSet*& pMipSet, void*&, int nMipLevel, int nFaceOrSlice, CMP_DWORD dwWidth, CMP_DWORD dwHeight);

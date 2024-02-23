@@ -1,6 +1,6 @@
 //=====================================================================
+// Copyright 2020-2024 (c), Advanced Micro Devices, Inc. All rights reserved.
 // Copyright 2008 (c), ATI Technologies Inc. All rights reserved.
-// Copyright 2020 (c), Advanced Micro Devices, Inc. All rights reserved.
 //=====================================================================
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -57,7 +57,7 @@ private:
 
 #ifdef _WIN32
     DWORD Plugin_BoxFilter::CalcMipLevels(MipSet* pMipSet, CMP_CFilterParams* pD3DXFilterParams);
-    int GenMipLevelsUsingDXTex(MipSet* pMipSet, CMP_CFilterParams* pD3DXFilterParams);
+    int   GenMipLevelsUsingDXTex(MipSet* pMipSet, CMP_CFilterParams* pD3DXFilterParams);
 #endif
 };
 

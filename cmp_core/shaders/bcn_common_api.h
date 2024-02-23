@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2021    Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2021-2024    Advanced Micro Devices, Inc. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files(the "Software"), to deal
@@ -25,7 +25,7 @@
 #define BCN_COMMON_API_H_
 
 //===================================================================
-// NOTE: Do not use these API in production code, subject to changes 
+// NOTE: Do not use these API in production code, subject to changes
 //===================================================================
 
 #ifndef ASPM_GPU
@@ -42,10 +42,9 @@
 
 #include "common_def.h"
 
-#define CMP_MAX_16BITFLOAT  65504.0f
-#define CMP_FLT_MAX         3.402823466e+38F
-#define BC1ConstructColour(r, g, b)  (((r) << 11) | ((g) << 5) | (b))
-
+#define CMP_MAX_16BITFLOAT 65504.0f
+#define CMP_FLT_MAX 3.402823466e+38F
+#define BC1ConstructColour(r, g, b) (((r) << 11) | ((g) << 5) | (b))
 
 #ifdef ASPM_HLSL
 #define fabs(x) abs(x)
@@ -349,7 +348,6 @@ CMP_STATIC CGU_FLOAT cmp_max3(CMP_IN CGU_FLOAT i, CMP_IN CGU_FLOAT j, CMP_IN CGU
 #endif
 }
 
-
 CMP_STATIC CGU_Vec4ui cmp_minVec4ui(CMP_IN CGU_Vec4ui a, CMP_IN CGU_Vec4ui b)
 {
     //#ifdef ASPM_HLSL
@@ -416,7 +414,6 @@ CMP_STATIC CGU_UINT32 cmp_clampui32(CMP_IN CGU_UINT32 v, CMP_IN CGU_UINT32 a, CM
         return b;
     return v;
 }
-
 
 // Test Ref:https://en.wikipedia.org/wiki/Half-precision_floating-point_format
 // Half (in Hex)        Float               Comment
@@ -863,7 +860,6 @@ CMP_STATIC CGU_Vec3f cmp_exp2(CMP_IN CGU_Vec3f value)
 #endif
 }
 
-
 CMP_STATIC CGU_Vec3f cmp_roundVec3f(CMP_IN CGU_Vec3f value)
 {
 #ifdef ASPM_HLSL
@@ -927,8 +923,6 @@ CMP_STATIC CGU_FLOAT cmp_CalcMSLE(CMP_IN CGU_Vec3f a, CMP_IN CGU_Vec3f b)
     return err.x + err.y + err.z;
 }
 
-
-
 // Compute Endpoints (min/max) bounding box
 CMP_STATIC void cmp_GetTexelMinMax(CMP_IN CGU_Vec3f texels[16], CMP_INOUT CGU_Vec3f CMP_REFINOUT blockMin, CMP_INOUT CGU_Vec3f CMP_REFINOUT blockMax)
 {
@@ -967,7 +961,7 @@ CMP_STATIC void cmp_RefineMinMaxAsLog2(CMP_IN CGU_Vec3f texels[16], CMP_INOUT CG
 }
 
 // Refine Endpoints (min/max) by Least Squares Optimization
-CMP_STATIC void cmp_RefineMinMaxAs16BitLeastSquares(CMP_IN CGU_Vec3f texels[16],
+CMP_STATIC void cmp_RefineMinMaxAs16BitLeastSquares(CMP_IN CGU_Vec3f                 texels[16],
                                                     CMP_INOUT CGU_Vec3f CMP_REFINOUT blockMin,
                                                     CMP_INOUT CGU_Vec3f CMP_REFINOUT blockMax)
 {
@@ -1031,7 +1025,6 @@ CMP_STATIC CGU_Vec3f cmp_fabsVec3f(CGU_Vec3f value)
     return res;
 #endif
 }
-
 
 CMP_STATIC CGU_UINT32 cmp_constructColor(CMP_IN CGU_Vec3ui EndPoints)
 {
@@ -1386,8 +1379,7 @@ Vec4T<T> clamp(Vec4T<T>& v, const T& lo, const T& hi)
     return res;
 }
 
-
-template <typename T,typename T2>
+template <typename T, typename T2>
 T dot(T& v1, T2& v2)
 {
     return (v1 * v2);
@@ -1419,4 +1411,4 @@ T dot(Vec3T<T>& v1, Vec3T<T2>& v2)
 #endif  //  API_INTERFACED
 #endif  //  ASPM_GPU
 
-#endif //
+#endif  //

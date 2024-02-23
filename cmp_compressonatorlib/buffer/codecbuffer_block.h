@@ -1,5 +1,5 @@
 //===============================================================================
-// Copyright (c) 2007-2016  Advanced Micro Devices, Inc. All rights reserved.
+// Copyright (c) 2007-2024  Advanced Micro Devices, Inc. All rights reserved.
 // Copyright (c) 2004-2006 ATI Technologies Inc.
 //===============================================================================
 //
@@ -31,36 +31,47 @@
 
 #include "codecbuffer.h"
 
-class CCodecBuffer_Block : public CCodecBuffer {
-  public:
-    CCodecBuffer_Block( CodecBufferType nCodecBufferType,
-                        CMP_BYTE nBlockWidth, CMP_BYTE nBlockHeight, CMP_BYTE nBlockDepth,
-                        CMP_DWORD dwWidth, CMP_DWORD dwHeight, CMP_DWORD dwPitch = 0, CMP_BYTE* pData = 0,CMP_DWORD dwDataSize = 0);
+class CCodecBuffer_Block : public CCodecBuffer
+{
+public:
+    CCodecBuffer_Block(CodecBufferType nCodecBufferType,
+                       CMP_BYTE        nBlockWidth,
+                       CMP_BYTE        nBlockHeight,
+                       CMP_BYTE        nBlockDepth,
+                       CMP_DWORD       dwWidth,
+                       CMP_DWORD       dwHeight,
+                       CMP_DWORD       dwPitch    = 0,
+                       CMP_BYTE*       pData      = 0,
+                       CMP_DWORD       dwDataSize = 0);
 
     virtual ~CCodecBuffer_Block();
 
-    virtual CodecBufferType GetBufferType() const {
+    virtual CodecBufferType GetBufferType() const
+    {
         return m_nCodecBufferType;
     };
-    virtual CMP_DWORD GetChannelDepth() const {
+    virtual CMP_DWORD GetChannelDepth() const
+    {
         return 0;
     };
-    virtual CMP_DWORD GetChannelCount() const {
+    virtual CMP_DWORD GetChannelCount() const
+    {
         return 0;
     };
-    virtual bool IsFloat() const {
+    virtual bool IsFloat() const
+    {
         return false;
     };
 
     virtual bool ReadBlock(CMP_DWORD x, CMP_DWORD y, CMP_DWORD* pBlock, CMP_DWORD dwBlockSize);
     virtual bool WriteBlock(CMP_DWORD x, CMP_DWORD y, CMP_DWORD* pBlock, CMP_DWORD dwBlockSize);
 
-  protected:
+protected:
     CodecBufferType m_nCodecBufferType;
-    CMP_DWORD m_dwBlockSize;
-    CMP_DWORD m_dwBlockWidth;
-    CMP_DWORD m_dwBlockHeight;
-    CMP_DWORD m_dwBlockBPP;
+    CMP_DWORD       m_dwBlockSize;
+    CMP_DWORD       m_dwBlockWidth;
+    CMP_DWORD       m_dwBlockHeight;
+    CMP_DWORD       m_dwBlockBPP;
 };
 
-#endif // !defined(_CODECBUFFER_BLOCK_H_INCLUDED_)
+#endif  // !defined(_CODECBUFFER_BLOCK_H_INCLUDED_)
