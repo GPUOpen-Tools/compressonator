@@ -116,8 +116,6 @@ CodecType GetCodecType(CMP_FORMAT format)
         return CT_BC6H_SF;
     case CMP_FORMAT_BC7:
         return CT_BC7;
-    case CMP_FORMAT_BC7_SRGB:
-        return CT_BC7_SRGB;
 #if (OPTION_BUILD_ASTC == 1)
     case CMP_FORMAT_ASTC:
         return CT_ASTC;
@@ -241,7 +239,6 @@ CMP_DWORD CalcBufferSize(CodecType nCodecType, CMP_DWORD dwWidth, CMP_DWORD dwHe
 
     // Block size is 4x4 and 128 bits per block
     case CT_BC7:
-    case CT_BC7_SRGB:
         dwWidth  = ((dwWidth + 3) / 4) * 4;
         dwHeight = ((dwHeight + 3) / 4) * 4;
         buffsize = dwWidth * dwHeight;

@@ -768,7 +768,6 @@ int AMDSaveMIPSTextureImage(const char* DestFile, MipSet* MipSetIn, bool use_OCV
             case CMP_FORMAT_ASTC:
 #endif
             case CMP_FORMAT_BC7:
-            case CMP_FORMAT_BC7_SRGB:
             case CMP_FORMAT_BC6H:
             case CMP_FORMAT_BC6H_SF:
             case CMP_FORMAT_ETC_RGB:

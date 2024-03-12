@@ -234,8 +234,7 @@ CCodec* CreateCodec(CodecType nCodecType)
     case CT_BC6H_SF:
         return new CCodec_BC6H(nCodecType);
     case CT_BC7:
-    case CT_BC7_SRGB:
-        return new CCodec_BC7(nCodecType);
+        return new CCodec_BC7;
 #if (OPTION_BUILD_ASTC == 1)
     case CT_ASTC:
         return new CCodec_ASTC;

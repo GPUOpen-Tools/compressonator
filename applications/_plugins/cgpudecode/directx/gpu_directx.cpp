@@ -614,9 +614,6 @@ DXGI_FORMAT GPU_DirectX::CMP2DXGIFormat(CMP_FORMAT cmp_format)
     case CMP_FORMAT_BC7:
         dxgi_format = DXGI_FORMAT_BC7_UNORM;
         break;
-    case CMP_FORMAT_BC7_SRGB:
-        dxgi_format = DXGI_FORMAT_BC7_UNORM_SRGB;
-        break;
 
         // Unknown compression mapping to Direct X
 #if (OPTION_BUILD_ASTC == 1)

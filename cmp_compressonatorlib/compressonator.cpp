@@ -144,7 +144,6 @@ static void CMP_PrepareSourceForCMP_Destination(CMP_Texture* pTexture, CMP_FORMA
 #endif
         case CMP_FORMAT_BC6H:
         case CMP_FORMAT_BC7:
-        case CMP_FORMAT_BC7_SRGB:
         case CMP_FORMAT_GT:
         case CMP_FORMAT_ETC_RGB:
         case CMP_FORMAT_ETC2_RGB:
@@ -197,7 +196,6 @@ static void CMP_PrepareSourceForCMP_Destination(CMP_Texture* pTexture, CMP_FORMA
 #endif
         case CMP_FORMAT_BC6H:
         case CMP_FORMAT_BC7:
-        case CMP_FORMAT_BC7_SRGB:
         case CMP_FORMAT_ETC_RGB:
         case CMP_FORMAT_ETC2_RGB:
         case CMP_FORMAT_ETC2_SRGB:
@@ -246,7 +244,6 @@ static void CMP_PrepareSourceForCMP_Destination(CMP_Texture* pTexture, CMP_FORMA
 #endif
         case CMP_FORMAT_BC6H:
         case CMP_FORMAT_BC7:
-        case CMP_FORMAT_BC7_SRGB:
         case CMP_FORMAT_ETC_RGB:
         case CMP_FORMAT_ETC2_RGB:
         case CMP_FORMAT_ETC2_SRGB:
@@ -385,7 +382,7 @@ CMP_ERROR CMP_API CMP_ConvertTexture(CMP_Texture*               pSourceTexture,
 #if (OPTION_BUILD_ASTC == 1)
             (destType != CT_ASTC) &&
 #endif
-            (destType != CT_BC7) && (destType != CT_BC7_SRGB) && (destType != CT_BC6H) && (destType != CT_BC6H_SF)
+            (destType != CT_BC7) && (destType != CT_BC6H) && (destType != CT_BC6H_SF)
 #ifdef USE_APC
             && (destType != CT_APC)
 #endif

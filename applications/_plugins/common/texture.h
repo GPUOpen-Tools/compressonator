@@ -118,8 +118,6 @@ extern "C" {
 
 #define CMP_FOURCC_BC6H CMP_MAKEFOURCC('B', 'C', '6', 'H')
 #define CMP_FOURCC_BC7 CMP_MAKEFOURCC('B', 'C', '7', 'x')
-#define CMP_FOURCC_BC7_SRGB CMP_MAKEFOURCC('B', 'C', '7', 's')
-
 #if (OPTION_BUILD_ASTC == 1)
 #define CMP_FOURCC_ASTC CMP_MAKEFOURCC('A', 'S', 'T', 'C')
 #endif

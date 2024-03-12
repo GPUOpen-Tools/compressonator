@@ -217,9 +217,6 @@ int Plugin_KTX2::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipS
             case VK_FORMAT_BC7_UNORM_BLOCK:
                 pMipSet->m_format = CMP_FORMAT_BC7;
                 break;
-            case VK_FORMAT_BC7_SRGB_BLOCK:
-                pMipSet->m_format = CMP_FORMAT_BC7_SRGB;
-                break;
             case VK_FORMAT_ETC2_R8G8B8_UNORM_BLOCK:
                 pMipSet->m_format = CMP_FORMAT_ETC2_RGB;  // Skip ETC as ETC2 is backward comp
                 break;
@@ -851,10 +848,6 @@ int Plugin_KTX2::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipS
             case CMP_FORMAT_BC7:
                 // RGB_BP_UNorm;
                 textureCreateInfo.vkFormat = VK_FORMAT_BC7_UNORM_BLOCK;
-                break;
-            case CMP_FORMAT_BC7_SRGB:
-                // RGB_BP_SRGB;
-                textureCreateInfo.vkFormat = VK_FORMAT_BC7_SRGB_BLOCK;
                 break;
             //case CMP_FORMAT_ATI1N:
             //    // COMPRESSED_FORMAT_ATI1N_UNorm_TMP;

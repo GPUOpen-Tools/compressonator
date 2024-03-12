@@ -97,7 +97,6 @@ CMP_FormatDesc g_FormatDesc[] = {
     {CMP_FORMAT_BC6H, "BC6H"},
     {CMP_FORMAT_BC6H_SF, "BC6H_SF"},
     {CMP_FORMAT_BC7, "BC7"},
-    {CMP_FORMAT_BC7_SRGB, "BC7_SRGB"},
 
     {CMP_FORMAT_DXT1, "DXT1"},
     {CMP_FORMAT_DXT3, "DXT3"},
@@ -323,9 +322,6 @@ void CMP_API CMP_Format2FourCC(CMP_FORMAT format, MipSet* pMipSet)
     case CMP_FORMAT_BC7:
         pMipSet->m_dwFourCC = CMP_FOURCC_DX10;
         break;
-    case CMP_FORMAT_BC7_SRGB:
-        pMipSet->m_dwFourCC =  CMP_FOURCC_DX10;
-        break;
 #if (OPTION_BUILD_ASTC == 1)
     case CMP_FORMAT_ASTC:
         pMipSet->m_dwFourCC = CMP_FOURCC_DX10;
@@ -472,7 +468,6 @@ CMP_BOOL CMP_API CMP_IsCompressedFormat(CMP_FORMAT format)
     case CMP_FORMAT_BC6H:
     case CMP_FORMAT_BC6H_SF:
     case CMP_FORMAT_BC7:
-    case CMP_FORMAT_BC7_SRGB:
     case CMP_FORMAT_DXT1:
     case CMP_FORMAT_DXT3:
     case CMP_FORMAT_DXT5:
@@ -610,7 +605,6 @@ CMP_BOOL CMP_API CMP_IsValidFormat(CMP_FORMAT InFormat)
     case CMP_FORMAT_BC6H:
     case CMP_FORMAT_BC6H_SF:
     case CMP_FORMAT_BC7:
-    case CMP_FORMAT_BC7_SRGB:
     case CMP_FORMAT_ATI1N:
     case CMP_FORMAT_ATI2N:
     case CMP_FORMAT_ATI2N_XY:
@@ -799,8 +793,6 @@ static CMP_FORMAT GetFormat(CMP_DWORD dwFourCC)
         return CMP_FORMAT_BC6H;
     case CMP_FOURCC_BC7:
         return CMP_FORMAT_BC7;
-    case CMP_FOURCC_BC7_SRGB:
-        return CMP_FORMAT_BC7_SRGB;
 #if (OPTION_BUILD_ASTC == 1)
     case CMP_FOURCC_ASTC:
         return CMP_FORMAT_ASTC;

@@ -171,9 +171,6 @@ unsigned int GPU_OpenGL::MIP2OLG_Format(const CMP_Texture* pSourceTexture)
     case CMP_FORMAT_BC7:
         m_GLnum = GL_COMPRESSED_RGBA_BPTC_UNORM;
         break;
-    case CMP_FORMAT_BC7_SRGB:
-        m_GLnum = GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM;
-        break;
     case CMP_FORMAT_ETC_RGB:
     case CMP_FORMAT_ETC2_RGB:
         m_GLnum = GL_COMPRESSED_RGB8_ETC2;

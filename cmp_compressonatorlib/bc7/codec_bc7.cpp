@@ -83,8 +83,8 @@ unsigned int BC7ThreadProcEncode(void* param)
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////////////
 
-CCodec_BC7::CCodec_BC7(CodecType codecType)
-    : CCodec_DXTC(codecType) {
+CCodec_BC7::CCodec_BC7()
+    : CCodec_DXTC(CT_BC7)
 {
     m_LibraryInitialized = false;
 
