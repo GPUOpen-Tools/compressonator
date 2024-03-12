@@ -195,7 +195,6 @@ CMP_FormatDesc g_DDSFormatDesc[] = {
     {CMP_FORMAT_BC5_S, ("BC5_S")},
     {CMP_FORMAT_BC6H, ("BC6H")},
     {CMP_FORMAT_BC7, ("BC7")},
-    {CMP_FORMAT_BC7_SRGB, ("BC7s")},
     {CMP_FORMAT_ATC_RGB, ("ATC_RGB")},
     {CMP_FORMAT_ATC_RGBA_Explicit, ("ATC_RGBA_Explicit")},
     {CMP_FORMAT_ATC_RGBA_Interpolated, ("ATC_RGBA_Interpolated")},
@@ -894,7 +893,7 @@ void SaveDDSFile(const char* pszFile, CMP_Texture& texture)
             // Check to save the data using DX10 file format (BC7 is used as an example of what is supported
             // and can be expanded to include other formats
 
-            if ((texture.format == CMP_FORMAT_BC7) || (texture.format == CMP_FORMAT_BC7_SRGB) || (texture.format == CMP_FORMAT_BC6H) || (texture.format == CMP_FORMAT_BC6H_SF))
+            if ((texture.format == CMP_FORMAT_BC7) || (texture.format == CMP_FORMAT_BC6H) || (texture.format == CMP_FORMAT_BC6H_SF))
             {
                 ddsd.ddpfPixelFormat.dwFlags  = DDPF_FOURCC;
                 ddsd.ddpfPixelFormat.dwFourCC = MAKEFOURCC('D', 'X', '1', '0');
@@ -908,8 +907,6 @@ void SaveDDSFile(const char* pszFile, CMP_Texture& texture)
 
                 if (texture.format == CMP_FORMAT_BC7)
                     HeaderDDS10.dxgiFormat = DXGI_FORMAT_BC7_UNORM;
-                else if (texture.format == CMP_FORMAT_BC7_SRGB)
-                    HeaderDDS10.dxgiFormat = DXGI_FORMAT_BC7_UNORM_SRGB;
                 else if (texture.format == CMP_FORMAT_BC6H)
                     HeaderDDS10.dxgiFormat = DXGI_FORMAT_BC6H_UF16;
                 else if (texture.format == CMP_FORMAT_BC6H_SF)

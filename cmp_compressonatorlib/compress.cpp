@@ -164,7 +164,6 @@ static void CMP_PrepareCMPSourceForIMG_Destination(CMP_Texture* destTexture, CMP
 #endif
     case CMP_FORMAT_BC6H:
     case CMP_FORMAT_BC7:
-    case CMP_FORMAT_BC7_SRGB:
     case CMP_FORMAT_GT:
     case CMP_FORMAT_ETC_RGB:
     case CMP_FORMAT_ETC2_RGB:
@@ -237,7 +236,6 @@ CMP_ERROR CodecCompressTexture(const CMP_Texture* srcTexture, CMP_Texture* destT
         switch (destType)
         {
         case CT_BC7:
-        case CT_BC7_SRGB:
             codec->SetParameter("MultiThreading", (CMP_DWORD)!options->bDisableMultiThreading);
 
             if (!options->bDisableMultiThreading)
@@ -518,8 +516,6 @@ CMP_ERROR CodecCompressTextureThreaded(const CMP_Texture*         srcTexture,
 
     // Note function should not be called for the following Codecs....
     if (destType == CT_BC7)
-        return CMP_ABORTED;
-    if (destType == CT_BC7_SRGB)
         return CMP_ABORTED;
 #ifdef USE_APC
     if (destType == CT_APC)

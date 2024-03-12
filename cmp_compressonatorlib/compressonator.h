@@ -155,10 +155,9 @@ typedef enum
                                   // compressed texture format for Microsoft DirectX10. Identical to ATI2N_XY. Eight bits per pixel.
     CMP_FORMAT_BC5_S = 0x1051,    // DXGI_FORMAT_BC5_SNORM VK_FORMAT_BC5_SNORM_BLOCK GL_COMPRESSED_RGBA_BPTC_UNORM A two component
                                   // compressed texture format for Microsoft DirectX10. Identical to ATI2N_XY. Eight bits per pixel.
-    CMP_FORMAT_BC6H     = 0x0061,  // DXGI_FORMAT_BC6H_UF16 VK_FORMAT_BC6H_UFLOAT_BLOCK GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT BC6H compressed texture format (UF)
-    CMP_FORMAT_BC6H_SF  = 0x1061,  // DXGI_FORMAT_BC6H_SF16 VK_FORMAT_BC6H_SFLOAT_BLOCK GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT   BC6H compressed texture format (SF)
-    CMP_FORMAT_BC7      = 0x0071,  // DXGI_FORMAT_BC7_UNORM VK_FORMAT_BC7_UNORM_BLOCK GL_COMPRESSED_RGBA_BPTC_UNORM BC7  compressed texture format
-    CMP_FORMAT_BC7_SRGB = 0x0072,  // DXGI_FORMAT_BC7_UNORM_SRGB VK_FORMAT_BC7_SRGB_BLOCK GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM BC7  compressed texture format
+    CMP_FORMAT_BC6H    = 0x0061,  // DXGI_FORMAT_BC6H_UF16 VK_FORMAT_BC6H_UFLOAT_BLOCK GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT BC6H compressed texture format (UF)
+    CMP_FORMAT_BC6H_SF = 0x1061,  // DXGI_FORMAT_BC6H_SF16 VK_FORMAT_BC6H_SFLOAT_BLOCK GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT   BC6H compressed texture format (SF)
+    CMP_FORMAT_BC7     = 0x0071,  // DXGI_FORMAT_BC7_UNORM VK_FORMAT_BC7_UNORM_BLOCK GL_COMPRESSED_RGBA_BPTC_UNORM BC7  compressed texture format
 
     CMP_FORMAT_ATI1N = 0x0141,       // DXGI_FORMAT_BC4_UNORM VK_FORMAT_BC4_UNORM_BLOCK GL_COMPRESSED_RED_RGTC1 Single component
                                      // compression format using the same technique as DXT5 alpha. Four bits per pixel.

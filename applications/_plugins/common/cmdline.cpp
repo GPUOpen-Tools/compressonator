@@ -183,8 +183,7 @@ static inline bool IsFileModel(const std::string& sourceFile)
 static inline bool IsFormatBCN(CMP_FORMAT format)
 {
     return format == CMP_FORMAT_BC1 || format == CMP_FORMAT_BC2 || format == CMP_FORMAT_BC3 || format == CMP_FORMAT_BC4 || format == CMP_FORMAT_BC4_S ||
-           format == CMP_FORMAT_BC5 || format == CMP_FORMAT_BC5_S || format == CMP_FORMAT_BC6H || format == CMP_FORMAT_BC6H_SF || format == CMP_FORMAT_BC7 ||
-           format == CMP_FORMAT_BC7_SRGB;
+           format == CMP_FORMAT_BC5 || format == CMP_FORMAT_BC5_S || format == CMP_FORMAT_BC6H || format == CMP_FORMAT_BC6H_SF || format == CMP_FORMAT_BC7;
 }
 
 static inline bool IsProcessingBRLG(const CCmdLineParamaters& params)
@@ -2058,7 +2057,6 @@ bool SVMInitCodec(KernelOptions* options)
     case CMP_FORMAT_BC1:
     case CMP_FORMAT_DXT1:
     case CMP_FORMAT_BC7:
-    case CMP_FORMAT_BC7_SRGB:
 #if (OPTION_BUILD_ASTC == 1)
     case CMP_FORMAT_ASTC:
 #endif
@@ -3280,7 +3278,7 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
                     if (destFormat == CMP_FORMAT_BC1 || destFormat == CMP_FORMAT_BC4 || destFormat == CMP_FORMAT_BC4_S)
                         bytesPerBlock = 8;
                     else if (destFormat == CMP_FORMAT_BC2 || destFormat == CMP_FORMAT_BC3 || destFormat == CMP_FORMAT_BC5 || destFormat == CMP_FORMAT_BC5_S ||
-                             destFormat == CMP_FORMAT_BC6H || destFormat == CMP_FORMAT_BC6H_SF || destFormat == CMP_FORMAT_BC7 || destFormat == CMP_FORMAT_BC7_SRGB)
+                             destFormat == CMP_FORMAT_BC6H || destFormat == CMP_FORMAT_BC6H_SF || destFormat == CMP_FORMAT_BC7)
                         bytesPerBlock = 16;
 
                     CMP_DWORD remainingSize = destMipSet.dwDataSize;
@@ -3531,7 +3529,7 @@ int ProcessCMDLine(CMP_Feedback_Proc pFeedbackProc, MipSet* p_userMipSetIn)
             if ((g_CmdPrams.CompressOptions.fquality > 0.00f) && (g_CmdPrams.CompressOptions.fquality < 0.01f))
             {
                 // set default max quality for fast processing codecs
-                if ((destFormat != CMP_FORMAT_BC7_SRGB) && (destFormat != CMP_FORMAT_BC7) && (destFormat != CMP_FORMAT_BC6H) && (destFormat != CMP_FORMAT_BC6H_SF))
+                if ((destFormat != CMP_FORMAT_BC7) && (destFormat != CMP_FORMAT_BC6H) && (destFormat != CMP_FORMAT_BC6H_SF))
                 {
                     g_CmdPrams.CompressOptions.fquality = 1.0f;
                 }

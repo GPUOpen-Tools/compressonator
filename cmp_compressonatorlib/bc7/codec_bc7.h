@@ -58,7 +58,7 @@ struct BC7EncodeThreadParam
 class CCodec_BC7 : public CCodec_DXTC
 {
 public:
-    CCodec_BC7(CodecType codecType);
+    CCodec_BC7();
     ~CCodec_BC7();
 
     virtual bool SetParameter(const CMP_CHAR* pszParamName, CMP_CHAR* sValue);

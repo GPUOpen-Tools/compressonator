@@ -465,10 +465,6 @@ int Plugin_KTX::TC_PluginFileLoadTexture(const char* pszFilename, MipSet* pMipSe
             pMipSet->m_format          = CMP_FORMAT_BC7;
             pMipSet->m_TextureDataType = TDT_ARGB;
             break;
-        case RGB_BP_SRGB:
-            pMipSet->m_format          = CMP_FORMAT_BC7_SRGB;
-            pMipSet->m_TextureDataType = TDT_ARGB;
-            break;
         case RGB_BP_UNSIGNED_FLOAT:
             pMipSet->m_format          = CMP_FORMAT_BC6H;
             pMipSet->m_TextureDataType = TDT_ARGB;
@@ -1105,7 +1101,6 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSe
     case CMP_FORMAT_BC6H:
     case CMP_FORMAT_BC6H_SF:
     case CMP_FORMAT_BC7:
-    case CMP_FORMAT_BC7_SRGB:
     case CMP_FORMAT_DXT1:
     case CMP_FORMAT_DXT3:
     case CMP_FORMAT_DXT5:
@@ -1255,9 +1250,6 @@ int Plugin_KTX::TC_PluginFileSaveTexture(const char* pszFilename, MipSet* pMipSe
                 break;
             case CMP_FORMAT_BC7:
                 textureinfo.glInternalFormat = RGB_BP_UNorm;
-                break;
-            case CMP_FORMAT_BC7_SRGB:
-                textureinfo.glInternalFormat = RGB_BP_SRGB;
                 break;
             case CMP_FORMAT_ATI1N:
                 textureinfo.glInternalFormat = R_ATI1N_UNorm;

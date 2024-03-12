@@ -355,9 +355,6 @@ VkFormat MIP2VK_Format(MipSet* pMipsTexture) {
     case CMP_FORMAT_BC7:
         m_VKnum = VK_FORMAT_BC7_UNORM_BLOCK;
         break;
-    case CMP_FORMAT_BC7_SRGB:
-        m_VKnum = VK_FORMAT_BC7_SRGB_BLOCK;
-        break;
     case CMP_FORMAT_ETC_RGB:
     case CMP_FORMAT_ETC2_RGB:
         m_VKnum = VK_FORMAT_ETC2_R8G8B8_UNORM_BLOCK;

@@ -1022,7 +1022,6 @@ HRESULT CDirectX::GPU_Encode(ID3D11Buffer** ppDstTextureAsBufOut, int miplevel)
             case DXGI_FORMAT_BC6H_UF16:
             case DXGI_FORMAT_BC6H_SF16:
             case DXGI_FORMAT_BC7_UNORM:
-            case DXGI_FORMAT_BC7_UNORM_SRGB:
             default:
                 sbOutDesc.StructureByteStride = sizeof(OutCompressedStruct128Bits);  // 16 Bytes
                 sbOutDesc.ByteWidth           = NumOfBlocks * sizeof(OutCompressedStruct128Bits);
@@ -1650,10 +1649,6 @@ CMP_ERROR CDirectX::Compress(KernelOptions* KernelOptions, MipSet& srcTexture, M
     case CMP_FORMAT_BC6H_SF:
         m_fmtEncode     = DXGI_FORMAT_BC6H_SF16;
         m_activeEncoder = ACTIVE_ENCODER_BC6;
-        break;
-    case CMP_FORMAT_BC7_SRGB:
-        m_fmtEncode     = DXGI_FORMAT_BC7_UNORM_SRGB;
-        m_activeEncoder = ACTIVE_ENCODER_BC7;
         break;
     default:
     case CMP_FORMAT_BC7:
