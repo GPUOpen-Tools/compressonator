@@ -238,9 +238,14 @@ TC_PluginError LoadDDS_DX10(FILE* pFile, DDSD2* pDDSD, MipSet* pMipSet)
 
     case DXGI_FORMAT_BC7_TYPELESS:
     case DXGI_FORMAT_BC7_UNORM:
-    case DXGI_FORMAT_BC7_UNORM_SRGB:
         pMipSet->m_compressed = true;
         pMipSet->m_format     = CMP_FORMAT_BC7;
+        err                   = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, CMP_FOURCC_DX10);
+        break;
+
+    case DXGI_FORMAT_BC7_UNORM_SRGB:
+        pMipSet->m_compressed = true;
+        pMipSet->m_format     = CMP_FORMAT_BC7_SRGB;
         err                   = LoadDDS_DX10_FourCC(pFile, pDDSD, pMipSet, CMP_FOURCC_DX10);
         break;
 
@@ -393,6 +398,8 @@ DXGI_FORMAT GetDXGIFormat(const MipSet* pMipSet)
             return DXGI_FORMAT_BC5_UNORM;
         case CMP_FORMAT_BC7:
             return DXGI_FORMAT_BC7_UNORM;
+        case CMP_FORMAT_BC7_SRGB:
+            return DXGI_FORMAT_BC7_UNORM_SRGB;
             // case CMP_FORMAT_ASTC:        return DXGI_FORMAT_????;  Not yet supported as of Jun 24 2015
         }
     }
@@ -476,6 +483,7 @@ TC_PluginError SaveDDS_DX10(FILE* pFile, const MipSet* pMipSet)
         ddsd2.lPitch = ddsd2.dwWidth * 4;
         break;
     case CMP_FORMAT_BC7:
+    case CMP_FORMAT_BC7_SRGB:
     default:
         ddsd2.lPitch = ddsd2.dwWidth * 4;
         break;
