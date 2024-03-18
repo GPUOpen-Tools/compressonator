@@ -139,8 +139,8 @@ if (MipSetIn.m_nMipLevels <= 1)
 //==========================
 // Set Compression Options
 //==========================
-KernalOptions   kernel_options;
-memset(&kernel_options, 0, sizeof(KernalOptions));
+KernelOptions   kernel_options;
+memset(&kernel_options, 0, sizeof(KernelOptions));
 
 kernel_options.format   = destFormat;   // Set the format to process
 kernel_options.fquality = fQuality;     // Set the quality of the result
