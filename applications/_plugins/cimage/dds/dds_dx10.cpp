@@ -439,7 +439,7 @@ bool SetupDDSD10(DDS_HEADER_DDS10& HeaderDDS10, const MipSet* pMipSet)
     {
         HeaderDDS10.resourceDimension = D3D10_RESOURCE_DIMENSION_TEXTURE2D;
         HeaderDDS10.miscFlag          = D3D10_RESOURCE_MISC_TEXTURECUBE;
-        HeaderDDS10.arraySize         = 6;
+        HeaderDDS10.arraySize         = 1;
     }
     else
     {
