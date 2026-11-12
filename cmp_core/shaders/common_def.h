@@ -115,6 +115,7 @@
 #include <cstring>
 #include <cmath>
 #include <stdio.h>
+#include <stdlib.h>
 #include INC_cmp_math_vec4
 #endif
 
